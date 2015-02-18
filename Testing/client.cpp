@@ -6,6 +6,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h> 
+#include <iostream>
+#include <string>
+using namespace std;
 
 void error(const char *msg)
 {
@@ -44,14 +47,34 @@ int main(int argc, char *argv[])
     printf("Please enter the message: ");
     bzero(buffer,256);
     fgets(buffer,255,stdin);
-    n = write(sockfd,buffer,strlen(buffer));
-    if (n < 0) 
-         error("ERROR writing to socket");
-    bzero(buffer,256);
-    n = read(sockfd,buffer,255);
-    if (n < 0) 
-         error("ERROR reading from socket");
-    printf("%s\n",buffer);
+   
+   	while(1)
+   	{	char ch;
+   		string s; 
+ 	     n = write(sockfd,buffer,strlen(buffer));
+   		 if (n < 0) 
+   	   		   error("ERROR writing to socket");
+    	
+    	bzero(buffer,256);
+    	
+    	n = read(sockfd,buffer,255);
+    	if (n < 0) {
+       		  error("ERROR reading from socket");
+    	}
+    	listen( sockfd , 5);
+		// if(ch == 'y') 
+		// {
+			puts(buffer);
+			cout<<"\n";
+			printf("Please enter the message: ");
+    		bzero(buffer,256);
+    		fgets(buffer,255,stdin);
+		// } 
+		// else {
+		// 	break;
+		// }
+
+	}
     close(sockfd);
     return 0;
 }
