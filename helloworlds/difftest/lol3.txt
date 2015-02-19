@@ -1,0 +1,8 @@
+1c1
+< hi harman. stop being afraid of vim.
+---
+> Hi haroun. Actually, although vim is pretty darn cool, 
+3c3
+< vim is pretty darn cool.
+---
+> you dont know how to copy paste in vim, do you?

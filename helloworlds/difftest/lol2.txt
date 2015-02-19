@@ -1,0 +1,3 @@
+Hi haroun. Actually, although vim is pretty darn cool, 
+test test
+you dont know how to copy paste in vim, do you?
