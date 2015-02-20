@@ -70,7 +70,7 @@ Every client needs to keep track of the versions of various files that are in th
 \item \textbf{Communication:}
 Coomunicaiton between client and server happens through sockets. We have a predefined set of instructions, including an end-instruction (special token). The transfer of data is synchronized using \textit{poll()} function provided by linux.
 \item \textbf{Error Handling:}
-Occasionally, file conflicts and errors happen - the server handles these errors by instructing the client to do specific actions. 
+Occasionally, file conflicts and errors happen - the server handles these errors by instructing the client to do specific actions. For example, if the client tries to push a previous version, the server will need to handle the request. However, the client will be implementing these changes.
 \end{itemize}
 %%\subsection{Communications} The communication between client and server is done by passing "instructions" over the internet. The server accepts these instructions using a "getInstruction()" method and handles the instructions using a "handleInstructions()" method. 
 
@@ -170,6 +170,22 @@ A client can share his files or folders with other clients on the network. These
 \subsection{ }
 
 \section{File Handling}
+This section describes how the files are handled on the server and on the client.
+\begin{itemize}
+\item \textbf{Client:}
+	\begin{enumerate}
+	\item \textbf{Version Control:}
+	\item \textbf{File Log:}
+	
+	\end{enumerate}
+\item \textbf{Server:}
+\begin{itemize}
+\item \textbf{Compression:}
+\item \textbf{Delta Files:}
+\item \textbf{File Log:}
+\end{itemize}
+
+\end{itemize}
 
 %%TODO : Describe features
 \section{Features}
