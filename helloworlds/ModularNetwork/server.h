@@ -1,8 +1,9 @@
 #ifndef SERVER_H
 	#define SERVER_H
-
+using namespace std;
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <string>
 #include <unistd.h>
@@ -32,7 +33,7 @@ private:
 	int port;
 	int n, clientLength;
 	std::string tempPW;
-	std::unordered_map < std::string , userdetails > userDetails;
+	tr1::unordered_map< std::string , userdetails > userDetails;
 	struct sockaddr_in serverAddr;
 	struct sockaddr_in clientAddr;
 	Socket ssock;

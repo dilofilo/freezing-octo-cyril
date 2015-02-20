@@ -58,16 +58,16 @@ void Server::readDatabase()
 	{
 		userdetails temp;
 		
-		f>>temp.userID;
-		f>>temp.password;
-		f>>temp.serverDirectory;
-		f>>temp.clientDirectory;
+		f >> temp.userID;
+		f >> temp.password;
+		f >> temp.serverDirectory;
+		f >> temp.clientDirectory;
 		std::pair< std::string , userdetails > temppair( temp.userID , temp);
 
 		userDetails.insert(temppair);
 
 	}
-
+	f.close();
 }
 void Server::handleClient( Socket& csock ) {
 	bool socketAlive = true;
@@ -158,7 +158,7 @@ void Server::getInstruction( std::string& inst , Socket& csock) {
 
 	int rv = poll( polledSock , 1 , POLL_TIMEOUT);
 	if ( rv < 0 ) {
-		cout << "Failed to event read ... < POLLIN Event in getInstruction() >" << clientAddr << "\n ";
+		cout << "Failed to event read ... < POLLIN Event in getInstruction() >\n ";
 		exit(1);
 	} else if ( rv == 0 ) {
 		std::cout << "Time out... on address from...\n";

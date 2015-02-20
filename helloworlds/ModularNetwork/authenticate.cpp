@@ -1,5 +1,5 @@
 #include <poll.h>
-
+#include "server.h"
 void Server::mainAuthenticateUser()
 {
 	std::string authOutput;
@@ -20,7 +20,7 @@ bool Server::checkUsername( std::string& uID )
 {
 	// open the database and check username
 
-	 std::unordered_map< std::string, userdetails > :: iterator got = userDetails.find (uID);
+	 tr1::unordered_map< std::string, userdetails > :: iterator got = userDetails.find (uID);
 
      if ( got == mymap.end() )  
      {
@@ -54,7 +54,7 @@ bool Server::authenticateUser(std::string& output)
      	
  	std::string enu = "Enter the Username";
  	std::string enp = "Enter the Password";
- 	output = "Unknown Error ... not authenticated."
+ 	output = "Unknown Error ... not authenticated.";
 
  	int n = write(csock , enu.c_str() , enu.size());
  	if (n < 0)  {

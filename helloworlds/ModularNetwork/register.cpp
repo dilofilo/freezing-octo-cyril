@@ -1,4 +1,5 @@
 #include <poll.h>
+#include "server.h"
 void Server::mainRegisterUser()
 {
 	std::string regOutput;
@@ -44,7 +45,7 @@ bool Server::registerUser( std::string& output )
 	else 
 	{
 		std::string tempString( instBuffer );
-		std::string tempsring3("../serverdirectories/" + tempString);
+		std::string tempString3("../serverdirectories/" + tempString);
 			
 			n = write(csock , enp.c_str() , enp.size());
 			
@@ -90,8 +91,8 @@ bool Server::registerUser( std::string& output )
 
 					std::ofstream f;
 					f.open("details.txt" , ios::app );
-					f<<"\n";
-					f<<tempString<<" "<<tempString1<<" "<<tempString3<<" "<<tempString2;
+					f << "\n";
+					f << tempString << " " << tempString1 << " " << tempString3 << " " << tempString2;
 					f.close();
 					output = "Registered.";
 					return 1;
