@@ -53,11 +53,11 @@ void Server::readDatabase()
 {
 	std::ifstream f;
 	f.open("details.txt");
-
+	int ctr=0;
 	while(!f.eof())
 	{
 		userdetails temp;
-		
+		ctr++;
 		f >> temp.userID;
 		f >> temp.password;
 		f >> temp.serverDirectory;
@@ -68,6 +68,7 @@ void Server::readDatabase()
 
 	}
 	f.close();
+	cout << " loaded user database #users= " << ctr << "\n";
 }
 void Server::handleClient( Socket& csock ) {
 	bool socketAlive = true;
