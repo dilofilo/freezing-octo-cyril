@@ -4,23 +4,26 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <string.h>
+#include <string>
 #include <unistd.h>
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <vector>
 #include "arpa/inet.h"
-
+#include <unordered_map>
+#include <poll.h>
 typedef int Socket ; //Because safer.
 #define PORT 5000
 #define MAX_CONNECTION_REQUESTS 10
 #define POLL_TIMEOUT 15000
-struct userdetails {
-	string userID;
-	string serverDirectory;
-	string clientDirectory;
 
+
+struct userdetails {
+	std::string userID;
+	std::string password;
+	std::string serverDirectory;
+	std::string clientDirectory;
 };
 class Server{
 private:
@@ -28,32 +31,49 @@ private:
 	struct userdetails user;
 	int port;
 	int n, clientLength;
-
+	std::string tempPW;
+	std::unordered_map < std::string , userdetails > userDetails;
 	struct sockaddr_in serverAddr;
 	struct sockaddr_in clientAddr;
 	Socket ssock;
 	Socket csock;	
-	string activeUserID;
-	
+	std::string activeUserID;
 	void startServer(); //Initializes serverAddr.
+	void readDatabase();
 	void getClient(); //Infinite loop for the main process to keep accepting new processes,
 
-	void handleClient(); // Every individual client is handled here.
+	void handleClient(Socket& csock); // Every individual client is handled here.
 	
-	void getInstruction(string& inst); //Reads into the inst file.
-	void handleInstruction(string& inst); //Handles inputs that come in from the socket.
+	void getInstruction(std::string& inst , Socket& csock); //Reads into the inst file.
+	void handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
 		//List of instructions
 		bool returnPing(); // Ping and pingback.
+			void readMsg(std::string& p);
+			void writeMsg(std::string& p);
+		
+		void mainRegisterUser();
+		void mainAuthenticateUser();
+		void mainFileToServer();
+		void mainFileToClient();
 
-		bool authenticateUser(string& userID , string& pw , string& output); //Authentitcates using userID and password given by client. Also takes in Directory stuff. Sets the user details.
-		bool registerUser(string& userID , string& pw , string& output); //Other options too.	
+		bool authenticateUser(std::string& output); //Authentitcates using userID and password given by client. Also takes in Directory stuff. Sets the user details.
+		bool registerUser( std::string& output ); //Other options too.	
+		bool checkPassword( std::string pw );
+		bool checkUsername( std::string& uID );
 
-		bool fileToServer( string& filename , Socket& csock ); //Transfers fileToServer 
-		bool fileToClient( string& filename , Socket& csock );
+
+		bool fileToServer( std::string& filename , Socket& csock ); //Transfers fileToServer 
+		bool fileToClient( std::string& filename , Socket& csock );
 
 public:
 	Server(int nClients);
 	~Server();
-
+	void error(std::string s);
 };
+
+//Utility function
+void Server::error(string s) {
+	std::cout << s << "\n";
+}
+
 #endif

@@ -53,39 +53,50 @@ int main(int argc, char *argv[])
 	char temp[256];
    	
    	while(1)
-    {	
+   	{	
+   		
+   		printf("Please enter the message: ");
+   		bzero(buffer,256);
+   		fgets(buffer,256,stdin);
+   		
+   		while(!f.eof())
+   		{
+   			char ch;
+   			string s; 
+ 	     	//n = write(sockfd,s.c_str(),s.size());
+ 	     	n = write(sockfd,temp,256);
+   		 	if (n < 0) 
+   	   			   error("ERROR writing to socket");
+    	
+    		bzero(buffer,256);
+    	
+    		n = read(sockfd,buffer,256);
+    		cout<<buffer<<endl;
+   		 	if (n < 0) {
+    	   		  error("ERROR reading from socket");
+    		}
+    		listen( sockfd , 5);
+			// if(ch == 'y') 
+			// {
+				
+			for( int i =0; (i<255) && (!f.eof()); i++)
+			{
+				f.get(temp[i]);
+			}
+	
+				//puts(buffer);
+				//cout<<"\n";
+				//printf("Please enter the message: ");
+    			//bzero(buffer,256);
+    			//cin >> s;
+    		//cin.clear();
+			// } 
+			// else {
+			// 	break;
+			// }
+		}
 
-      printf("Please enter the message: ");
-      bzero(buffer,256);
-      fgets(buffer,256,stdin);
-
-      while(true)
-      {
-
-        for( int i =0; (i<255) && (!f.eof()); i++)
-        {
-            f.get(temp[i]);
-        } 
-        char ch;
-        string s; 
-        //n = write(sockfd,s.c_str(),s.size());
-        n = write(sockfd,temp,256);
-        if (n < 0) {
-          error("ERROR writing to socket");
-        }
-
-          bzero(buffer,256);
-
-          n = read(sockfd,buffer,256);
-          cout<<buffer<<endl;
-          if (n < 0) {
-             error("ERROR reading from socket");
-          }
-        }
-        if (f.eof()) {
-          break;
-        }
-      }
+	}
     close(sockfd);
     return 0;
-    }
+}

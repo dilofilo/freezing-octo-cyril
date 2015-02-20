@@ -2,6 +2,10 @@
 	#define SERVER_CPP
 
 #include "server.h"
+#include "ping.cpp"
+#include "authenticate.cpp"
+#include "register.cpp"
+#include "instructions.h"
 
 Server::Server(int n) {
 	//Initialize number of clients
@@ -18,6 +22,7 @@ Server::~Server() {
 void Server::startServer() {
 	
 	//Initialize server-only things.
+	readDatabase();
 	ssock = socket(AF_INET, SOCK_STREAM, 0); //Server's half of the socket.
 	if ( ssock < 0 ) {
 		//Connection failed.
@@ -44,6 +49,76 @@ void Server::startServer() {
 	
 }
 
+void Server::readDatabase() 
+{
+	std::ifstream f;
+	f.open("details.txt");
+
+	while(!f.eof())
+	{
+		userdetails temp;
+		
+		f>>temp.userID;
+		f>>temp.password;
+		f>>temp.serverDirectory;
+		f>>temp.clientDirectory;
+		std::pair< std::string , userdetails > temppair( temp.userID , temp);
+
+		userDetails.insert(temppair);
+
+	}
+
+}
+void Server::handleClient( Socket& csock ) {
+	bool socketAlive = true;
+	string instruction;
+	while ( socketAlive ) {
+		instruction = "";
+		getInstruction(instruction , csock);
+		handleInstruction(instruction); //Takes it to closing.
+	}
+	close(csock);
+	return;
+}
+
+void Server::handleInstruction(std::string& ins)
+{
+	switch (instr)
+	{		
+		case AUTH : {
+			mainAuthenticateUser();
+			break;
+		}
+		case REG : {
+			mainRegisterUser();
+			break;
+		}
+		case GETFILE : {
+			mainFileToServer();
+			break;
+		}
+			
+		case RETFILE : {
+			mainFileToClient();
+			break;
+		}
+		default : {
+
+		}
+
+	}
+}
+
+void mainFileToServer()
+{
+
+
+}
+
+
+
+
+
 void Server::getClient() {
 	listen( ssock , MAX_CONNECTION_REQUESTS ); // Back log of 10.
 	//Assert : ssock is now ready - there is one incoming connection.
@@ -67,26 +142,16 @@ void Server::getClient() {
 			//Original ID continues to listen for connections.
 			close(ssock);
 			handleClient( csock );
-		
 		} else {
 			close(csock);
 		}
 	}
-
+	close(ssock);
 }
 
-void Server::handleClient( Socket& csock ) {
-	bool socketAlive = true;
-	string instruction;
-	while ( socketAlive ) {
-		instruction = "";
-		getInstruction(instruction , csock);
-		handleInstruction(instruction , csock); //Takes it to closing.
-	}
-	return;
-}
 
-void Server::getInstruction( string& inst Socket& csock) {
+
+void Server::getInstruction( std::string& inst , Socket& csock) {
 	struct pollfd polledSock;
 		polledSock.fd = csock;
 		polledSock.events = POLLIN;
@@ -96,17 +161,17 @@ void Server::getInstruction( string& inst Socket& csock) {
 		cout << "Failed to event read ... < POLLIN Event in getInstruction() >" << clientAddr << "\n ";
 		exit(1);
 	} else if ( rv == 0 ) {
-		cout << "Time out... on address from..." << clientAddr << "\n";
+		std::cout << "Time out... on address from...\n";
 	} else {
 		//Read instruction
 		if (polledSock.revents & POLLIN) {
-			char* instBuffer[255];
+			char instBuffer[255];
 			int readSize = read( csock , instBuffer , 255);
 			if ( readSize < 0 ) {
-				cout << " weird reading error ... from readValue... getInstruction() " << clientAddr << "\n";
+				std::cout << " weird reading error ... from readValue... getInstruction() \n";
 				exit(1);
 			} else {
-				string tempString( instBuffer );
+				std::string tempString( instBuffer );
 				inst = tempString;
 			}
 		}
