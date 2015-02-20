@@ -59,6 +59,8 @@ private:
 		void mainRegisterUser();
 		void mainAuthenticateUser();
 		void mainFileToServer();
+			bool getFileNameFromClient(char* buffer);
+			bool readFileFromClient(char* buffer);
 		void mainFileToClient();
 
 		bool authenticateUser(std::string& output); //Authentitcates using userID and password given by client. Also takes in Directory stuff. Sets the user details.

@@ -97,12 +97,83 @@ void Server::handleInstruction(std::string& instr)
 	}
 }
 
-void Server::mainFileToServer()
+bool Server::fileToServer( std::string& filename , Socket& csock )
 {
+	char buffer[256];
+	string s;
 
+	ofstream f;
 
+	f.open( filename , ios::app );
+
+	bzero(buffer,256);		
+		
+	struct pollfd polledSock;
+	polledSock.fd = csock;
+	polledSock.events = POLLIN;
+
+	int rv = poll( &polledSock , 1 , POLL_TIMEOUT);
+	if ( rv < 0 ) {
+		printf("Failed to event read ... < POLLIN Event in getInstruction() > \n");
+		exit(1);
+	} else if ( rv == 0 ) {
+		printf("Time out... on address from... \n" );
+	} else {
+	
+			///Reading the buffer 
+			
+			if (polledSock.revents & POLLIN) {
+			    int n = read(csock,buffer,256);
+	 			
+	 			if (n < 0) { 
+	 				error("ERROR reading from socket");
+				}
+				
+				int i=0;
+				
+				while(( buffer[i] != '\0' )&& ( buffer[i+1] != '\0' ) )
+				{
+					f<<buffer[i++];
+				}
+
+				if(buffer[i]=='1')	
+				{
+					n = write(newsockfd,"y",1);
+		 			if (n < 0)  {
+	 					error("ERROR writing to socket");
+	 				}
+	 				return true;
+	 			}
+	 			else
+	 			{
+	 				n=write(newsockfd , "complete" , 8 );
+	 				if (n < 0)  {
+	 					error("ERROR writing to socket");
+	 				}     			
+	 				return false;
+	 			}
+ 			}
+ 		}
+	
+	f.close();
+	
 }
 
+#define FILE_BUF_SIZE 255
+void Server::mainFileToServer()
+{
+		bool cont =true;
+		while(cont)
+		{
+			char buffer[FILE_BUF_SIZE];
+			getFileName(buffer);
+			readFile(buffer);
+     	}
+}
+
+bool Server::getFileName(char * buffer) {
+	//Read from csock.
+}
 void Server::mainFileToClient() {
 
 }
