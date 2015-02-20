@@ -5,6 +5,7 @@ using namespace std;
 #include <stdlib.h>
 #include <cstdlib>
 #include <iostream>
+#include <string.h>
 #include <string>
 #include <unistd.h>
 #include <sys/types.h> 
@@ -14,6 +15,7 @@ using namespace std;
 #include "arpa/inet.h"
 #include <unordered_map>
 #include <poll.h>
+#include <fstream>
 typedef int Socket ; //Because safer.
 #define PORT 5000
 #define MAX_CONNECTION_REQUESTS 10
@@ -26,6 +28,7 @@ struct userdetails {
 	std::string serverDirectory;
 	std::string clientDirectory;
 };
+#define CL_URL_LEN 255
 class Server{
 private:
 
@@ -33,9 +36,10 @@ private:
 	int port;
 	int n, clientLength;
 	std::string tempPW;
-	tr1::unordered_map< std::string , userdetails > userDetails;
+	unordered_map< std::string , struct userdetails > userDetails;
 	struct sockaddr_in serverAddr;
 	struct sockaddr_in clientAddr;
+	char clienturl[CL_URL_LEN];
 	Socket ssock;
 	Socket csock;	
 	std::string activeUserID;

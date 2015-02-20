@@ -19,27 +19,16 @@ void Server::mainAuthenticateUser()
 bool Server::checkUsername( std::string& uID )
 {
 	// open the database and check username
-
-	 tr1::unordered_map< std::string, userdetails > :: iterator got = userDetails.find (uID);
-
-     if ( got == mymap.end() )  
-     {
-     	// Not Found
-     	return 0;
-   	 }
-  	
-  	else
-    {
+	 unordered_map< std::string, struct userdetails > :: iterator got = userDetails.find (uID);
+     if ( got == userDetails.end() )  
+     {	// Not Found
+     	return false;
+   	 } else {
     	// Username Exists.
     	user.userID = got->first;
     	tempPW = (got->second).password;
-    	return 1;
+    	return true;
     }
-
-	// user.userID = uID;
-
-	// set the value of tempPW
-
 }
 
 bool Server::checkPassword( std::string pw )
@@ -63,7 +52,7 @@ bool Server::authenticateUser(std::string& output)
 	
  	/// Getting the Username
 
-	char* instBuffer[255];
+	char instBuffer[255];
 	int readSize = read( csock , instBuffer , 255);
 	if ( readSize < 0 ) 
 	{

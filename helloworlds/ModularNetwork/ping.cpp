@@ -22,7 +22,7 @@ void Server::readMsg(std::string& p) {
 	} else {
 		//Read instruction
 		if (polledSock.revents & POLLIN) {
-			char* instBuffer[255];
+			char instBuffer[255];
 			int readSize = read( csock , instBuffer , 255);
 			if ( readSize < 0 ) {
 				printf(" weird reading error ... from readValue... getInstruction()  \n");

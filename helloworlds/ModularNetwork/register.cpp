@@ -34,7 +34,7 @@ bool Server::registerUser( std::string& output )
 
 
 
-	char* instBuffer[255];
+	char instBuffer[255];
 	int readSize = read( csock , instBuffer , 255);
 	if ( readSize < 0 ) 
 	{

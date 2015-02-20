@@ -81,40 +81,31 @@ void Server::handleClient( Socket& csock ) {
 	return;
 }
 
-void Server::handleInstruction(std::string& ins)
+void Server::handleInstruction(std::string& instr)
 {
-	switch (instr)
-	{		
-		case AUTH : {
-			mainAuthenticateUser();
-			break;
-		}
-		case REG : {
-			mainRegisterUser();
-			break;
-		}
-		case GETFILE : {
-			mainFileToServer();
-			break;
-		}
-			
-		case RETFILE : {
-			mainFileToClient();
-			break;
-		}
-		default : {
-
-		}
-
+	if ( instr == AUTH ) {
+		mainAuthenticateUser();
+	} 
+	if ( instr == REG ) {
+		mainRegisterUser();
+	} 
+	if ( instr == GETFILE ) {
+		mainFileToServer();
+	}
+	if ( instr == RETFILE ) {
+		mainFileToClient();
 	}
 }
 
-void mainFileToServer()
+void Server::mainFileToServer()
 {
 
 
 }
 
+void Server::mainFileToClient() {
+
+}
 
 
 
@@ -125,7 +116,7 @@ void Server::getClient() {
 	pid_t cpid;
 	while(true) {
 		clientLength = sizeof(clientAddr);
-		csock = accept( ssock , (struct sockaddr *) clientAddr , (socklen_t*) clientLength);
+		csock = accept( ssock , (struct sockaddr*) &clientAddr , (socklen_t*) &clientLength);
 		if (csock<0) {
 			cout << " error accepting connection... \n";
 			exit(1);
@@ -133,7 +124,7 @@ void Server::getClient() {
 			cout << " connection accepted... \n";
 		}
 
-		inet_ntop( AF_INET, &(clientAddr.sin_) , clientAddr , CLADDR_LEN );
+		inet_ntop( AF_INET, &(clientAddr.sin_addr) , clienturl , CL_URL_LEN );
 		
 		//Create a child ID.
 		cpid = fork(); //fork returns 0 to child and process id to forker.
@@ -156,7 +147,7 @@ void Server::getInstruction( std::string& inst , Socket& csock) {
 		polledSock.fd = csock;
 		polledSock.events = POLLIN;
 
-	int rv = poll( polledSock , 1 , POLL_TIMEOUT);
+	int rv = poll( &polledSock , 1 , POLL_TIMEOUT);
 	if ( rv < 0 ) {
 		cout << "Failed to event read ... < POLLIN Event in getInstruction() >\n ";
 		exit(1);

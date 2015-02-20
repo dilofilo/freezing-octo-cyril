@@ -1,5 +1,8 @@
+#ifndef INSTRUCTIONS_H
+	#define INSTRUCTIONS_H
+#define AUTH "AUTH"
+#define REG "REG"
+#define GETFILE "GETFILE"
+#define RETFILE "RETFILE"
 
-static const std::string AUTH = "AUTH";
-static const std::string REG = "REG";
-static const std::string GETFILE = "GETFILE";
-static const std::string RETFILE = "RETFILE" ;
+#endif
