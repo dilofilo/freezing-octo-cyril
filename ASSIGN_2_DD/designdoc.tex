@@ -27,9 +27,9 @@
 \title{COP 290 Assignment 2}
 \maketitle
 
-\begin{center}
-\includegraphics[width = 10cm]{images/hello1.jpg}
-\end{center}
+%%\begin{center}
+%%\includegraphics[width = 10cm]{images/hello1.jpg}
+%%\end{center}
 
 
 %%Abstract
@@ -43,8 +43,9 @@ Security ensured: \textbf{openSSL}
 \end{center} 
 \end{abstract}
 
-%%TODO : Classes
-\section{Project Structure}
+
+%%
+\section{\LARGE Project Structure}
 %%Describe classes etc.
 Our project is divided into the following primary parts - the server, the client and the algorithms involved.
 Since each of the three parts is highly modular, we will have a file for each module, for example, we will have a file for authentication on the server side, another file for authentication of the client side etc. \\
@@ -58,7 +59,8 @@ The list of functions is server are:
 \item \textbf{startServer():}  This initializes the server object, creates the host socket of the server. 
 \item \textbf{getClient():}    This function accepts new clients and forks to create a new process which handles the new client.
 \item \textbf{handleClient():} This function is a loop which handles a connection from a server. As the socket closes, the process is also freed.
-\item \textbf{Modules:} %%TODO
+\item \textbf{Modules:}
+Every back-end module or feature of the application is coded up in a very modular manner. We will have an authentication module, a module for registration, a few modules for the file transfer, some modules for sharing, some modules for version control, some for utility - like reading and writing to the buffer securely. Each module can be developed independtly once the modules it depends on are developed.
 \end{itemize}
 
 \subsection{Client} :
@@ -86,7 +88,7 @@ Some of the various algorithms which we may try out are :
 \item librsync by dropbox
 \end{itemize}
 
-\section{GUI}
+\section{\LARGE User Interface}
 %%TODO : INSERT IMAGES HERE
 \subsection{LoginForm}
 We will be using a very simple, rudimentary login screen. It has a field for username, a field for password, a sign-in button and a register button(to add new users). Authentication will be done entirely on the server side. 
@@ -126,7 +128,7 @@ Close
 : To close the MyDropBox app.
 %%TODO : list items
 
-\section{Networking}
+\section{\LARGE Network}
 %%TODO : Harman
 
 \subsection{Server Side}
@@ -167,28 +169,29 @@ In order to encrypt the user data, a protocol like \textit{md5 hash} would be ad
 \subsection{Sharing Files:}
 A client can share his files or folders with other clients on the network. These files would not be duplicated, only their path would be added to the directory of the users with whom the file has been shared.  
 
-\subsection{ }
 
-\section{File Handling}
+\section{\Large File Handling}
 This section describes how the files are handled on the server and on the client.
-\begin{itemize}
-\item \textbf{Client:}
+\subsection{\textbf{Client:}}
 	\begin{enumerate}
-	\item \textbf{Version Control:}
-	\item \textbf{File Log:}
-	
+	\item \textbf{Version Control:} 
+	Users are given theoption to revert back to previous versions. If they choose to do so, the client retrieves the appropriate inverse delta file from the server and applies the changes. The list of file versions will be saved on the client side, however, the versions themselves will be saved compactly on the server side. However, as an added functionality, we may allow for local file version control as well. 
+	\item \textbf{Storage:}
+	When a user requests a file from myDropBox, the file is downloaded onto the client's system. Hence, the client is free to disconnect from the internet after the download is complete and make local changes. This also acts as persistent strage.
 	\end{enumerate}
-\item \textbf{Server:}
-\begin{itemize}
-\item \textbf{Compression:}
+\subsection{\textbf{Server:}} 
+\begin{enumerate}
+\item \textbf{Storage:}
+Files are stored on the server in specific directories for each user. Each of these directories also has a file which contains the list of files and versions of the files in the directory. 
 \item \textbf{Delta Files:}
+Delta files are computed locally on the server and then stored appropriately. Computing inverse delta files is also possible.
 \item \textbf{File Log:}
-\end{itemize}
+The file log on the server contains more details about files on the server directory. These details include the list of users who have access to the file, password of the file, origin, owner, list of versions with their timestamps.
+\end{enumerate}
 
-\end{itemize}
 
 %%TODO : Describe features
-\section{Features}
+\section{\LARGE Features}
 \subsection{Delta Files}
 We store copies of files using delta files. This is applied only to files that share the same name (and extension). The delta file is computed and stored with respect to the original version of the file. The rationale behind this is that version retrieval becomes faster. It might be at the risk of more data storage. However, the larger a file, the less likely it is to be modified, for example, movies. Hence, when it comes to computing delta files, its really the smaller files that will be modified.
 \subsection{File Sharing}
@@ -201,7 +204,7 @@ A vital feature of any storage facility is the ability to revert back to previou
 \subsection{Search}
 In the GUI, we would have a search bar that can search for files present in your directory on the server and also the the files that have been shared with you.
 
-\section{Future Plans}
+\section{{\LARGE Future Plans}}
 
 \begin{itemize}
 \item \textbf{Drag and Drop:} 

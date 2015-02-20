@@ -17,9 +17,6 @@ using namespace std;
 #include <poll.h>
 #include <fstream>
 typedef int Socket ; //Because safer.
-#define PORT 5000
-#define MAX_CONNECTION_REQUESTS 10
-#define POLL_TIMEOUT 15000
 
 
 struct userdetails {
