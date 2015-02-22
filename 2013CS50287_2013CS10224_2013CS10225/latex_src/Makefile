@@ -12,11 +12,17 @@ PDFFIGURES	= $(patsubst %.fig,%.pdf,$(wildcard ./images/*.fig))
 
 all: 
 	pdflatex designdoc.tex
-clean:
-	rm -f *.pdf
+doc:
+	pdflatex designdoc.tex
 	rm -f *.log
 	rm -f *.aux
 	rm -f *.out
+	rm -f *.gz
+clean:
+	rm -f *.log
+	rm -f *.aux
+	rm -f *.out
+	rm -f *.gz
 #dvi: ${MAIN}.dvi
 #pdf: ${MAIN}.pdf
 #ps: ${MAIN}.ps
@@ -47,7 +53,7 @@ clean:
 #	rm -f ./images/*.bak
 #	rm -f ./*.aux
 #	rm -f ./*.tex~
-#
+#	rm -f ./*.pdf
 # (re)Make .eps is .fig if newer
 #
 #%.eps : %.fig
