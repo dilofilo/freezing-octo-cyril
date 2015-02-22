@@ -49,7 +49,9 @@ private:
 	void getInstruction(std::string& inst , Socket& csock); //Reads into the inst file.
 	void handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
 		//List of instructions
-		bool returnPing(); // Ping and pingback.
+		bool ping(); 
+			
+		bool chat(); // Infinite chat
 			void readMsg(std::string& p);
 			void writeMsg(std::string& p);
 		
