@@ -18,6 +18,7 @@ using namespace std;
 #include <fstream>
 typedef int Socket ; //Because safer.
 
+#define SERVER_SIDE
 
 struct userdetails {
 	std::string userID;
