@@ -6,6 +6,10 @@
 #define MAX_CONNECTION_REQUESTS 10
 #define POLL_TIMEOUT 15000
 
+//PING Instructions
+#define REQUEST_PING "HI"
+#define ACCEPT_PING "HI"
+
 //Instructions to and from server
 #define AUTH "AUTH"
 #define REG "REG"
