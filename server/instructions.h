@@ -11,7 +11,16 @@
 #define ACCEPT_PING "HI"
 
 //Instructions to and from server
+
 #define AUTH "AUTH"
+#define ACCEPT_AUTH_REQUEST "AUTH_ACCEPTED"
+	#define ACCEPTED_USERNAME "UID_ACCEPTED"
+	#define VALID_USER "VALID"
+	#define INVALID_USER "INVALID"
+
+	#define GIVE_DIR "WRITE"
+	#define 
+
 #define REG "REG"
 #define GETFILE "GETFILE"
 #define RETFILE "RETFILE"
@@ -21,5 +30,8 @@
 
 //Size constants
 #define FILE_BUF_SIZE 128
+#define INSTR_BUF_SIZE 255
+#define CL_URL_LEN 255
+
 
 #endif

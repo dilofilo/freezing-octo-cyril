@@ -41,35 +41,11 @@ void Server::startServer() {
 		exit(1);
 	} else {
 		cout << " successfully binded... \n";
-	}
-
-	
+	}	
 	//Assert : ssock is now ready - there is one incoming connection.
-	getClient();
-	
+	getClient();	
 }
 
-void Server::readDatabase() 
-{
-	std::ifstream f;
-	f.open("details.txt");
-	int ctr=0;
-	while(!f.eof())
-	{
-		userdetails temp;
-		ctr++;
-		f >> temp.userID;
-		f >> temp.password;
-		f >> temp.serverDirectory;
-		f >> temp.clientDirectory;
-		std::pair< std::string , userdetails > temppair( temp.userID , temp);
-
-		userDetails.insert(temppair);
-
-	}
-	f.close();
-	cout << " loaded user database #users= " << ctr << "\n";
-}
 void Server::handleClient( Socket& csock ) {
 	bool socketAlive = true;
 	string instruction;
@@ -84,16 +60,19 @@ void Server::handleClient( Socket& csock ) {
 
 void Server::handleInstruction(std::string& instr)
 {
-	if ( instr == AUTH ) {
+	if ( instr == REQUEST_PING ) {
+		mainPing();
+	}
+	else if ( instr == AUTH ) {
 		mainAuthenticateUser();
 	} 
-	if ( instr == REG ) {
+	else if ( instr == REG ) {
 		mainRegisterUser();
 	} 
-	if ( instr == GETFILE ) {
+	else if ( instr == GETFILE ) {
 		mainFileToServer();
 	}
-	if ( instr == RETFILE ) {
+	else if ( instr == RETFILE ) {
 		mainFileToClient();
 	}
 }

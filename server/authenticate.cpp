@@ -1,43 +1,48 @@
 #include <poll.h>
 #include "server.h"
-void Server::mainAuthenticateUser()
-{
-	std::string authOutput;
+void Server::mainAuthenticateUser(){
+	//Accept authentication request.
+	writeToSocket(csock , ACCEPT_AUTH_REQUEST);
+	
+	//Accept username
+	
+	string userid = "";
+	getUsername(userid);
+	//Accept password
+	string passwd = "";
+	getPassword(passwd);
 
-	if(authenticateUser(authOutput)==1) {
-		std::cout<<"Authenticated."<<"\n";
+	if( verifyUser( userid , passwd)) {
+
 	} else {
-		std::cout<<"Problem with authentication."<<"\n";
-	}
 
-	int n = write(csock , authOutput.c_str() , authOutput.size());
-     	if (n < 0)  {
-     		error("ERROR writing to socket");
-     	}
+	}
 }
 
-bool Server::checkUsername( std::string& uID )
+bool Server::getUsername( std::string& userid )
 {
 	// open the database and check username
-	 unordered_map< std::string, struct userdetails > :: iterator got = userDetails.find (uID);
-     if ( got == userDetails.end() )  
-     {	// Not Found
-     	return false;
-   	 } else {
-    	// Username Exists.
-    	user.userID = got->first;
-    	tempPW = (got->second).password;
-    	return true;
-    }
+	char usernameBuffer[INSTR_BUF_SIZE];
+	readFromSocket(csock , usernameBuffer , INSTR_BUF_SIZE);
+	writeToSocket(csock , ACCEPTED_USERNAME);
+	string tempuid(usernameBuffer);
+	userid = tempuid;
 }
 
-bool Server::checkPassword( std::string pw )
+bool Server::getPassword( std::string& passwd )
 {
-	 if(pw.compare(tempPW) == 0)	return 1;
+	char passwordBuffer[INSTR_BUF_SIZE];
+	if (readFromSocket(csock , passwordBuffer , INSTR_BUF_SIZE)) {
 
-	 return 0;
+	} else {
+		return false;
+	}
+	string password(passwordBuffer);
+	passwd = password;
+	return true;
 }
 
+bool Server::
 bool Server::authenticateUser(std::string& output)
 {
      	

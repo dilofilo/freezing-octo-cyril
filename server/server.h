@@ -25,7 +25,6 @@ struct userdetails {
 	std::string serverDirectory;
 	std::string clientDirectory;
 };
-#define CL_URL_LEN 255
 class Server{
 private:
 
@@ -49,7 +48,7 @@ private:
 	void getInstruction(std::string& inst , Socket& csock); //Reads into the inst file.
 	void handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
 		//List of instructions
-		bool ping(); 
+		bool mainPing(); 
 			
 		bool chat(); // Infinite chat
 			void readMsg(std::string& p);
