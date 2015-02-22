@@ -87,23 +87,4 @@ bool writeToSocket( Socket& csock , std::string buffer , int buffer_size = -1 ) 
 	}
 }
 
-bool writeToSocket ( Socket& csock , vector<string>& vec )
-{
-	std::vector<string>::iterator it = vec.begin();
-
-	while( it!= vec.end())
-	{
-
-	}
-
-	writeToSocket( csock , TRANSFER_DONE );
-
-}
-
-bool readFromSocket( Socket& csock , vector<string>& vec )
-{
-
-
-}
- 
 #endif
