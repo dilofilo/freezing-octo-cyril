@@ -24,8 +24,8 @@ typedef int Socket ; //Because safer.
 
 
 #define SERVER_SIDE //look at instructions.h
-#include "instructions.h" //must have.
-
+#include "../common/instructions.h" //must have.
+#include "../common/communications.h" //another must have.
 class Server{
 private:
 
@@ -40,6 +40,7 @@ private:
 	Socket ssock;
 	Socket csock;	
 	std::string activeUserID;
+
 	void startServer(); //Initializes serverAddr.
 	void readDatabase();
 	void getClient(); //Infinite loop for the main process to keep accepting new processes,
@@ -49,11 +50,8 @@ private:
 	void getInstruction(std::string& inst , Socket& csock); //Reads into the inst file.
 	void handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
 		//List of instructions
-		bool mainPing(); 
+        bool handlePing();
 			
-		bool chat(); // Infinite chat
-			void readMsg(std::string& p);
-			void writeMsg(std::string& p);
 		
 		void mainRegisterUser();
 		void mainAuthenticateUser();

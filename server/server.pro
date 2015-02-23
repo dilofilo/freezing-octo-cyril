@@ -16,7 +16,9 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    ../common/communications.cpp
+    ../common/communications.cpp \
+    server.cpp \
+    ping.cpp
 
 OTHER_FILES += \
     ../details.txt

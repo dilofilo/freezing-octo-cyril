@@ -26,10 +26,10 @@ void Server::startServer() {
 	ssock = socket(AF_INET, SOCK_STREAM, 0); //Server's half of the socket.
 	if ( ssock < 0 ) {
 		//Connection failed.
-		cout << " Socket creation failed \n";
-		exit(1);
-	} else {
-		cout << " host socket created... \n";
+        printf(" host socket creation failed...exitting. please ensure that the appropriate ports are open. \n");
+        exit(1);
+    } else {
+        printf(" host socket created... \n");
 	}
 	memset( &serverAddr , 0 , sizeof(serverAddr));
  	serverAddr.sin_family = AF_INET;  
@@ -37,21 +37,21 @@ void Server::startServer() {
 	serverAddr.sin_port = PORT;
 
 	if ( bind( ssock , (struct sockaddr * ) &serverAddr , sizeof(serverAddr)) < 0 ) {
-		cout << " binding failed... \n";
+        printf(" socket binding failed... \n");
 		exit(1);
 	} else {
-		cout << " successfully binded... \n";
+        printf(" socket successfully binded... \n");
 	}	
 	//Assert : ssock is now ready - there is one incoming connection.
 	getClient();	
 }
 
-void Server::handleClient( Socket& csock ) {
+void Server::handleClient() {
 	bool socketAlive = true;
 	string instruction;
 	while ( socketAlive ) {
 		instruction = "";
-		getInstruction(instruction , csock);
+        getInstruction(instruction);
 		handleInstruction(instruction); //Takes it to closing.
 	}
 	close(csock);
@@ -60,84 +60,12 @@ void Server::handleClient( Socket& csock ) {
 
 void Server::handleInstruction(std::string& instr)
 {
-	if ( instr == REQUEST_PING ) {
-		mainPing();
-	}
-	else if ( instr == AUTH ) {
-		mainAuthenticateUser();
-	} 
-	else if ( instr == REG ) {
-		mainRegisterUser();
-	} 
-	else if ( instr == GETFILE ) {
-		mainFileToServer();
-	}
-	else if ( instr == RETFILE ) {
-		mainFileToClient();
-	}
+    if ( instr ==  PING_REQUEST) {
+        handlePing();
+    }
+
 }
 
-bool Server::fileToServer( std::string& filename , Socket& csock )
-{
-	char buffer[256];
-	string s;
-
-	ofstream f;
-
-	f.open( filename , ios::app );
-
-	bzero(buffer,256);		
-		
-	struct pollfd polledSock;
-	polledSock.fd = csock;
-	polledSock.events = POLLIN;
-
-	int rv = poll( &polledSock , 1 , POLL_TIMEOUT);
-	if ( rv < 0 ) {
-		printf("Failed to event read ... < POLLIN Event in getInstruction() > \n");
-		exit(1);
-	} else if ( rv == 0 ) {
-		printf("Time out... on address from... \n" );
-	} else {
-	
-			///Reading the buffer 
-			
-			if (polledSock.revents & POLLIN) {
-			    int n = read(csock,buffer,256);
-	 			
-	 			if (n < 0) { 
-	 				error("ERROR reading from socket");
-				}
-				
-				int i=0;
-				
-				while(( buffer[i] != '\0' )&& ( buffer[i+1] != '\0' ) )
-				{
-					f<<buffer[i++];
-				}
-
-				if(buffer[i]=='1')	
-				{
-					n = write(newsockfd,"y",1);
-		 			if (n < 0)  {
-	 					error("ERROR writing to socket");
-	 				}
-	 				return true;
-	 			}
-	 			else
-	 			{
-	 				n=write(newsockfd , "complete" , 8 );
-	 				if (n < 0)  {
-	 					error("ERROR writing to socket");
-	 				}     			
-	 				return false;
-	 			}
- 			}
- 		}
-	
-	f.close();
-	
-}
 
 #define FILE_BUF_SIZE 255
 void Server::mainFileToServer()
@@ -183,7 +111,7 @@ void Server::getClient() {
 			//Child ID does work.
 			//Original ID continues to listen for connections.
 			close(ssock);
-			handleClient( csock );
+            handleClient();
 		} else {
 			close(csock);
 		}
@@ -193,30 +121,8 @@ void Server::getClient() {
 
 
 
-void Server::getInstruction( std::string& inst , Socket& csock) {
-	struct pollfd polledSock;
-		polledSock.fd = csock;
-		polledSock.events = POLLIN;
-
-	int rv = poll( &polledSock , 1 , POLL_TIMEOUT);
-	if ( rv < 0 ) {
-		cout << "Failed to event read ... < POLLIN Event in getInstruction() >\n ";
-		exit(1);
-	} else if ( rv == 0 ) {
-		std::cout << "Time out... on address from...\n";
-	} else {
-		//Read instruction
-		if (polledSock.revents & POLLIN) {
-			char instBuffer[255];
-			int readSize = read( csock , instBuffer , 255);
-			if ( readSize < 0 ) {
-				std::cout << " weird reading error ... from readValue... getInstruction() \n";
-				exit(1);
-			} else {
-				std::string tempString( instBuffer );
-				inst = tempString;
-			}
-		}
-	}
+void Server::getInstruction( std::string& inst ) {
+    inst = "";
+    return conn.readFromSocket( inst );
 }
 #endif
