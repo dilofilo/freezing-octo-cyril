@@ -1,11 +1,10 @@
 #ifndef SERVER_CPP
 	#define SERVER_CPP
 
+#include "../common/instructions.h"
+#include "../common/communications.h"
 #include "server.h"
 #include "ping.cpp"
-#include "authenticate.cpp"
-#include "register.cpp"
-#include "instructions.h"
 
 Server::Server(int n) {
 	//Initialize number of clients
@@ -50,44 +49,30 @@ void Server::handleClient() {
 	bool socketAlive = true;
 	string instruction;
 	while ( socketAlive ) {
-		instruction = "";
-        getInstruction(instruction);
-		handleInstruction(instruction); //Takes it to closing.
-	}
+        if ( getInstruction(instruction) ) { //Also sets instruction = ""
+            if (handleInstruction(instruction) ) { //Returns if the handler was succesful, take appropriate action.
+            } else {
+                #ifdef SERVER_SIDE
+                printf( " handle instruction failed .. \n");
+                #endif
+            }
+        } else {
+            #ifdef SERVER_SIDE
+            printf( " get instruction failed .. \n");
+            #endif
+        }
+    }
 	close(csock);
 	return;
 }
 
-void Server::handleInstruction(std::string& instr)
+bool Server::handleInstruction(std::string& instr)
 {
     if ( instr ==  PING_REQUEST) {
-        handlePing();
+        return handlePing();
     }
 
 }
-
-
-#define FILE_BUF_SIZE 255
-void Server::mainFileToServer()
-{
-		bool cont =true;
-		while(cont)
-		{
-			char buffer[FILE_BUF_SIZE];
-			getFileName(buffer);
-			readFile(buffer);
-     	}
-}
-
-bool Server::getFileName(char * buffer) {
-	//Read from csock.
-}
-void Server::mainFileToClient() {
-
-}
-
-
-
 
 void Server::getClient() {
 	listen( ssock , MAX_CONNECTION_REQUESTS ); // Back log of 10.
@@ -111,6 +96,7 @@ void Server::getClient() {
 			//Child ID does work.
 			//Original ID continues to listen for connections.
 			close(ssock);
+            conn.setSocket(csock);
             handleClient();
 		} else {
 			close(csock);
@@ -121,7 +107,7 @@ void Server::getClient() {
 
 
 
-void Server::getInstruction( std::string& inst ) {
+bool Server::getInstruction( std::string& inst ) {
     inst = "";
     return conn.readFromSocket( inst );
 }

@@ -41,14 +41,16 @@ private:
 	Socket csock;	
 	std::string activeUserID;
 
+    Communications conn; //In true SQL style.
+
 	void startServer(); //Initializes serverAddr.
 	void readDatabase();
 	void getClient(); //Infinite loop for the main process to keep accepting new processes,
 
 	void handleClient(Socket& csock); // Every individual client is handled here.
 	
-	void getInstruction(std::string& inst , Socket& csock); //Reads into the inst file.
-	void handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
+    bool getInstruction(std::string& inst); //Reads into the inst file.
+    bool handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
 		//List of instructions
         bool handlePing();
 			
