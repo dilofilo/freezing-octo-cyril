@@ -1,8 +1,6 @@
-#ifndef SERVER_H
-	#define SERVER_H
+#ifndef CLIENT_H
+	#define CLIENT_H
 using namespace std;
-
-//Connectivity stuff
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstdlib>
@@ -13,20 +11,23 @@ using namespace std;
 #include <sys/types.h> 
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include "arpa/inet.h"
-
-//Other stuff.
 #include <vector>
+#include "arpa/inet.h"
 #include <unordered_map>
 #include <poll.h>
 #include <fstream>
 typedef int Socket ; //Because safer.
 
 
-#define SERVER_SIDE //look at instructions.h
-#include "instructions.h" //must have.
+struct userdetails {
+	std::string userID;
+	std::string password;
+	std::string serverDirectory;
+	std::string clientDirectory;
+};
 
-class Server{
+#define CL_URL_LEN 255
+class Client{
 private:
 
 	struct userdetails user;
@@ -49,9 +50,7 @@ private:
 	void getInstruction(std::string& inst , Socket& csock); //Reads into the inst file.
 	void handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
 		//List of instructions
-		bool mainPing(); 
-			
-		bool chat(); // Infinite chat
+		bool Ping(); // Ping and pingback.
 			void readMsg(std::string& p);
 			void writeMsg(std::string& p);
 		
@@ -62,7 +61,7 @@ private:
 			bool readFileFromClient(char* buffer);
 		void mainFileToClient();
 
-		bool authenticateUser(std::string& output); //Authentitcates using userID and password given by client. Also takes in Directory stuff. Sets the user details.
+		bool authenticate(std::string& output); //Authentitcates using userID and password given by client. Also takes in Directory stuff. Sets the user details.
 		bool registerUser( std::string& output ); //Other options too.	
 		bool checkPassword( std::string pw );
 		bool checkUsername( std::string& uID );
@@ -78,7 +77,7 @@ public:
 };
 
 //Utility function
-void Server::error(string s) {
+void Client::error(string s) {
 	std::cout << s << "\n";
 }
 
