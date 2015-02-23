@@ -3,6 +3,11 @@
 
 #include <QMainWindow>
 
+class Client;
+
+#include "../../common/instructions.h"
+#include "../../common/communications.h" //Defines socket.
+
 namespace Ui {
 class DropBox;
 }
@@ -22,4 +27,5 @@ private:
     Ui::DropBox *ui;
 };
 
+#include "client.h" //Safe because forward declarations and header guards.
 #endif // DROPBOX_H

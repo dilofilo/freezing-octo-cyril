@@ -33,6 +33,7 @@ public:
     QPushButton *btn_login;
     QPushButton *btn_register;
     QPushButton *btn_ping;
+    QPushButton *btn_back;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *LoginPage)
@@ -60,7 +61,10 @@ public:
         btn_register->setGeometry(QRect(160, 30, 101, 27));
         btn_ping = new QPushButton(centralwidget);
         btn_ping->setObjectName(QStringLiteral("btn_ping"));
-        btn_ping->setGeometry(QRect(30, 160, 251, 27));
+        btn_ping->setGeometry(QRect(30, 160, 131, 27));
+        btn_back = new QPushButton(centralwidget);
+        btn_back->setObjectName(QStringLiteral("btn_back"));
+        btn_back->setGeometry(QRect(170, 160, 111, 27));
         LoginPage->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(LoginPage);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -80,6 +84,7 @@ public:
         btn_login->setText(QApplication::translate("LoginPage", "Login!", 0));
         btn_register->setText(QApplication::translate("LoginPage", "Register!", 0));
         btn_ping->setText(QApplication::translate("LoginPage", "Ping!", 0));
+        btn_back->setText(QApplication::translate("LoginPage", "Back~", 0));
     } // retranslateUi
 
 };

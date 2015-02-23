@@ -44,9 +44,13 @@ void Client::on_btn_launch_clicked()
     if ( this->prepareSocket(serverip) ) {
         //Get the socket and set it for all of its kids.
         //Create the login screen and give it the socket.
-        msgBox.setText("Connection Successful! Press OK to move to the login page.");
-        msgBox.exec(); //Exits when the user presses OK.
-        this->openLoginPage(); //Well, thats the obvious step anyway.
+
+        if (this->createLoginPage()) {
+            this->showLoginPage(); //Well, thats the obvious step anyway.
+        } else {
+            msgBox.setText(" can't open the login page. Dont ask me please.");
+            msgBox.exec();
+        }
     } else {
         //TODO: prepareSocket failed.
         msgBox.setText("Connection unsuccessful! Please check your IP Addresses and make sure that the appropriate PORT is open.");
@@ -72,6 +76,32 @@ bool Client::prepareSocket(std::string serverAddressIP) {
     if ( rv < 0 ) {
         return false;
     } else {
+        conn.setSocket(csock);
         return true; //Assert : connection created.
     }
+}
+
+//Creation of login page.
+bool Client::createLoginPage() {
+    this->loginpage = new LoginPage(this , csock);
+    return true;
+}
+void Client::showLoginPage() {
+    this->hide();
+    this->loginpage->show();
+}
+
+//Pinging Functions.
+bool Client::handlePing() {
+    if (sendPing()) {
+        return receivePing();
+    } else {
+        return false;
+    }
+}
+bool Client::sendPing() {
+    return true;
+}
+bool Client::receivePing() {
+    return true;
 }

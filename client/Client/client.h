@@ -37,7 +37,9 @@ class LoginPage;
 class RegisterPage;
 class DropBox;
 }
-
+#ifndef CLIENT_SIDE
+#define CLIENT_SIDE
+#endif
 class Client : public QMainWindow
 {
     Q_OBJECT
@@ -46,6 +48,9 @@ public:
     explicit Client(QWidget *parent = 0);
     ~Client();
     
+    //handlers
+    bool handlePing();
+
 private slots:
     void on_btn_launch_clicked();
 
@@ -53,17 +58,28 @@ private:
     //Socket creation things.
     Socket csock;
     struct sockaddr_in serverAddress, clientAddress;
-    struct hostent* server_entity;
+    //struct hostent* server_entity; Not necessary.
     std::string serverAddress_string;
 
     //UI Related object pointers. To be initialized upon connection.
     Ui::Client *ui; //Disabled after creation
-    Ui::LoginPage *loginpage; //Show first.
-    Ui::RegisterPage *registerpage; //Shown if registration is clicked.
-    Ui::DropBox *dropboxpage; //Show after successful login.
+    LoginPage *loginpage; //Show first.
+    RegisterPage *registerpage; //Shown if registration is clicked.
+    DropBox *dropboxpage; //Show after successful login.
 
+    //Communications Object
+    Communications conn; // following that old PHP-SQL stile maen. \_|_/
     //Connection functions.
     bool prepareSocket(std::string serveraddress);
+
+
+        //Open next page functions.
+        bool createLoginPage();
+        void showLoginPage();
+
+        //Ping handling.
+        bool sendPing();
+        bool receivePing();
 };
 
 #endif // CLIENT_H

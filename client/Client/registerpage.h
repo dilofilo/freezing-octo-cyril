@@ -3,6 +3,10 @@
 
 #include <QMainWindow>
 
+
+#include "../../common/instructions.h"
+#include "../../common/communications.h" //does typedef int Socket.
+
 namespace Ui {
 class RegisterPage;
 }
@@ -22,4 +26,5 @@ private:
     Ui::RegisterPage *ui;
 };
 
+#include "client.h" //Safe because forward declaration and header guards.
 #endif // REGISTERPAGE_H
