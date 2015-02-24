@@ -19,14 +19,14 @@ public:
     explicit RegisterPage(QWidget *parent = 0);
     RegisterPage(Client* _client , Socket& _csock);
     ~RegisterPage();
-    
+    Ui::RegisterPage *ui;
+
 private slots:
     void on_btn_registerConfirm_clicked();
     
 private:
     Socket csock;
     Client* client;
-    Ui::RegisterPage *ui;
 };
 
 #include "client.h" //Safe because forward declaration and header guards.

@@ -2,7 +2,9 @@
 #define CLIENT_CPP
 #include "client.h"
 #include "ui_client.h"
-
+#include "ui_registerpage.h"
+#include "ui_dropbox.h"
+#include "ui_loginpage.h"
 //UNNECESSARY INCLUDES. REMOVE SOON.
 #include"stdio.h"
 #include"stdlib.h"

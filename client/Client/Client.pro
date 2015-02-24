@@ -22,7 +22,13 @@ SOURCES += main.cpp\
     launcher.cpp \
     logintoreg.cpp \
     userRegistration.cpp \
-    userLogin.cpp
+    userLogin.cpp \
+    fileUpload.cpp \
+    fileDownload.cpp \
+    fileRemove.cpp \
+    sync.cpp \
+    revert.cpp \
+    share.cpp
 
 HEADERS  += client.h \
     ../../common/instructions.h \

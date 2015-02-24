@@ -7,10 +7,10 @@
 bool Client::handleRegistration() { //Just registration, dont need to remember details of users.
     //Given user name and password to database functions.
     std::string username = (this->registerpage->ui->txt_username)->text().toUtf8().constData();
-    std::string passwd = ((this->registerpage->ui->txt_password)->text()).toUtfx8().constData();
-    std::string clidir = ((this->registerpage->ui->txt_clientDirectory)->text())->toUtf8().constData();
+    std::string passwd = ((this->registerpage->ui->txt_password)->text()).toUtf8().constData();
+    std::string clidir = ((this->registerpage->ui->txt_clientDirectory)->text()).toUtf8().constData();
     std::string serdir = ""; // Not necessary, really.
-    if ( this->sendRegistrationRequest( username , passwd , clidir ) ) {
+    if ( this->registrationRequest( username , passwd , clidir ) ) {
 //        this->user.userID = username;
 //        this->user.password = passwd;
 //        this->user.clientDirectory = clidir;

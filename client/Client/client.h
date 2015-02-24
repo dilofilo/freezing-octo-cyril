@@ -56,10 +56,11 @@ public:
         void goToRegisterPage(); // L_TO_R
         void goBackToLoginPage(); // L_TO_R
         bool handleRegistration(); // Upon clicking registration.
+        bool registrationRequest( std::string _user , std::string _pw , std::string _dir);
         bool handleLogin(); //userLogin.cpp
         bool handleLogout(); //userLogin.cpp
-        bool handleUpload(); //fileupload.cpp
-        bool handleDownload(); //filedownload.cpp
+        bool handleUpload(); //fileUpload.cpp
+        bool handleDownload(); //fileDownload.cpp
         bool handleRemove(); //fileRemove.cpp
         bool handleSync(); //sync.cpp
         bool handleRevert(); //revert.cpp
