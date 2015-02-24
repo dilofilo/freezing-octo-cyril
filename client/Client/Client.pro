@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     clientping.cpp \
     launcher.cpp \
     logintoreg.cpp \
-    userRegistration.cpp
+    userRegistration.cpp \
+    userLogin.cpp
 
 HEADERS  += client.h \
     ../../common/instructions.h \

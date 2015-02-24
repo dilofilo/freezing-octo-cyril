@@ -28,8 +28,8 @@
 #include "clientping.cpp"
 #include "launcher.cpp" // Also contains unlauncher.
 #include "logintoreg.cpp" //
-#include "userRegistration.cpp"
-
+#include "userRegistration.cpp" //handleRegistration()
+#include "userLogin.cpp" // handleLogin();
 Client::Client(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Client)
@@ -59,10 +59,23 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
     } else if ( instr == LOGIN_TO_REGISTER) {
         this->goToRegisterPage();
     } else if ( instr == REGISTER_TO_LOGIN_BACK) {
-        this->goBackToLoginPage();
+        this->goBackToLoginPage(); //Done.
     } else if ( instr == REGISTER_TO_LOGIN_REGISTER) {
         this->handleRegistration();
-    } else if ( instr == REGISTER_TO_LOGIN_REGISTER) {
+    } else if ( instr == LOGIN_TO_MAIN) {
+        this->handleLogin();
+    } else if ( instr == MAIN_TO_LOGIN) {
+        this->handleLogout();
+    } else if ( instr == UPLOAD_FILE) {
+        this->handleUpload();
+    } else if ( instr == DOWNLOAD_FILE) {
+        this->handleDownload();
+    } else if ( instr == REMOVE_FILE) {
+        this->handleRemove();
+    } else if ( instr == SYNC) {
+        this->handleSync();
+    } else if ( instr == REVERT) {
+        this->handleRevert();
     } else {
         //Assume exitting.
         this->exit();
@@ -72,11 +85,6 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
 /*
  *##################### MINION FUNCTIONS FOLLOW #############
 */
-
-bool Client::handleRegistration() {
-    //Given user name and password to database functions.
-    return false;
-}
 
 
 void Client::exit() {

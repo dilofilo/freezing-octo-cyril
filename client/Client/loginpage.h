@@ -30,6 +30,8 @@ private slots:
 
     void on_btn_register_clicked();
 
+    void on_btn_login_clicked();
+
 private:
     Socket csock;
     Client * client;

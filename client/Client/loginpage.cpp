@@ -48,3 +48,8 @@ void LoginPage::on_btn_register_clicked()
     this->client->eventHandler(LOGIN_TO_REGISTER);
 }
 #endif
+
+void LoginPage::on_btn_login_clicked()
+{
+    this->client->eventHandler(LOGIN_TO_MAIN);
+}

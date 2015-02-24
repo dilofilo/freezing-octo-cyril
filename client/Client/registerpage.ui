@@ -61,6 +61,9 @@
        <height>29</height>
       </rect>
      </property>
+     <property name="text">
+      <string>   select directory...</string>
+     </property>
     </widget>
     <widget class="QLineEdit" name="txt_password">
      <property name="geometry">
@@ -70,6 +73,9 @@
        <width>371</width>
        <height>29</height>
       </rect>
+     </property>
+     <property name="text">
+      <string>Desired Password</string>
      </property>
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>
@@ -83,6 +89,9 @@
        <width>371</width>
        <height>29</height>
       </rect>
+     </property>
+     <property name="text">
+      <string>Desired Username</string>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton">

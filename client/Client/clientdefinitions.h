@@ -7,20 +7,21 @@
 enum INSTRUCTION_TYPE {
     // Page Navigation
     LAUNCH, //unused
-    PING_INSTR,
+    PING_INSTR, //Button for pinging.
     //CLIENT_TO_LOGIN, Same as LAUNCH
-    LOGIN_TO_CLIENT,
-    LOGIN_TO_REGISTER,
-    REGISTER_TO_LOGIN_BACK,
-    REGISTER_TO_LOGIN_REGISTER,
-    LOGIN_TO_MAIN,
-    MAIN_TO_LOGIN,
+    LOGIN_TO_CLIENT, //Button called btn_back on login.ui
+    LOGIN_TO_REGISTER, //Button for register on login.ui
+    REGISTER_TO_LOGIN_BACK, //back button on register.
+    REGISTER_TO_LOGIN_REGISTER, //Confirm Registration button on registration page.
+    LOGIN_TO_MAIN, //login button
+    MAIN_TO_LOGIN, //logout button
 
     //File Uploads and Downloads and Removes
-    UPLOAD_FILE,
-    DOWNLOAD_FILE,
-    SYNC,
-    REMOVE_FILE
+    UPLOAD_FILE, //upload file button
+    DOWNLOAD_FILE, //download file button
+    SYNC, //synchronize button
+    REMOVE_FILE, //remove file button
+    REVERT //Revert button
 };
 
 struct InstructionData {
