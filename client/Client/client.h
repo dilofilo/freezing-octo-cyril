@@ -56,6 +56,14 @@ public:
         void goToRegisterPage(); // L_TO_R
         void goBackToLoginPage(); // L_TO_R
         bool handleRegistration(); // Upon clicking registration.
+        bool handleLogin(); //userLogin.cpp
+        bool handleLogout(); //userLogin.cpp
+        bool handleUpload(); //fileupload.cpp
+        bool handleDownload(); //filedownload.cpp
+        bool handleRemove(); //fileRemove.cpp
+        bool handleSync(); //sync.cpp
+        bool handleRevert(); //revert.cpp
+        bool handleShare(); //share.cpp
     //Adverse
     void exit();
 private slots:

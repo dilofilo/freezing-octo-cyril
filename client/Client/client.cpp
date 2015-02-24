@@ -76,6 +76,8 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
         this->handleSync();
     } else if ( instr == REVERT) {
         this->handleRevert();
+    } else if ( instr == FILE_SHARE) {
+        this->handleShare();
     } else {
         //Assume exitting.
         this->exit();

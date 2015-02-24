@@ -21,7 +21,8 @@ enum INSTRUCTION_TYPE {
     DOWNLOAD_FILE, //download file button
     SYNC, //synchronize button
     REMOVE_FILE, //remove file button
-    REVERT //Revert button
+    REVERT, //Revert button
+    FILE_SHARE //share button
 };
 
 struct InstructionData {
