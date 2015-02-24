@@ -20,10 +20,8 @@ using namespace std;
 #include <unordered_map>
 #include <poll.h>
 #include <fstream>
-typedef int Socket ; //Because safer.
 
-
-#define SERVER_SIDE //look at instructions.h
+#include "serverdefinitions.h"
 #include "../common/instructions.h" //must have.
 #include "../common/communications.h" //another must have.
 class Server{
@@ -31,23 +29,25 @@ private:
 
 	struct userdetails user;
 	int port;
-	int n, clientLength;
+    int clientLength;
 	std::string tempPW;
 	unordered_map< std::string , struct userdetails > userDetails;
 	struct sockaddr_in serverAddr;
 	struct sockaddr_in clientAddr;
-	char clienturl[CL_URL_LEN];
+    char clienturl[CLIENT_URL_LEN];
 	Socket ssock;
 	Socket csock;	
 	std::string activeUserID;
-
-    Communications conn; //In true SQL style.
+    Communications conn; //In true SQL style. Created in getClient() function for child process.
 
 	void startServer(); //Initializes serverAddr.
-	void readDatabase();
+    bool main_ReadDatabase();
+    bool main_GetAdmin();
+    bool main_ReadUsers();
+
 	void getClient(); //Infinite loop for the main process to keep accepting new processes,
 
-	void handleClient(Socket& csock); // Every individual client is handled here.
+    void handleClient(); // Every individual client is handled here.
 	
     bool getInstruction(std::string& inst); //Reads into the inst file.
     bool handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
@@ -72,14 +72,7 @@ private:
 		bool fileToClient( std::string& filename , Socket& csock );
 
 public:
-	Server(int nClients);
+    Server();
 	~Server();
-	void error(std::string s);
 };
-
-//Utility function
-void Server::error(string s) {
-	std::cout << s << "\n";
-}
-
 #endif

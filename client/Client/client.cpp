@@ -23,6 +23,7 @@
 #include <QLineEdit>
 #include <QMessageBox>
 
+#include "clientping.cpp"
 Client::Client(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Client)
@@ -33,6 +34,7 @@ Client::Client(QWidget *parent) :
 
 Client::~Client()
 {
+    ::close(csock);
     delete ui;
 }
 
@@ -91,17 +93,3 @@ void Client::showLoginPage() {
     this->loginpage->show();
 }
 
-//Pinging Functions.
-bool Client::handlePing() {
-    if (sendPing()) {
-        return receivePing();
-    } else {
-        return false;
-    }
-}
-bool Client::sendPing() {
-    return true;
-}
-bool Client::receivePing() {
-    return true;
-}

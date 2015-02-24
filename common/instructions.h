@@ -1,6 +1,6 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
-
+#include <string>
 struct userdetails {
     std::string userID;
     std::string password;
@@ -24,6 +24,7 @@ struct userdetails {
 #define PORT 5000
 #define MAX_CONNECTION_REQUESTS 10
 #define POLL_TIMEOUT 15000
+#define CLIENT_URL_LEN 255
     //Poll timeout is 15s.
 
 //Buffer Sizes

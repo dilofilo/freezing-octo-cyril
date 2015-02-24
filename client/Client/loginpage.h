@@ -28,12 +28,15 @@ private slots:
 
     void on_btn_back_clicked();
 
+    void on_btn_register_clicked();
+
 private:
     Socket csock;
     Client * client;
     Ui::LoginPage *ui;
 
     void backToClientPage();
+    void goToRegisterPage();
 };
 
 #include "client.h" //Safe because forward declaraitons and header guards.

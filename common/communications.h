@@ -51,8 +51,8 @@ public:
     bool readFromSocket( char* buffer , int buf_size);// buf_size = BUFFER_SIZE );
 
     //Read and write using string
-    bool writeToSocket( std::string& buffer , int buf_size);//= BUFFER_SIZE
-    bool readFromSocket( std::string& buffer , int buf_size);//=BUFFER_SIZE
+    bool writeToSocket( std::string& buffer , int buf_size= BUFFER_SIZE);
+    bool readFromSocket( std::string& buffer , int buf_size=BUFFER_SIZE);
 
     //Infinite Read and write.
     bool writeToSocket( std::vector< std::string >& strings );

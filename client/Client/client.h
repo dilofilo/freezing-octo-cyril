@@ -77,9 +77,6 @@ private:
         bool createLoginPage();
         void showLoginPage();
 
-        //Ping handling.
-        bool sendPing();
-        bool receivePing();
 };
 
 #endif // CLIENT_H

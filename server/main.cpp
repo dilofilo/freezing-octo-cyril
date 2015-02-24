@@ -5,6 +5,6 @@
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    Server w(3);
+    Server w;
     return 1;
 }

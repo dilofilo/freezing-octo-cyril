@@ -71,17 +71,21 @@ bool Communications::writeToSocket(char* buffer , int buf_size = BUFFER_SIZE) {
         return false;
     } else {
         //Poll was successful
-        rv = write(csock, buffer, buf_size);
-        if (rv>0) {
-            #ifdef SERVER_SIDE
-            printf(" writing was successful \n");
-            #endif
-            memset( buffer , 0 , buf_size );
-            return true;
+        if ( wPoll.revents & POLLOUT) {
+            rv = write(csock, buffer, buf_size);
+            if (rv>=0) {
+                #ifdef SERVER_SIDE
+                printf(" writing was successful \n");
+                #endif
+                memset( buffer , 0 , buf_size );
+                return true;
+            } else {
+                #ifdef SERVER_SIDE
+                printf(" ERROR!!!! writing was NOT successful \n");
+                #endif
+                return false;
+            }
         } else {
-            #ifdef SERVER_SIDE
-            printf(" ERROR!!!! writing was NOT successful \n");
-            #endif
             return false;
         }
     }
@@ -106,16 +110,20 @@ bool Communications::readFromSocket( char* buffer, int buf_size = BUFFER_SIZE) {
         return false;
     } else {
         //Poll was successful
-        rv = read(csock, buffer, buf_size);
-        if (rv>0) {
-            #ifdef SERVER_SIDE
-            printf(" Reading was successful \n");
-            #endif
-            return true;
+        if ( rPoll.revents & POLLIN ) {
+            rv = read(csock, buffer, buf_size);
+            if (rv>=0) {
+                #ifdef SERVER_SIDE
+                printf(" Reading was successful \n");
+                #endif
+                return true;
+            } else {
+                #ifdef SERVER_SIDE
+                printf(" ERROR!!!! reading was NOT successful \n");
+                #endif
+                return false;
+            }
         } else {
-            #ifdef SERVER_SIDE
-            printf(" ERROR!!!! reading was NOT successful \n");
-            #endif
             return false;
         }
     }
@@ -124,28 +132,30 @@ bool Communications::readFromSocket( char* buffer, int buf_size = BUFFER_SIZE) {
 
 //String involving functions.
 
-bool Communications::writeToSocket( std::string& buffer , int buf_size = BUFFER_SIZE) {
+bool Communications::writeToSocket( std::string& buffer , int buf_size ) {
     //Clears the string.
     if ( buf_size != BUFFER_SIZE ) {
-#ifdef SERVER_SIDE
         printf(" WARNING! writeToSocket() called with BUFFER_SIZE changed. \n");
-#endif
     } else {
 
     }
     char nbuffer[BUFFER_SIZE];
-    for(uint pos=0; pos < buffer.size() ; pos++) {
-        nbuffer[pos] = buffer[pos];
+    for(int pos=0; pos < buf_size ; pos++) {
+        if ( pos < buffer.size()) {
+            nbuffer[pos] = buffer[pos];
+        } else {
+            nbuffer[pos] = 0;
+        }
     }
+
     return writeToSocket( nbuffer ,  buf_size);
 }
 
-bool Communications::readFromSocket(std::string& buffer , int buf_size = BUFFER_SIZE) {
+bool Communications::readFromSocket(std::string& buffer , int buf_size ) {
+    buffer =""; //Clear it.
     bool returnvalue = false;
     if (buf_size != BUFFER_SIZE ) {
-#ifdef SERVER_SIDE
         printf(" WARNING! readFromSocket() called with BUFFER_SIZE changed. \n");
-#endif
     } else {
         char tempArr[BUFFER_SIZE];
         returnvalue = readFromSocket( tempArr , BUFFER_SIZE );

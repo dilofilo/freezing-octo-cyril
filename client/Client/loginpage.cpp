@@ -1,7 +1,7 @@
 #include "loginpage.h"
 #include "ui_loginpage.h"
 #include <QMessageBox>
-
+#include <iostream>
 LoginPage::LoginPage(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::LoginPage)
@@ -22,15 +22,15 @@ LoginPage::~LoginPage()
 
 void LoginPage::on_btn_ping_clicked()
 {
-    QMessageBox msgBox;
-    if ( this->client->handlePing() ) {
-        //Ping Successful!
-        msgBox.setText("Ping successful! ");
+
+    bool reply = this->client->handlePing();
+    QMessageBox msg;
+    if (reply) {
+        msg.setText("success!\n");
     } else {
-        //Ping Not Successful.
-        msgBox.setText("Ping not successful! ");
+        msg.setText("failure!\n");
     }
-    msgBox.exec();
+    msg.exec();
 }
 
 void LoginPage::on_btn_back_clicked()
@@ -41,4 +41,9 @@ void LoginPage::on_btn_back_clicked()
 void LoginPage::backToClientPage() {
     this->hide();
     this->client->show();
+}
+
+void LoginPage::on_btn_register_clicked()
+{
+    goToRegisterPage();
 }
