@@ -7,3 +7,5 @@
 #define ADMIN_PW "lolpw"
     //I wish the admin password could be secured in a better manner, but thats alright.
 #endif // SERVERDEFINITIONS_H
+
+enum EDIT_MODE { EDIT , NEW };

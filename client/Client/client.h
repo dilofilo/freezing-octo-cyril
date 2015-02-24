@@ -61,6 +61,9 @@ private:
     //struct hostent* server_entity; Not necessary.
     std::string serverAddress_string;
 
+    //User
+    UserDetails user;
+
     //UI Related object pointers. To be initialized upon connection.
     Ui::Client *ui; //Disabled after creation
     LoginPage *loginpage; //Show first.
@@ -74,8 +77,14 @@ private:
 
 
         //Open next page functions.
-        bool createLoginPage();
+        bool createPages();
+        //Login pages
         void showLoginPage();
+        void backToClientPage(); //From the Login Page.
+        //Register pages.
+        void goToRegisterPage();
+        //Main pages.
+
 
 };
 

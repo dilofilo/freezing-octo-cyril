@@ -17,12 +17,12 @@ class RegisterPage : public QMainWindow
     
 public:
     explicit RegisterPage(QWidget *parent = 0);
-    RegisterPage(QMainWindow* client);
-    RegisterPage(Socket& _csock);
+    RegisterPage(Client* _client , Socket& _csock);
     ~RegisterPage();
     
 private:
     Socket csock;
+    Client* client;
     Ui::RegisterPage *ui;
 };
 

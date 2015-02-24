@@ -5,6 +5,12 @@ This file handles with reading databases and reading user's file directory etc.
 
 TODO list.
 */
+
+bool updateDatabase(UserDetails user , EDIT_MODE = EDIT) {
+    return false;
+}
+
+
 bool Server::main_ReadDatabase() { //The structure of the reading.
     if( main_GetAdmin() ) {
         if (main_ReadUsers()) {

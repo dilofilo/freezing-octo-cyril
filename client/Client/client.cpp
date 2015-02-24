@@ -84,8 +84,9 @@ bool Client::prepareSocket(std::string serverAddressIP) {
 }
 
 //Creation of login page.
-bool Client::createLoginPage() {
+bool Client::createPages() {
     this->loginpage = new LoginPage(this , csock);
+    this->registerpage = new RegisterPage(this , csock);
     return true;
 }
 void Client::showLoginPage() {
@@ -93,3 +94,11 @@ void Client::showLoginPage() {
     this->loginpage->show();
 }
 
+void Client::backToClientPage() {
+    this->loginpage->hide();
+    this->show();
+}
+
+void Client::goToRegisterPage() {
+    this->loginpage->hide();
+}

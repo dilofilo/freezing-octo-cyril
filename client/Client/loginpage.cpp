@@ -35,15 +35,11 @@ void LoginPage::on_btn_ping_clicked()
 
 void LoginPage::on_btn_back_clicked()
 {
-    backToClientPage();
+    this->client->backToClientPage();
 }
 
-void LoginPage::backToClientPage() {
-    this->hide();
-    this->client->show();
-}
 
 void LoginPage::on_btn_register_clicked()
 {
-    goToRegisterPage();
+    this->client->goToRegisterPage();
 }

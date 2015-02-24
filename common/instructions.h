@@ -1,7 +1,7 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 #include <string>
-struct userdetails {
+struct UserDetails {
     std::string userID;
     std::string password;
     std::string serverDirectory;

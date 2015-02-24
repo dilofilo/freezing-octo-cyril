@@ -31,7 +31,7 @@ private:
 	int port;
     int clientLength;
 	std::string tempPW;
-	unordered_map< std::string , struct userdetails > userDetails;
+    unordered_map< std::string , struct UserDetails > userDetails;
 	struct sockaddr_in serverAddr;
 	struct sockaddr_in clientAddr;
     char clienturl[CLIENT_URL_LEN];
