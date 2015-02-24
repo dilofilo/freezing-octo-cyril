@@ -35,8 +35,6 @@ private:
     Client * client;
     Ui::LoginPage *ui;
 
-    void backToClientPage();
-    void goToRegisterPage();
 };
 
 #include "client.h" //Safe because forward declaraitons and header guards.

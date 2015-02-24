@@ -18,14 +18,18 @@ SOURCES += main.cpp\
     loginpage.cpp \
     registerpage.cpp \
     dropbox.cpp \
-    clientping.cpp
+    clientping.cpp \
+    launcher.cpp \
+    logintoreg.cpp \
+    userRegistration.cpp
 
 HEADERS  += client.h \
     ../../common/instructions.h \
     ../../common/communications.h \
     loginpage.h \
     registerpage.h \
-    dropbox.h
+    dropbox.h \
+    clientdefinitions.h
 
 FORMS    += client.ui \
     loginpage.ui \

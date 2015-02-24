@@ -17,13 +17,14 @@ LoginPage::LoginPage(Client * _client , Socket& _csock) : ui(new Ui::LoginPage) 
 
 LoginPage::~LoginPage()
 {
+    this->client->exit();
     delete ui;
 }
 
 void LoginPage::on_btn_ping_clicked()
 {
 
-    bool reply = this->client->handlePing();
+    bool reply = this->client->eventHandler(PING_INSTR);
     QMessageBox msg;
     if (reply) {
         msg.setText("success!\n");
@@ -35,11 +36,11 @@ void LoginPage::on_btn_ping_clicked()
 
 void LoginPage::on_btn_back_clicked()
 {
-    this->client->backToClientPage();
+    this->client->eventHandler(LOGIN_TO_CLIENT);
 }
 
 
 void LoginPage::on_btn_register_clicked()
 {
-    this->client->goToRegisterPage();
+    this->client->eventHandler(LOGIN_TO_REGISTER);
 }

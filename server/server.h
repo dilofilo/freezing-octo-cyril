@@ -27,7 +27,7 @@ using namespace std;
 class Server{
 private:
 
-	struct userdetails user;
+    struct UserDetails user;
 	int port;
     int clientLength;
 	std::string tempPW;

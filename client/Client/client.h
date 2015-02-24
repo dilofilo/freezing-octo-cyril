@@ -21,10 +21,10 @@ using namespace std;
 #include <netinet/in.h>
 #include <netdb.h>
 
-
-#define CLIENT_SIDE
+//Instructions and utility.
 #include "../../common/instructions.h"
 #include "../../common/communications.h" //does typedef int Socket.
+#include "clientdefinitions.h" //Contains the definitions used for instruction handling.
 
 //Client related files.
 #include "loginpage.h"
@@ -47,10 +47,24 @@ class Client : public QMainWindow
 public:
     explicit Client(QWidget *parent = 0);
     ~Client();
-    
+    //Event Handler.
+    bool eventHandler( INSTRUCTION_TYPE instr ); //This is the handler.
+        InstructionData data; //This data conveys data you might need.
+        bool handlePing();
+        void launch();
+        void unlaunch();
+        void goToRegisterPage();
+        void goBackToLoginPage();
     //handlers
     bool handlePing();
 
+    //Page changes
+    void backToClientPage(); //From the Login Page.
+    //Register pages.
+    void goToRegisterPage();
+
+    //Adverse
+    void exit();
 private slots:
     void on_btn_launch_clicked();
 
@@ -80,9 +94,6 @@ private:
         bool createPages();
         //Login pages
         void showLoginPage();
-        void backToClientPage(); //From the Login Page.
-        //Register pages.
-        void goToRegisterPage();
         //Main pages.
 
 

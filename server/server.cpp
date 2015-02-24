@@ -90,6 +90,7 @@ void Server::handleClient() {
                 #ifdef SERVER_SIDE
                 printf( " handle instruction failed .. \n");
                 #endif
+
             }
         } else {
             #ifdef SERVER_SIDE
@@ -112,6 +113,9 @@ bool Server::handleInstruction(std::string& instr) {
     if ( instr ==  PING_REQUEST) {//Why am I able to convert a const char[] to a string?
         cout << "detected ping request \n";
         return handlePing();
+    } else if ( instr == EXIT_REQUEST ){
+        close(csock);
+        return true;
     } else {
         return false;
     }

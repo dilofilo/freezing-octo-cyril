@@ -10,5 +10,6 @@ DropBox::DropBox(QWidget *parent) :
 
 DropBox::~DropBox()
 {
+    this->client->exit();
     delete ui;
 }

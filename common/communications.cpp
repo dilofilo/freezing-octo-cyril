@@ -63,12 +63,13 @@ bool Communications::writeToSocket(char* buffer , int buf_size = BUFFER_SIZE) {
         #ifdef SERVER_SIDE
         printf(" poll was unsuccessful for some reason. \n");
         #endif
+        exit(1);
         return false;
     } else if( rv==0 ) { //Poll timeout occurred
         #ifdef SERVER_SIDE
         printf(" poll timeout \n");
         #endif
-        return false;
+        return true;
     } else {
         //Poll was successful
         if ( wPoll.revents & POLLOUT) {
@@ -103,11 +104,12 @@ bool Communications::readFromSocket( char* buffer, int buf_size = BUFFER_SIZE) {
         printf(" poll was unsuccessful for some reason. \n");
         #endif
         return false;
+        exit(1);
     } else if( rv==0 ) { //Poll timeout occurred
         #ifdef SERVER_SIDE
         printf(" poll timeout \n");
         #endif
-        return false;
+        return true;
     } else {
         //Poll was successful
         if ( rPoll.revents & POLLIN ) {
@@ -192,7 +194,7 @@ bool Communications::writeToSocket( std::vector< std::string >& strings ) { //As
         #ifdef SERVER_SIDE
         printf(" poll timeout \n");
         #endif
-        return false;
+        return true;
     } else {
         //Poll was successful
         char buffer[BUFFER_SIZE];
@@ -237,7 +239,7 @@ bool Communications::writeToSocket( std::vector< std::string >& strings ) { //As
         #ifdef SERVER_SIDE
         printf(" poll timeout \n");
         #endif
-        return false;
+        return true;
     } else {
         //Poll was successful - assume that the event was revents = POLLIN
         if ( wPoll.revents & POLLOUT ) {
@@ -286,7 +288,7 @@ bool Communications::readFromSocket( std::vector< std::string >& strings ) { //A
         #ifdef SERVER_SIDE
         printf(" poll timeout \n");
         #endif
-        return false;
+        return true;
     } else {
         //Poll was successful
         rv = read(csock, buffer, BUFFER_SIZE);
@@ -322,7 +324,7 @@ bool Communications::readFromSocket( std::vector< std::string >& strings ) { //A
             #ifdef SERVER_SIDE
             printf(" poll timeout \n");
             #endif
-            return false;
+            return true;
         } else {
             if ( rPoll.revents & POLLIN ) {
                 //polling happened. now, just read the darned value, check it its what we want.

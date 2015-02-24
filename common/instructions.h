@@ -40,6 +40,9 @@ struct UserDetails {
     #define PING_REQUEST "PING"
     #define PING_ACCEPTED "PINGBACK"
 
+    //Exitter INSTRUCTION
+    #define EXIT_REQUEST "EXIT"
+
     //Registraiton and authentication
     #define REGISTRATION_REQUEST "REG"
         #define REGISTRATION_REJECTED "REG_REJECTED"

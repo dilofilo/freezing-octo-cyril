@@ -23,6 +23,7 @@ public:
     ~DropBox();
     
 private:
+    Client* client;
     Socket csock;
     Ui::DropBox *ui;
 };
