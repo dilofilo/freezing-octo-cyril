@@ -1,6 +1,8 @@
+#ifndef REGISTER_PAGE_CPP
+#define REGISTER_PAGE_CPP
 #include "registerpage.h"
 #include "ui_registerpage.h"
-
+#include <QMessageBox>
 RegisterPage::RegisterPage(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::RegisterPage)
@@ -25,9 +27,9 @@ void RegisterPage::on_btn_registerConfirm_clicked()
 {
     //Set the data.
     this->client->data.type = REGISTER_TO_LOGIN_REGISTER;
-    this->client->data.user.userID = (this->ui->txt_username)->text();
-    this->client->data.user.password = (this->ui->txt_password)->text();
-    this->client->data.user.clientDirectory = (this->ui->txt_clientDirectory)->text();
+    this->client->data.user.userID = ((this->ui->txt_username)->text()).toUtf8().constData();
+    this->client->data.user.password = ((this->ui->txt_password)->text()).toUtf8().constData();
+    this->client->data.user.clientDirectory = ((this->ui->txt_clientDirectory)->text()).toUtf8().constData();
     //Passes data across.
     bool reply = this->client->eventHandler(REGISTER_TO_LOGIN_REGISTER);
     if (!reply) {
@@ -37,3 +39,4 @@ void RegisterPage::on_btn_registerConfirm_clicked()
         msgBox.exec();
     }
 }
+#endif

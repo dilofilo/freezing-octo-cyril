@@ -20,6 +20,9 @@ public:
     RegisterPage(Client* _client , Socket& _csock);
     ~RegisterPage();
     
+private slots:
+    void on_btn_registerConfirm_clicked();
+    
 private:
     Socket csock;
     Client* client;

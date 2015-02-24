@@ -1,4 +1,6 @@
-
+#ifndef CLIENT_PING_CPP
+#define CLIENT_PING_CPP
+#include "client.h"
 #include "../../common/instructions.h"
 #include "../../common/communications.h" //does typedef int Socket.
 #include <QMessageBox>
@@ -19,3 +21,4 @@ bool Client::handlePing() { //Handles the entire ping
         return false;
     }
 }
+#endif

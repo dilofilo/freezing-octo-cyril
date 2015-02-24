@@ -1,3 +1,6 @@
+#ifndef LOGIN_PAGE_CPP
+#define LOGIN_PAGE_CPP
+
 #include "loginpage.h"
 #include "ui_loginpage.h"
 #include <QMessageBox>
@@ -44,3 +47,4 @@ void LoginPage::on_btn_register_clicked()
 {
     this->client->eventHandler(LOGIN_TO_REGISTER);
 }
+#endif

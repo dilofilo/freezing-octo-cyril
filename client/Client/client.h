@@ -55,14 +55,7 @@ public:
         void unlaunch(); //launcher
         void goToRegisterPage(); // L_TO_R
         void goBackToLoginPage(); // L_TO_R
-    //handlers
-    bool handlePing();
-
-    //Page changes
-    void backToClientPage(); //From the Login Page.
-    //Register pages.
-    void goToRegisterPage();
-
+        bool handleRegistration(); // Upon clicking registration.
     //Adverse
     void exit();
 private slots:

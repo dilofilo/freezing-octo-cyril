@@ -6,7 +6,9 @@ This file handles with reading databases and reading user's file directory etc.
 TODO list.
 */
 
-bool updateDatabase(UserDetails user , EDIT_MODE = EDIT) {
+#include "server.h"
+
+bool Server::updateDatabase(UserDetails user , EDIT_MODE mode) {
     return false;
 }
 

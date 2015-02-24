@@ -44,6 +44,8 @@ private:
     bool main_ReadDatabase();
     bool main_GetAdmin();
     bool main_ReadUsers();
+    bool updateDatabase(UserDetails user , EDIT_MODE mode = EDIT);
+    bool authenticate(std::string userid , std::string passwd);
 
 	void getClient(); //Infinite loop for the main process to keep accepting new processes,
 

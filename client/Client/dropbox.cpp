@@ -1,3 +1,5 @@
+#ifndef DROPBOX_CPP
+#define DROPBOX_CPP
 #include "dropbox.h"
 #include "ui_dropbox.h"
 
@@ -13,3 +15,4 @@ DropBox::~DropBox()
     this->client->exit();
     delete ui;
 }
+#endif
