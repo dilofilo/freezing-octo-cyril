@@ -1,6 +1,8 @@
 #ifndef USER_REGISTRATIONS_CPP
 #define USER_REGISTRATIONS_CPP
 
-bool 
+bool Client::handleRegistration() {
+    //Given user name and 
+}
 
 #endif

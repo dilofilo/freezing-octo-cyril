@@ -59,7 +59,8 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
         return this->goBackToLoginPage();
     } else if ( instr == REGISTER_TO_LOGIN_REGISTER) {
         return this->handleRegistration();
-    }else {
+    } else if ( instr == REGISTER_TO_LOGIN_REGISTER) {
+    } else {
         //Assume exitting.
         this->exit();
     }

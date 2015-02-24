@@ -50,11 +50,11 @@ public:
     //Event Handler.
     bool eventHandler( INSTRUCTION_TYPE instr ); //This is the handler.
         InstructionData data; //This data conveys data you might need.
-        bool handlePing();
-        void launch();
-        void unlaunch();
-        void goToRegisterPage();
-        void goBackToLoginPage();
+        bool handlePing(); //clientping
+        void launch();   //launcher
+        void unlaunch(); //launcher
+        void goToRegisterPage(); // L_TO_R
+        void goBackToLoginPage(); // L_TO_R
     //handlers
     bool handlePing();
 

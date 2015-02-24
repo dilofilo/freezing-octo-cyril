@@ -30,4 +30,8 @@ bool Server::main_ReadUsers() { //Modify this function accordingly.
     return true;
 }
 
+bool Server::authenticate(std::string userid , std::string passwd) {
+    return false;
+}
+
 #endif
