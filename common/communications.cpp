@@ -342,4 +342,9 @@ bool Communications::readFromSocket( std::vector< std::string >& strings ) { //A
     }
 }
 
+//UserDetails code.
+bool Communications::writeToSocket_user(UserDetails &usr) {
+
+}
+
 #endif

@@ -33,6 +33,9 @@ using namespace std;
 
 namespace Ui {
 class Client;
+class LoginPage;
+class RegisterPage;
+class DropBox;
 }
 #ifndef CLIENT_SIDE
 #define CLIENT_SIDE
@@ -67,8 +70,6 @@ public:
 private slots:
     void on_btn_launch_clicked();
 
-
-
 private:
     //Socket creation things.
     Socket csock;
@@ -101,4 +102,3 @@ private:
 };
 
 #endif // CLIENT_H
-

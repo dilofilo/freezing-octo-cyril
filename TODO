@@ -1,0 +1,22 @@
+Three Components :
+
+class Communications :
+	Since write( sockfd , void* , bufsize)
+		--> Write the entire struct of user. Write one for userDetails, one for File Buffers.
+		//One for DeltaFiles?
+
+class Server :
+	Get the framework up.
+
+class Client :
+	GUI End : Depend on kabir.
+	Backend : Compartmentalize and transfer data to *client of pages using structs.
+				Write all the auxillary Functions.
+			: Work by going down the instruction list for Client.
+
+TODO according to line number and comment :
+
+15 ( LOGIN )
+	-> Communications ( for struct )
+
+## This is ##'s todo file.

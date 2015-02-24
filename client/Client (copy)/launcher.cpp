@@ -25,12 +25,8 @@ void Client::launch() {
 }
 
 void Client::unlaunch() {
-
-    // this->loginpage->hide(); //MEMORY LEAK?
+    this->loginpage->hide();
     this->show();
-    if ( this->loginpage != NULL) {
-        delete this->loginpage;
-    }
 }
 //Creation of login page.
 bool Client::createPages() {

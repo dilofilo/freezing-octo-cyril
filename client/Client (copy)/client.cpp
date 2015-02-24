@@ -56,15 +56,15 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
     if (instr == PING_INSTR) {
         return this->handlePing(); //Nothing to handle, really.
     } else if ( instr == LAUNCH) {
-        this->launch(); //Done.
+        this->launch();
     } else if ( instr == LOGIN_TO_CLIENT) {
-        this->unlaunch(); //Done.
+        this->unlaunch();
     } else if ( instr == LOGIN_TO_REGISTER) {
         this->goToRegisterPage();
     } else if ( instr == REGISTER_TO_LOGIN_BACK) {
         this->goBackToLoginPage(); //Done.
     } else if ( instr == REGISTER_TO_LOGIN_REGISTER) {
-        this->handleRegistration();
+        this->handleRegistration(); //Done.
     } else if ( instr == LOGIN_TO_MAIN) {
         this->handleLogin();
     } else if ( instr == MAIN_TO_LOGIN) {

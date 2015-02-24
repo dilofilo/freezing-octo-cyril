@@ -6,10 +6,10 @@
 #include <QString>
 bool Client::handleRegistration() { //Just registration, dont need to remember details of users.
     //Given user name and password to database functions.
-    std::string username = this->user.userID ; //(this->registerpage->ui->txt_username)->text().toUtf8().constData();
-    std::string passwd = this->user.password ; //((this->registerpage->ui->txt_password)->text()).toUtf8().constData();
-    std::string clidir = this->user.clientDirectory; //((this->registerpage->ui->txt_clientDirectory)->text()).toUtf8().constData();
-
+    std::string username = (this->registerpage->ui->txt_username)->text().toUtf8().constData();
+    std::string passwd = ((this->registerpage->ui->txt_password)->text()).toUtf8().constData();
+    std::string clidir = ((this->registerpage->ui->txt_clientDirectory)->text()).toUtf8().constData();
+    std::string serdir = ""; // Not necessary, really.
     if ( this->registrationRequest( username , passwd , clidir ) ) {
 //        this->user.userID = username;
 //        this->user.password = passwd;
@@ -30,9 +30,6 @@ bool Client::registrationRequest( std::string uid , std::string pw , std::string
     std::string temp(REGISTRATION_REQUEST);
     conn.writeToSocket(temp);
     //Write to the socket.
-    //sendRegistrationDetails()
-
-
     //Now, to read back from the socket.
     std::string reply = "";
     conn.readFromSocket( reply ); //Somehwere in here, the server has checked the database for the user and replied.

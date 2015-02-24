@@ -65,6 +65,14 @@ struct UserDetails {
 //Infinite Buffer Instructions.
 #define INF_TRANSFER_BEGIN_CHAR 'X'
 #define INF_TRANSFER_END_CHAR 'X'
+
+//For transferring UserDetails - used in Communications in the *_user() functions
+#define TRANSFER_USER_BEGIN_CHAR 'U'
+#define TRANSFER_USER_END_CHAR 'U'
+
+//For transferring Files - used in Communications in the *_file() functions
+#define TRANSFER_FILE_BEGIN_CHAR 'F'
+#define TRANSFER_FILE_END_CHAR 'F'
     //Both of these instructions will be accompanied with buffer[INF_TRANSFER_BUFFER_SIZE] = '0'
 
 #endif // INSTRUCTIONS_H
