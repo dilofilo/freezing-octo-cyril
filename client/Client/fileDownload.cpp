@@ -4,6 +4,6 @@
 #include "client.h"
 
 bool Client::handleDownload() {
-    return true;
+
 }
 #endif

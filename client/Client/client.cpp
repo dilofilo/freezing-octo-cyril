@@ -64,13 +64,13 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
     } else if ( instr == REGISTER_TO_LOGIN_BACK) {
         this->goBackToLoginPage(); //Done.
     } else if ( instr == REGISTER_TO_LOGIN_REGISTER) {
-        this->handleRegistration();
+        this->handleRegistration(); //Done. Need to write server side
     } else if ( instr == LOGIN_TO_MAIN) {
-        this->handleLogin();
+        this->handleLogin(); //Done. Need to write server side.
     } else if ( instr == MAIN_TO_LOGIN) {
-        this->handleLogout();
+        this->handleLogout(); // Need to link GUI click to the event
     } else if ( instr == UPLOAD_FILE) {
-        this->handleUpload();
+        this->handleUpload(); //Done. Need to write the communications and server side equivalent.
     } else if ( instr == DOWNLOAD_FILE) {
         this->handleDownload();
     } else if ( instr == REMOVE_FILE) {

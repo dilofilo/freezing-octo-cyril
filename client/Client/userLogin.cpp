@@ -11,7 +11,7 @@ bool Client::handleLogin() {
     if ( validUser ) {
         this->user.userID = data.user.userID;
         this->user.password = data.user.password;
-        this->user.clientDirectory = data.user.clientDirectory;
+        this->user.clientDirectory = data.user.clientDirectory; //NEED TO GET FROM THE SERVER.
         //Dont need server directory for the client.
         return true;
     } else {
@@ -49,6 +49,9 @@ bool Client::handleLogout() {
 
 bool Client::sendLogin( std::string& uid , std::string& pw , std::string& clidir) {
     //Write to the server and get the details back.
+    /*
+     *Send login request, read continue, send user details , read reply login details, read rejection/acceptance.
+     */
     std::string temp( LOGIN_REQUEST );
     conn.writeToSocket(temp);
     //Read a continue.
@@ -59,12 +62,18 @@ bool Client::sendLogin( std::string& uid , std::string& pw , std::string& clidir
     }
     //Send User details function.
     conn.writeToSocket_user(data.user);
+    UserDetails tempusr;
+    conn.readFromSocket_user(tempusr);
+    std::string cont(CONTINUE);
+    conn.writeToSocket(cont);
     conn.readFromSocket(temp2);
     if ( temp2 == LOGIN_ACCEPTED ) {
+        data.user = tempusr;
         return true; //Saved on server side.
     } else {
         return false;
     }
+
 }
 
 #endif
