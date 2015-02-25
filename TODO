@@ -16,4 +16,14 @@ class Client :
 
 ################## TODO according to line number and comment : #######################3
 
-15 ( LOGIN )
+15 ( DOWNLOAD ) - Haroun
+File Transfer - communications class - Haroun
+Server Event Handling - Harman
+GUI Front End - Kabir.
+
+
+Deadline shit:
+25 - Event Handlers(Harm) + File Transfers(H) + GUI(K)
+26 - File Algo (K) + implement File Transfer ( H & Harm ) + File Handling System ( H ) + Security ( Harm )
+27 - Sharing + Databases  + implement Diff files + Search for files
+28 - Version Control + Revert + Sharing implemented

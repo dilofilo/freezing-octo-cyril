@@ -21,6 +21,7 @@ bool Client::uploadNewFile() {
     //ASSERT : data.filetype == FILE_TYPE_NEW
     std::string filename = this->data.filename;
     std::fstream reader( filename );
+    std::string
     return conn.writeToSocket_file( reader , NEW);
 }
 

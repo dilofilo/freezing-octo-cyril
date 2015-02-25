@@ -31,7 +31,8 @@ struct UserDetails {
 //Buffer Sizes
 #define BUFFER_SIZE 255
 #define INF_TRANSFER_BUFFER_SIZE 254
-#define FILE_TRANSFER_BUFFER_SIZE 254
+#define FILE_TRANSFER_BUFFER_SIZE 1024
+    //File Transfer Buffer Size is different.
 /*INF_TRANSFER_BUFFER_SIZE must always be BUFFER_SIZE-1
     FILE_TRANSFER_BUFFER_SIZE must always be BUFFER_SIZE-1.
 */
@@ -58,12 +59,15 @@ struct UserDetails {
     //Individual File Transfer and download
     #define C_TO_S_FILE "C_TO_S_FILE"
     #define S_TO_C_FILE "S_TO_C_FILE"
-
+        //FILE_MODE is a enum declared in communications.
     //Sharing
     #define SHARE_REQUEST "SHARE"
     #define SHARE_ACCEPTED "SHARED"
     #define SHARE_REJECTED "NOSHARE"
-
+    //Unsharing
+    #define UNSHARE_REQUEST "UNSHARE"
+    #define UNSHARE_ACCEPTED "UNSHARED"
+    #define UNSHARE_REJECTED "NOUNSHARE"
 
 //Infinite Buffer Instructions.
 #define INF_TRANSFER_BEGIN_CHAR 'X'
@@ -75,7 +79,9 @@ struct UserDetails {
 #define TRANSFER_USER_END_CHAR 'U'
 
 //For transferring Files - used in Communications in the *_file() functions
+
 #define TRANSFER_FILE_BEGIN_CHAR 'F'
+#define TRANSFER_FILE_CONTINUE_CHAR 'C'
 #define TRANSFER_FILE_END_CHAR 'F'
     //Both of these instructions will be accompanied with buffer[INF_TRANSFER_BUFFER_SIZE] = '0'
 
