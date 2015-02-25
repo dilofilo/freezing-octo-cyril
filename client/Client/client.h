@@ -53,8 +53,9 @@ public:
         void goToRegisterPage(); // L_TO_R
         void goBackToLoginPage(); // L_TO_R
         bool handleRegistration(); // Upon clicking registration.
-        bool registrationRequest( std::string _user , std::string _pw , std::string _dir);
+            //bool registrationRequest( std::string _user , std::string _pw , std::string _dir);
         bool handleLogin(); //userLogin.cpp
+            //bool sendLogin();
         bool handleLogout(); //userLogin.cpp
         bool handleUpload(); //fileUpload.cpp
         bool handleDownload(); //fileDownload.cpp
@@ -62,6 +63,7 @@ public:
         bool handleSync(); //sync.cpp
         bool handleRevert(); //revert.cpp
         bool handleShare(); //share.cpp
+        void exitRequest(); //client.cpp
     //Adverse
     void exit();
 private slots:
@@ -97,6 +99,9 @@ private:
         void showLoginPage();
         //Main pages.
 
+        //Auxillary Functions.
+        bool registrationRequest( std::string _user , std::string _pw , std::string _dir);
+        bool sendLogin(std::string _user , std::string _pw , std::string _dir);
 
 };
 

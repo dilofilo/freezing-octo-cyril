@@ -37,6 +37,9 @@ struct UserDetails {
 */
 //Instructions.
 
+    //CONTINUE is used to specify that the next instruction can be sent.
+    #define CONTINUE "GO_ON"
+
     //Connection Testing
     #define PING_REQUEST "PING"
     #define PING_ACCEPTED "PINGBACK"

@@ -6,22 +6,22 @@
 #include <QString>
 bool Client::handleRegistration() { //Just registration, dont need to remember details of users.
     //Given user name and password to database functions.
-    std::string username = this->user.userID ; //(this->registerpage->ui->txt_username)->text().toUtf8().constData();
-    std::string passwd = this->user.password ; //((this->registerpage->ui->txt_password)->text()).toUtf8().constData();
-    std::string clidir = this->user.clientDirectory; //((this->registerpage->ui->txt_clientDirectory)->text()).toUtf8().constData();
+    std::string username = this->data.user.userID ; //(this->registerpage->ui->txt_username)->text().toUtf8().constData();
+    std::string passwd = this->data.user.password ; //((this->registerpage->ui->txt_password)->text()).toUtf8().constData();
+    std::string clidir = this->data.user.clientDirectory; //((this->registerpage->ui->txt_clientDirectory)->text()).toUtf8().constData();
 
     if ( this->registrationRequest( username , passwd , clidir ) ) {
-//        this->user.userID = username;
-//        this->user.password = passwd;
-//        this->user.clientDirectory = clidir;
-//        this->user.serverDirectory = serdir;
-        //TODO : Do Stuff. Valid Login.
+        //this->user.userID = username;
+        //this->user.password = passwd;
+        //this->user.clientDirectory = clidir;
+        //this->user.serverDirectory = serdir;
+
         this->goBackToLoginPage();
         return true;
     } else {
         //TODO : Do Stuff. Invalid Login.
         QMessageBox msg;
-        msg.setText(" Invalid user name or password. Please try again \n");
+        msg.setText(" Something ain't right \n");
         return false;
     }
 }

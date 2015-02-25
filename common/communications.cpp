@@ -370,7 +370,31 @@ bool Communications::writeToSocket_user(UserDetails &usr) {
 
     //Continue the transfer.
     //write uid, read a continue.
-
+    this->writeToSocket(temp.userID);
+    this->readFromSocket(beginbuf , BUFFER_SIZE);
+    if ( !((beginbuf[0] == TRANSFER_USER_CONTINUE) && ( beginbuf[BUFFER_SIZE-1] == '0')) ) {
+        return false;
+    }
+    this->writeToSocket(temp.password);
+    this->readFromSocket(beginbuf , BUFFER_SIZE);
+    if ( !((beginbuf[0] == TRANSFER_USER_CONTINUE) && ( beginbuf[BUFFER_SIZE-1] == '0')) ) {
+        return false;
+    }
+    this->writeToSocket(temp.clientDirectory);
+    this->readFromSocket(beginbuf , BUFFER_SIZE);
+    if ( !((beginbuf[0] == TRANSFER_USER_CONTINUE) && ( beginbuf[BUFFER_SIZE-1] == '0')) ) {
+        return false;
+    }
+    this->writeToSocket(temp.serverDirectory);
+    this->readFromSocket(beginbuf , BUFFER_SIZE);
+    if ( !((beginbuf[0] == TRANSFER_USER_CONTINUE) && ( beginbuf[BUFFER_SIZE-1] == '0')) ) {
+        return false;
+    }
+    //Write continue.
+    memset(beginbuf , 0, BUFFER_SIZE);
+    beginbuf[0] = TRANSFER_USER_END_CHAR;
+    beginbuf[BUFFER_SIZE-1] = '0';
+    this->writeToSocket(beginbuf , BUFFER_SIZE);
 
 }
 
@@ -414,7 +438,7 @@ bool Communications::readFromSocket_user(UserDetails &usr) {
     rv = this->readFromSocket( buf , BUFFER_SIZE);
     if ( rv && (buf[0] == TRANSFER_USER_END_CHAR) && (buf[0] == '0') ) {
         return true;
-    }
+    } //Done.
 }
 
 #endif

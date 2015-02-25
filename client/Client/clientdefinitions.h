@@ -3,6 +3,8 @@
 #define CLIENT_SIDE
 #include <string>
 #include <string.h>
+#include "../../common/instructions.h" //includes UserDetails.
+
 //This enum is used to trigger events of the client.
 enum INSTRUCTION_TYPE {
     // Page Navigation

@@ -51,5 +51,9 @@ void LoginPage::on_btn_register_clicked()
 
 void LoginPage::on_btn_login_clicked()
 {
+    //Set the data.
+
+    this->client->data->user.userID = (this->ui->txt_username)->text().toUtf8().constData();
+    this->client->user.password = (this->ui->txt_password)->text().toUtf8().constData();
     this->client->eventHandler(LOGIN_TO_MAIN);
 }

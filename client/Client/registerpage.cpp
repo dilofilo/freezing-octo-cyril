@@ -37,6 +37,6 @@ void RegisterPage::on_btn_registerConfirm_clicked()
         QMessageBox msgBox;
         msgBox.setText(" Registration Failed - chances are, somebody has the same username as you ");
         msgBox.exec();
-    }
+    } //Done?
 }
 #endif
