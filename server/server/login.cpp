@@ -5,7 +5,7 @@
 #include"../../common/instructions.h"
 #include <string>
 
-bool Server::getUserdetails(  )
+bool Server::handleLogin(  )
 {
     string cont( CONTINUE );
     conn.writeToSocket(s);

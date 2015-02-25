@@ -53,10 +53,20 @@ private:
 	
     bool getInstruction(std::string& inst); //Reads into the inst file.
     bool handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
-		//List of instructions
-        bool handlePing();
-			
+        //List of instructions and their handlers.
+        bool handlePing(); //ping.cpp
+        bool handleRegistration(); //registration.cpp
+        bool handleLogin(); //login.cpp
+        bool handleLogout(); //login.cpp
+        bool handleUpload(); //upload.cpp
+        bool handleDownload(); //download.cpp
+        bool handleRemoveFile(); //removal.cpp
+        bool handleSync(); //sync.cpp
+        bool handleRevert(); //revert.cpp
+        bool handleShare(); //share.cpp
+        bool handleUnshare(); //share.cpp
 		
+        //database.cpp :
 		void mainRegisterUser();
 		void mainAuthenticateUser();
 		void mainFileToServer();

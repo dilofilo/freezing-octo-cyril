@@ -65,6 +65,8 @@ struct UserDetails {
     //File removal.
     #define REMOVE_REQUEST "REMOVEDEMFILES"
 
+    //Revert
+#define REVERT_REQUEST "REVERTPLIZ"
     //File Sync
     #define SYNC_REQUEST "SYNCPLIZ"
 
