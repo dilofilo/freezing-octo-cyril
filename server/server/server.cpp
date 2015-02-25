@@ -6,6 +6,7 @@
 #include "server.h"
 #include "ping.cpp"
 #include "database.cpp"
+#include "login.cpp"
 
 Server::Server() {
 	//Initialize number of clients
@@ -113,10 +114,20 @@ bool Server::handleInstruction(std::string& instr) {
     if ( instr ==  PING_REQUEST) {//Why am I able to convert a const char[] to a string?
         cout << "detected ping request \n";
         return handlePing();
-    } else if ( instr == EXIT_REQUEST ){
+    }else if( instr == REGISTRATION_REQUEST ) {
+
+    }else if( instr == LOGIN_REQUEST ){
+
+    }else if( instr == C_TO_S_FILE ){
+
+    }else if( instr == S_TO_C_FILE ){
+
+    }else if ( instr == EXIT_REQUEST ){
         close(csock);
         return true;
-    } else {
+    }else if( instr == UNSHARE_REQUEST ){
+
+    }else {
         return false;
     }
 }
