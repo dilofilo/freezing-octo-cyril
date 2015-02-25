@@ -23,7 +23,8 @@ GUI Front End - Kabir.
 
 
 Deadline shit:
-25 - Event Handlers(Harm) + File Transfers(H) + GUI(K)
+25 - Event Handlers(Harm) + (**File Transfers(H)**) + GUI(K)
+25th MIDNIGHT : Test File Transfer. - most proably works.
 26 - File Algo (K) + implement File Transfer ( H & Harm ) + File Handling System ( H ) + Security ( Harm )
 27 - Sharing + Databases  + implement Diff files + Search for files
 28 - Version Control + Revert + Sharing implemented

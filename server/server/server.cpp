@@ -10,7 +10,10 @@
 
 Server::Server() {
 	//Initialize number of clients
-    activeUserID = "";
+    user.userID = "";
+    user.password = "";
+    user.clientDirectory = "";
+    user.serverDirectory = "";
 	startServer();
 }
 

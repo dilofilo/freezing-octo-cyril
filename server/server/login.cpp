@@ -13,7 +13,6 @@ bool Server::handleLogin(  )
     readFromSocket_user( usr );
     if(authenticate(usr.userID , usr.password) == true )
     {
-
         // Modify the struct and send it back.
         string temp;
         conn.readFromSocket( temp );
@@ -21,8 +20,6 @@ bool Server::handleLogin(  )
             string acc (LOGIN_ACCEPTED);
             conn.writeToSocket(acc);
         }
-
-
     }
     else{
         conn.writeToSocket_user( usr );
@@ -34,5 +31,14 @@ bool Server::handleLogin(  )
     }
 }
 
+bool Server::handleLogout() {
+    //Forget user details.
+    this->user.userID = "";
+    this->user.clientDirectory = "";
+    this->user.password = "";
+    this->user.serverDirectory = "";
+    return true;
+    //Done.
+}
 
 #endif
