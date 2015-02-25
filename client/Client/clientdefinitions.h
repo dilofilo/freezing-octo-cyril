@@ -24,7 +24,8 @@ enum INSTRUCTION_TYPE {
     SYNC, //synchronize button
     REMOVE_FILE, //remove file button
     REVERT, //Revert button
-    FILE_SHARE //share button
+    FILE_SHARE, //share button
+    FILE_UNSHARE // unshare button
 };
 
 struct InstructionData {

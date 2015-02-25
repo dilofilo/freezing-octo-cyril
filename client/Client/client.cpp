@@ -53,35 +53,37 @@ void Client::on_btn_launch_clicked()
 }
 
 bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionData data appropriately.
-    if (instr == PING_INSTR) {
-        return this->handlePing(); //Nothing to handle, really.
-    } else if ( instr == LAUNCH) {
+    if (instr == PING_INSTR) {// to server
+        return this->handlePing();
+    } else if ( instr == LAUNCH) { // internal, except for connection
         this->launch(); //Done.
-    } else if ( instr == LOGIN_TO_CLIENT) {
+    } else if ( instr == LOGIN_TO_CLIENT) { //internal
         this->unlaunch(); //Done.
-    } else if ( instr == LOGIN_TO_REGISTER) {
+    } else if ( instr == LOGIN_TO_REGISTER) { //internal
         this->goToRegisterPage();
-    } else if ( instr == REGISTER_TO_LOGIN_BACK) {
+    } else if ( instr == REGISTER_TO_LOGIN_BACK) { //internal
         this->goBackToLoginPage(); //Done.
-    } else if ( instr == REGISTER_TO_LOGIN_REGISTER) {
+    } else if ( instr == REGISTER_TO_LOGIN_REGISTER) { //to server
         this->handleRegistration(); //Done. Need to write server side
-    } else if ( instr == LOGIN_TO_MAIN) {
+    } else if ( instr == LOGIN_TO_MAIN) { //to server
         this->handleLogin(); //Done. Need to write server side.
-    } else if ( instr == MAIN_TO_LOGIN) {
+    } else if ( instr == MAIN_TO_LOGIN) { //to server
         this->handleLogout(); // Need to link GUI click to the event
-    } else if ( instr == UPLOAD_FILE) {
+    } else if ( instr == UPLOAD_FILE) { //to server
         this->handleUpload(); //Done. Need to write the communications and server side equivalent.
-    } else if ( instr == DOWNLOAD_FILE) {
+    } else if ( instr == DOWNLOAD_FILE) { //to server
         this->handleDownload();
-    } else if ( instr == REMOVE_FILE) {
+    } else if ( instr == REMOVE_FILE) { //to server
         this->handleRemove();
-    } else if ( instr == SYNC) {
+    } else if ( instr == SYNC) { //to server - retrieves dates and decides. Works only for files which have been uploaded at least once.
         this->handleSync();
-    } else if ( instr == REVERT) {
+    } else if ( instr == REVERT) { //to server
         this->handleRevert();
-    } else if ( instr == FILE_SHARE) {
+    } else if ( instr == FILE_SHARE) { //to server
         this->handleShare();
-    } else {
+    } else if ( instr == FILE_UNSHARE ) {
+        this->handleUnshare();
+    } else { // to server
         //Assume exitting.
         this->exit();
     }
@@ -95,5 +97,6 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
 void Client::exit() {
     std::string temp(EXIT_REQUEST);
     conn.writeToSocket( temp );
+    ::close(csock);
 }
 #endif

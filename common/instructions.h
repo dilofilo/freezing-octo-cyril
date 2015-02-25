@@ -45,7 +45,7 @@ struct UserDetails {
     #define PING_REQUEST "PING"
     #define PING_ACCEPTED "PINGBACK"
 
-    //Exitter INSTRUCTION
+    //Exitter INSTRUCTIONS
     #define EXIT_REQUEST "EXIT"
 
     //Registraiton and authentication
@@ -55,11 +55,20 @@ struct UserDetails {
     #define LOGIN_REQUEST "LOGIN"
         #define LOGIN_REJECTED "LOGIN_REJECTED"
         #define LOGIN_ACCEPTED "LOGIN_ACCEPTED"
-
+#define LOGOUT "LOGOUT"
     //Individual File Transfer and download
     #define C_TO_S_FILE "C_TO_S_FILE"
+        //The above one is upload
     #define S_TO_C_FILE "S_TO_C_FILE"
-        //FILE_MODE is a enum declared in communications.
+        //The above one is download.
+
+    //File removal.
+    #define REMOVE_REQUEST "REMOVEDEMFILES"
+
+    //File Sync
+    #define SYNC_REQUEST "SYNCPLIZ"
+
+    //FILE_MODE is a enum declared in communications.
     //Sharing
     #define SHARE_REQUEST "SHARE"
     #define SHARE_ACCEPTED "SHARED"
