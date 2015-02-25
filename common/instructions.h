@@ -68,6 +68,7 @@ struct UserDetails {
 
 //For transferring UserDetails - used in Communications in the *_user() functions
 #define TRANSFER_USER_BEGIN_CHAR 'U'
+#define TRANSFER_USER_CONTINUE "GO_ON"
 #define TRANSFER_USER_END_CHAR 'U'
 
 //For transferring Files - used in Communications in the *_file() functions

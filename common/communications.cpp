@@ -344,7 +344,77 @@ bool Communications::readFromSocket( std::vector< std::string >& strings ) { //A
 
 //UserDetails code.
 bool Communications::writeToSocket_user(UserDetails &usr) {
+    /*
+     *Done by :
+     *write TRANSFER_BEGIN
+     *read the appropriate reply.
+    */
+    UserDetails temp = usr;
+    char beginbuf[BUFFER_SIZE];
+    memset(beginbuf , 0 , BUFFER_SIZE);
+    beginbuf[0] = TRANSFER_USER_BEGIN_CHAR;
+    beginbuf[BUFFER_SIZE-1] = '0';
+    bool rv = this->writeToSocket(beginbuf, BUFFER_SIZE);
+    if ( !rv ) {
+        return false;
+    } else {
+        //Read the instruction reply and decide.
+        this->readFromSocket(beginbuf , BUFFER_SIZE);
+        std::temp(beginbuf);
+        if ( temp == TRANSFER_USER_CONTINUE ) {
+            //Continue out of this if-else block.
+        } else {
+            return false;
+        }
+    } // Apt reply read.
 
+    //Continue the transfer.
+    //write uid, read a continue.
+
+
+}
+
+bool Communications::readFromSocket_user(UserDetails &usr) {
+    /*
+     * Read the request,
+    */
+    UserDetails usr_buf; //Stores the read values temporarily.
+    std::string temp( TRANSFER_USER_CONTINUE ); //Written multiple times
+    char buf[BUFFER_SIZE]; //Used for writing/reading the initial instructions.
+    memset( buf , 0, BUFFER_SIZE);
+    bool rv = this->readFromSocket( buf , BUFFER_SIZE);
+
+    if ( !rv || ( buf[0] != TRANSFER_USER_BEGIN_CHAR ) || (buf[BUFFER_SIZE-1] != '0') ) {
+        return false;
+    } else {
+        //write the transfer request.
+        memset(buf, 0 , BUFFER_SIZE);
+
+        this->writeToSocket( temp );
+    }
+
+    //Assert : Now, read each field and write a confirmation.
+    std::string uid = "";
+    this->readFromSocket(uid);
+    this->writeToSocket((temp));
+
+    std::string pwd = "";
+    this->readFromSocket(pwd);
+    this->writeToSocket((temp));
+
+    std::string clidir = "";
+    this->readFromSocket(clidir);
+    this->writeToSocket((temp));
+
+    std::string serdir = "";
+    this->readFromSocket(serdir);
+    this->writeToSocket((temp));
+
+    memset( buf , 0, BUFFER_SIZE);
+    rv = this->readFromSocket( buf , BUFFER_SIZE);
+    if ( rv && (buf[0] == TRANSFER_USER_END_CHAR) && (buf[0] == '0') ) {
+        return true;
+    }
 }
 
 #endif
