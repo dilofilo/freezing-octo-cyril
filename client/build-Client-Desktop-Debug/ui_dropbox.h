@@ -30,8 +30,7 @@ class Ui_DropBox
 {
 public:
     QWidget *centralwidget;
-    QTreeWidget *clientTreeWidget;
-    QTreeView *serverTreeView;
+    QTreeView *clientTreeView;
     QPushButton *btnSync;
     QPushButton *btnDownload;
     QPushButton *btnRemove;
@@ -48,6 +47,7 @@ public:
     QPushButton *btnSearch;
     QComboBox *comboRevert;
     QPushButton *btnConfirmRevert;
+    QTreeWidget *serverTreeWidget;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *DropBox)
@@ -57,15 +57,9 @@ public:
         DropBox->resize(1221, 734);
         centralwidget = new QWidget(DropBox);
         centralwidget->setObjectName(QStringLiteral("centralwidget"));
-        clientTreeWidget = new QTreeWidget(centralwidget);
-        QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
-        __qtreewidgetitem->setText(0, QStringLiteral("1"));
-        clientTreeWidget->setHeaderItem(__qtreewidgetitem);
-        clientTreeWidget->setObjectName(QStringLiteral("clientTreeWidget"));
-        clientTreeWidget->setGeometry(QRect(690, 200, 361, 261));
-        serverTreeView = new QTreeView(centralwidget);
-        serverTreeView->setObjectName(QStringLiteral("serverTreeView"));
-        serverTreeView->setGeometry(QRect(120, 200, 371, 261));
+        clientTreeView = new QTreeView(centralwidget);
+        clientTreeView->setObjectName(QStringLiteral("clientTreeView"));
+        clientTreeView->setGeometry(QRect(690, 200, 371, 261));
         btnSync = new QPushButton(centralwidget);
         btnSync->setObjectName(QStringLiteral("btnSync"));
         btnSync->setGeometry(QRect(390, 480, 99, 27));
@@ -114,6 +108,12 @@ public:
         btnConfirmRevert = new QPushButton(centralwidget);
         btnConfirmRevert->setObjectName(QStringLiteral("btnConfirmRevert"));
         btnConfirmRevert->setGeometry(QRect(250, 60, 101, 27));
+        serverTreeWidget = new QTreeWidget(centralwidget);
+        QTreeWidgetItem *__qtreewidgetitem = new QTreeWidgetItem();
+        __qtreewidgetitem->setText(0, QStringLiteral("1"));
+        serverTreeWidget->setHeaderItem(__qtreewidgetitem);
+        serverTreeWidget->setObjectName(QStringLiteral("serverTreeWidget"));
+        serverTreeWidget->setGeometry(QRect(110, 200, 381, 261));
         DropBox->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(DropBox);
         statusbar->setObjectName(QStringLiteral("statusbar"));

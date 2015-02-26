@@ -3,13 +3,14 @@
 #include "dropbox.h"
 #include "ui_dropbox.h"
 #include <QTreeView>
+#include <QDirModel>
 #include "clientdefinitions.h"
 DropBox::DropBox(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DropBox)
 {
     ui->setupUi(this);
-    ui->clientTreeWidget->setColumnCount(1);
+    ui->serverTreeWidget->setColumnCount(1);
     std::vector<QString> childName{"Java","CPP"};
     AddRoot("Code",childName);
     childName={"PL","CompArch"};
@@ -18,12 +19,12 @@ DropBox::DropBox(QWidget *parent) :
     model = new QDirModel(this);
     model->setReadOnly(false);
     model->setSorting(QDir::DirsFirst | QDir::IgnoreCase | QDir::Name );
-     ui->serverTreeView->setModel(model);
-    QModelIndex index =model->index("/home/dual/cs5130287/Desktop");
-    ui->serverTreeView->expand(index);
-    ui->serverTreeView->scrollTo(index);
-    ui->serverTreeView->setCurrentIndex((index));
-    ui->serverTreeView->resizeColumnToContents(0);
+     ui->clientTreeView->setModel(model);
+    QModelIndex index =model->index(QDir::currentPath());
+    ui->clientTreeView->expand(index);
+    ui->clientTreeView->scrollTo(index);
+    ui->clientTreeView->setCurrentIndex((index));
+    ui->clientTreeView->resizeColumnToContents(0);
     //ui->serverTreeView->setHeader("System Files");
 }
 
@@ -35,7 +36,7 @@ DropBox::~DropBox()
 
 void DropBox::AddRoot(QString Name, const std::vector<QString> childName)
 {
-    QTreeWidgetItem *itm= new QTreeWidgetItem(ui->clientTreeWidget);
+    QTreeWidgetItem *itm= new QTreeWidgetItem(ui->serverTreeWidget);
     itm->setText(0,Name);
    // ui->copTreeWidget->addTopLevelItem(itm);
     AddChild(itm,childName[0]);
@@ -56,7 +57,7 @@ void DropBox::AddChild(QTreeWidgetItem *parent,QString Name)
 void DropBox::on_btnMake_clicked()
 {
 
-    QModelIndex index=ui->serverTreeView->currentIndex();
+    QModelIndex index=ui->clientTreeView->currentIndex();
     if (!index.isValid())
         return;
 
@@ -70,7 +71,7 @@ void DropBox::on_btnMake_clicked()
 void DropBox::on_btnDelete_clicked()
 {
     //delete
-    QModelIndex index=ui->serverTreeView->currentIndex();
+    QModelIndex index=ui->clientTreeView->currentIndex();
     if (!index.isValid())
         return;
 
@@ -99,7 +100,7 @@ void DropBox::on_btnSearch_clicked()
 void DropBox::on_btnUpload_clicked()
 {
 
-    this->client->data.filename = model->filePath(this->ui->clientTreeWidget->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
     this->client->data.type = UPLOAD_FILE;
     bool reply= this->client->eventHandler( UPLOAD_FILE);
     if(!reply)
@@ -142,7 +143,7 @@ void DropBox::on_btnExit_clicked()
 
 void DropBox::on_btnDownload_clicked()
 {
-    this->client->data.filename = model->filePath(this->ui->serverTreeView->currentIndex()).toUtf8().constData(); //this is a model index, convert to string
+    this->client->data.filename = model->filePath(this->ui->serverTreeWidget->currentIndex()).toUtf8().constData(); //this is a model index, convert to string
     this->client->data.type = DOWNLOAD_FILE;
     bool reply= this->client->eventHandler(DOWNLOAD_FILE);
     if(!reply)
@@ -153,7 +154,7 @@ void DropBox::on_btnDownload_clicked()
 
 void DropBox::on_btnRemove_clicked()
 {
-    this->client->data.filename = model->filePath(this->ui->serverTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.filename = model->filePath(this->ui->serverTreeWidget->currentIndex()).toUtf8().constData();//this is a model index, convert to string
     this->client->data.type = REMOVE_FILE;
     bool reply= this->client->eventHandler(REMOVE_FILE);
     if(!reply)
@@ -164,7 +165,7 @@ void DropBox::on_btnRemove_clicked()
 
 void DropBox::on_btnShare_clicked()
 {
-    this->client->data.filename = model->filePath(this->ui->clientTreeWidget->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
     this->client->data.type = FILE_SHARE;
     bool reply= this->client->eventHandler( FILE_SHARE);
     if(!reply)
@@ -175,7 +176,7 @@ void DropBox::on_btnShare_clicked()
 
 void DropBox::on_btnUnshare_clicked()
 {
-    this->client->data.filename = model->filePath(this->ui->clientTreeWidget->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
     this->client->data.type = FILE_UNSHARE;
     QString userName= QInputDialog::getText(this,"User Name","Enter a Name");
     this->client->data.other_user.userID = userName.toUtf8().constData();
