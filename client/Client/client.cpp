@@ -83,6 +83,10 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
         this->handleShare();
     } else if ( instr == FILE_UNSHARE ) {
         this->handleUnshare();
+    } else if ( instr == FILE_SEARCH ) {
+        this->handleSearch();
+    } else if ( instr == MAIN_TO_DESKTOP ) {//have you handled this already?? its for exiting
+               this->handleExit();
     } else { // to server
         //Assume exitting.
         this->exit();

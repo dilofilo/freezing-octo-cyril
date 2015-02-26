@@ -218,7 +218,7 @@
      <string>Search</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="comboBox">
+   <widget class="QComboBox" name="comboRevert">
     <property name="geometry">
      <rect>
       <x>120</x>
@@ -232,6 +232,19 @@
       <string>Version 1</string>
      </property>
     </item>
+   </widget>
+   <widget class="QPushButton" name="btnConfirmRevert">
+    <property name="geometry">
+     <rect>
+      <x>240</x>
+      <y>60</y>
+      <width>141</width>
+      <height>27</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ConfirmRevert</string>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

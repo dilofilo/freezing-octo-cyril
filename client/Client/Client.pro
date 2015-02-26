@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     fileRemove.cpp \
     sync.cpp \
     revert.cpp \
-    share.cpp
+    share.cpp \
+    search.cpp
 
 HEADERS  += client.h \
     ../../common/instructions.h \

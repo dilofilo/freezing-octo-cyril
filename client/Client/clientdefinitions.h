@@ -25,7 +25,9 @@ enum INSTRUCTION_TYPE {
     REMOVE_FILE, //remove file button
     REVERT, //Revert button
     FILE_SHARE, //share button
-    FILE_UNSHARE // unshare button
+    FILE_UNSHARE, // unshare button
+    FILE_SEARCH, //To search for files on the server
+    MAIN_TO_DESKTOP //Exit
 };
 
 struct InstructionData {

@@ -64,6 +64,7 @@ public:
         bool handleSync(); //sync.cpp
         bool handleRevert(); //revert.cpp
         bool handleShare(); //share.cpp
+        bool handleSearch(); //search.cpp
         void exitRequest(); //client.cpp
     //Adverse
     void exit();

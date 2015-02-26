@@ -87,10 +87,114 @@ void DropBox::on_btnDelete_clicked()
 
 void DropBox::on_btnSearch_clicked()
 {
-
+    this->client->data.filename = this->ui->textSearch->text().toUtf8().constData();
+    this->client->data.type = FILE_SEARCH;
+    bool reply= this->client->eventHandler(FILE_SEARCH);
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Search Failed"));
+    }
 }
 
 void DropBox::on_btnUpload_clicked()
 {
+
+    this->client->data.filename = model->filePath(this->ui->clientTreeWidget->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.type = UPLOAD_FILE;
     bool reply= this->client->eventHandler( UPLOAD_FILE);
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Upload Failed"));
+    }
+    else
+    {
+        this->ui->comboRevert->addItem("");//add stuff
+    }
+}
+
+void DropBox::on_btnSync_clicked()
+{
+
+    bool reply= this->client->eventHandler(SYNC);
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Sync Failed"));
+    }
+}
+
+void DropBox::on_btnLogout_clicked()
+{
+    bool reply= this->client->eventHandler(MAIN_TO_LOGIN);
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Logout Failed"));
+    }
+}
+
+void DropBox::on_btnExit_clicked()
+{
+    bool reply= this->client->eventHandler(MAIN_TO_DESKTOP);
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Exit Failed"));
+    }
+}
+
+void DropBox::on_btnDownload_clicked()
+{
+    this->client->data.filename = model->filePath(this->ui->serverTreeView->currentIndex()).toUtf8().constData(); //this is a model index, convert to string
+    this->client->data.type = DOWNLOAD_FILE;
+    bool reply= this->client->eventHandler(DOWNLOAD_FILE);
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Download Failed"));
+    }
+}
+
+void DropBox::on_btnRemove_clicked()
+{
+    this->client->data.filename = model->filePath(this->ui->serverTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.type = REMOVE_FILE;
+    bool reply= this->client->eventHandler(REMOVE_FILE);
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Remove Failed"));
+    }
+}
+
+void DropBox::on_btnShare_clicked()
+{
+    this->client->data.filename = model->filePath(this->ui->clientTreeWidget->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.type = FILE_SHARE;
+    bool reply= this->client->eventHandler( FILE_SHARE);
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Share Failed"));
+    }
+}
+
+void DropBox::on_btnUnshare_clicked()
+{
+    this->client->data.filename = model->filePath(this->ui->clientTreeWidget->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.type = FILE_UNSHARE;
+    QString userName= QInputDialog::getText(this,"User Name","Enter a Name");
+    this->client->data.other_user.userID = userName;
+
+    bool reply= this->client->eventHandler( FILE_UNSHARE);
+
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Unshare Failed"));
+    }
+}
+
+void DropBox::on_btnConfirmRevert_clicked()
+{
+    this->client->data.filename = this->ui->comboRevert->currentText().toUtf8().constData();
+    this->client->data.type = REVERT;
+    bool reply= this->client->eventHandler( REVERT);
+    if(!reply)
+    {
+        QMessageBox::information(this,tr("Error"),tr("Share Failed"));
+    }
 }
