@@ -9,7 +9,31 @@
 */
 
 #include "communications.h"
-
+int sendint(int num, int fd) {
+    int32_t conv = htonl(num); //send safely.
+    char *data = (char*)&conv;
+    int left = sizeof(conv);
+    int rc;
+    while (left) { //write all of it.
+        rc = write(fd, data + sizeof(conv) - left, left);
+        if (rc < 0) return -1;
+        left -= rc;
+    }
+    return 0;
+}
+int receiveint(int *num, int fd) {
+    int32_t ret; //Safe int Reading
+    char *data = (char*)&ret;
+    int left = sizeof(ret);
+    int rc;
+    while (left) { //read all of it
+        ret = read(fd, data + sizeof(ret) - left, left);
+        if (ret < 0) return -1;
+        left -= ret;
+    }
+    *num = ret;
+    return 0;
+}
 //unnecessary incudes. TODO: REMOVE THESE UNNECESSARY INCLUDES.
 #include <stdio.h>
 #include <stdlib.h>
@@ -562,13 +586,75 @@ bool Communications::readToSocket_file_old(std::fstream &dest, FILE_MODE mode) {
 }
 
 bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
-    //Not gonna use poll.
+    //Not gonna use poll. //Assumes that reader is open.
+    std::string cont = "";
     char buf[FILE_TRANSFER_BUFFER_SIZE];
     memset(buf, 0 , FILE_TRANSFER_BUFFER_SIZE);
-
+    buf[0] = TRANSFER_FILE_BEGIN_CHAR;
+    buf[FILE_TRANSFER_BUFFER_SIZE-1] = '0';
+    this->writeToSocket( buf , FILE_TRANSFER_BUFFER_SIZE);
+    this->readFromSocket(cont);
+    if (!( cont == CONTINUE )) {
+        return false;
+    }
+    while( !reader.eof() ) {
+        //Read a block from the file, write it into the fstream and then write the size of the block.
+        //Read using f.gets to facilitate maintaining a counter for filedata size.
+        int blocksize = 0;
+        char filebuf[FILE_TRANSFER_BUFFER_SIZE];
+        memset( filebuf , 0, FILE_TRANSFER_BUFFER_SIZE);
+        char ch;
+        while ( (blocksize < FILE_TRANSFER_BUFFER_SIZE) && (!reader.eof() ) ) { //It breaks at eof.
+            reader.get(ch , 1); //Read one character.
+            filebuf[blocksize] = ch;
+            blocksize++;
+        }
+        filebuf[FILE_TRANSFER_BUFFER_SIZE-1] = '1'; //1 Represents more file to read.
+        //blocksize++; // for the '1' character - tells how many characters to write onto the file. nothing more.
+        //Done reading file aptly.
+        //Write file into the stream and then read a continue, then an int, then a continue.
+        this->writeToSocket( filebuf , FILE_TRANSFER_BUFFER_SIZE); //write the entire buffer. The int will convey what to read.
+        this->readFromSocket( cont ); //Read a continue.
+        //Now, write the int
+        sendint( blocksize , csock);
+        this->readFromSocket(cont);
+    }
+    buf[0] = TRANSFER_FILE_END_CHAR;
+    this->writeToSocket( buf , FILE_TRANSFER_BUFFER_SIZE);
+    return true;
 }
 
 bool Communications::readFromSocket_file( std::fstream& dest , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+    std::string cont(CONTINUE);
+    char buf[FILE_TRANSFER_BUFFER_SIZE];
+    memset(buf, 0 , FILE_TRANSFER_BUFFER_SIZE);
+    this->readFromSocket(buf , FILE_TRANSFER_BUFFER_SIZE); //Read file begin character
+    if (!( (buf[0] == TRANSFER_FILE_BEGIN_CHAR) && ( buf[FILE_TRANSFER_BUFFER_SIZE-1] == '0'))) {
+        this->writeToSocket(cont); //Write a continue.
+    }
+    bool moarfile = true; //This will be transmitted across.
+    while (moarfile) {
+        //Read a string, an int and then write those many ints into the filestream
+        char filebuf[FILE_TRANSFER_BUFFER_SIZE];
+        memset( filebuf , 0 , FILE_TRANSFER_BUFFER_SIZE);
+        this->readFromSocket(filebuf , FILE_TRANSFER_BUFFER_SIZE); //Read the buffer.
+
+        moarfile = ( filebuf[FILE_TRANSFER_BUFFER_SIZE-1] == '1');
+        if (!moarfile) {
+            //Break.
+            //If it was a '0', it means that the file was complete last time around.
+            break;
+        }
+        //Read an int
+        this->writeToSocket(cont); //Write a continue.
+        int* blocksize;
+        receiveint( blocksize , csock );
+        // write the file.
+        dest.write( filebuf , blocksize );
+        this->writeToSocket(cont); //Write a continue.
+        //Now, write the file in.
+    }
+    return true;
 }
 
 #endif
