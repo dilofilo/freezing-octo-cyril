@@ -16,7 +16,7 @@ TODO list.
 #include "serverdefinitions.h"
 #include <string>
 #include <sstream>
-
+#include <QString>
 bool Server::main_CreateDatabase(){
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setHostName(LOCAL_HOST);
@@ -89,10 +89,11 @@ bool Server::AddUser(string uID, string Password, string Server_Dir, string Clie
     if ( !db.isOpen() ) {
         db.open();
     }
+    cout << " now adding user \n";
     //Note : Server_Dir is not know at all. Fetch it from createDirectory.
     Server_Dir = SERVER_DIRECTORY;
     Server_Dir += uID; //Assert : Creates the correct server directory.
-    string myval = "VALUES(" + uID + "," + Password + "," + Server_Dir + "," + Client_Dir + ");";
+    string myval = " VALUES('" + uID + "','" + Password + "','" + Server_Dir + "','" + Client_Dir + "');";
     QSqlQuery inserter;
     string p1("INSERT INTO " );
     string p2(TABLE_NAME);
@@ -108,8 +109,8 @@ bool Server::DeleteUser(string uID) {
     QSqlQuery deletor;
     string p1("DELETE FROM ");
     string p2(TABLE_NAME);
-    string p3(" where USERNAME=");
-    string p4(";");
+    string p3(" where USERNAME='");
+    string p4("';");
     deletor.exec( (p1+p2+p3+uID+p4).c_str() );
     db.close();
     return true;
@@ -122,9 +123,9 @@ bool Server::UpdateDatabase( string uID, string Npassword){ //Change password st
     QSqlQuery deletor;
     string p1("UPDATE " );
     string p2(TABLE_NAME);
-    string p3( " SET PASSWORD=");
-    string p4("where USERNAME=");
-    string p5( ";");
+    string p3( " SET PASSWORD='");
+    string p4("' where USERNAME='");
+    string p5( "';");
     deletor.exec((p1+p2+p3+Npassword+p4+uID+p5).c_str());
     db.close();
     return true;
@@ -132,23 +133,28 @@ bool Server::UpdateDatabase( string uID, string Npassword){ //Change password st
 
 bool Server::fetchUserbyID(UserDetails &usr) {
     if ( !db.isOpen() ) {
+        cout << "database was not open\n";
         db.open();
     }
     QSqlQuery fetcher;
     string p1("SELECT USERNAME,PASSWORD,SERVER_DIR,CLIENT_DIR FROM ");
     string p2(TABLE_NAME);
-    string p3(" where USERNAME=");
-    string p4(";");
+    string p3(" where USERNAME='");
+    string p4("';");
     fetcher.exec((p1 +p2 + p3 + usr.userID + p4).c_str());
-    while ( fetcher.next() ) {
+    cout << fetcher.lastError().text().toUtf8().constData() << "\n";
+    while ( fetcher.isSelect() && fetcher.next() ) {
         //usr.userID is unchanged.
+        cout << "found a value \n";
         usr.password = fetcher.value(1).toString().toUtf8().constData();
         usr.serverDirectory = fetcher.value(2).toString().toUtf8().constData();
         usr.clientDirectory = fetcher.value(3).toString().toUtf8().constData();
         db.close();
         return true;
     }
+    cout << "didn't find a value \n";
     db.close();
+        cout << "didn't find a value EITHER \n";
     return false;
 }
 

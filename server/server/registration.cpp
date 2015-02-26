@@ -20,7 +20,8 @@ bool Server::handleRegistration() {
     conn.readFromSocket_user( newuser );
     cout << " registration details : \n id=" << newuser.userID << "\npwd=" << newuser.password << "\nclidir=" << newuser.clientDirectory << "\n";
     UserDetails temp = newuser;
-    if ( !fetchUserbyID( temp ) ) { //A user with that ID exists
+    bool found = (fetchUserbyID( temp ));
+    if ( found ) { //A user with that ID exists
         cout << "registration rejected \n";
         string reply = REGISTRATION_REJECTED;
         conn.writeToSocket(reply);
