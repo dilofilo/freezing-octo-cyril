@@ -19,7 +19,7 @@ struct UserDetails {
 #ifdef CLIENT_SIDE
     #undef CLIENT_SIDE
     #define CLIENT_SIDE
-#endif // This little bit of code is here only so that you know that the client has a definition called CLIENT_SIDE
+#endif #endif// This little bit of code is here only so that you know that the client has a definition called CLIENT_SIDE
 
 //Connection Requirements.
 #define PORT 5000
@@ -64,6 +64,10 @@ struct UserDetails {
     #define SHARE_ACCEPTED "SHARED"
     #define SHARE_REJECTED "NOSHARE"
 
+    //Unsharing
+    #define UNSHARE_REQUEST "UNSHARE"
+    #define UNSHARE_ACCEPTED "UNSHARED"
+    #define UNSHARE_REJECTED "NOUNSHARE"
 
 //Infinite Buffer Instructions.
 #define INF_TRANSFER_BEGIN_CHAR 'X'
