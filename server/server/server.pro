@@ -20,7 +20,12 @@ SOURCES += main.cpp \
     database.cpp \
     server.cpp \
     ping.cpp \
-    login.cpp
+    login.cpp \
+    registration.cpp \
+    directories.cpp \
+    upload.cpp \
+    download.cpp \
+    removal.cpp
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_LFLAGS += -std=c++11
 

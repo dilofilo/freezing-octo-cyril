@@ -10,7 +10,10 @@
 
 Server::Server() {
 	//Initialize number of clients
-    activeUserID = "";
+    user.userID = "";
+    user.password = "";
+    user.clientDirectory = "";
+    user.serverDirectory = "";
 	startServer();
 }
 
@@ -22,6 +25,7 @@ Server::~Server() {
 void Server::startServer() {
 	
 	//Initialize server-only things.
+    main_CreateDictionary();
     main_ReadDatabase();
 	ssock = socket(AF_INET, SOCK_STREAM, 0); //Server's half of the socket.
 	if ( ssock < 0 ) {
