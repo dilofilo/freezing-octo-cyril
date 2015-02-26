@@ -10,7 +10,7 @@ bool Server::handleLogin()
     string cont( CONTINUE );
     conn.writeToSocket(cont);
     struct UserDetails usr;
-    readFromSocket_user( usr );
+    conn.readFromSocket_user( usr );
     if(authenticate(usr.userID , usr.password) == true )
     {
         // Modify the struct and send it back.
@@ -26,7 +26,7 @@ bool Server::handleLogin()
         string temp;
         conn.readFromSocket( temp );
         string fail( LOGIN_REJECTED );
-        conn.write( fail );
+        conn.writeToSocket( fail );
         return false;
     }
 }

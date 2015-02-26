@@ -360,7 +360,7 @@ bool Communications::writeToSocket_user(UserDetails &usr) {
     } else {
         //Read the instruction reply and decide.
         this->readFromSocket(beginbuf , BUFFER_SIZE);
-        std::temp(beginbuf);
+        std::string temp(beginbuf);
         if ( temp == TRANSFER_USER_CONTINUE ) {
             //Continue out of this if-else block.
         } else {
@@ -372,22 +372,22 @@ bool Communications::writeToSocket_user(UserDetails &usr) {
     //write uid, read a continue.
     this->writeToSocket(temp.userID);
     this->readFromSocket(beginbuf , BUFFER_SIZE);
-    if ( !((beginbuf[0] == TRANSFER_USER_CONTINUE) && ( beginbuf[BUFFER_SIZE-1] == '0')) ) {
+    if ( strcmp(beginbuf , TRANSFER_USER_CONTINUE)!=0 ) {
         return false;
     }
     this->writeToSocket(temp.password);
     this->readFromSocket(beginbuf , BUFFER_SIZE);
-    if ( !((beginbuf[0] == TRANSFER_USER_CONTINUE) && ( beginbuf[BUFFER_SIZE-1] == '0')) ) {
+    if ( strcmp(beginbuf , TRANSFER_USER_CONTINUE)!=0 ) {
         return false;
     }
     this->writeToSocket(temp.clientDirectory);
     this->readFromSocket(beginbuf , BUFFER_SIZE);
-    if ( !((beginbuf[0] == TRANSFER_USER_CONTINUE) && ( beginbuf[BUFFER_SIZE-1] == '0')) ) {
+    if ( strcmp(beginbuf , TRANSFER_USER_CONTINUE)!=0 ) {
         return false;
     }
     this->writeToSocket(temp.serverDirectory);
     this->readFromSocket(beginbuf , BUFFER_SIZE);
-    if ( !((beginbuf[0] == TRANSFER_USER_CONTINUE) && ( beginbuf[BUFFER_SIZE-1] == '0')) ) {
+    if ( strcmp(beginbuf , TRANSFER_USER_CONTINUE)!=0 ) {
         return false;
     }
     //Write continue.
@@ -443,7 +443,7 @@ bool Communications::readFromSocket_user(UserDetails &usr) {
 
 //File Handling
 
-bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+bool Communications::writeToSocket_file_old( std::fstream& reader , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
     //Assumes that C_TO_S_FILE has been written and stuff.
     char buf[FILE_TRANSFER_BUFFER_SIZE];
     memset( buf , 0, FILE_TRANSFER_BUFFER_SIZE);
@@ -478,7 +478,7 @@ bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) 
             continue;
         } else {
             if ( wPoll.revents & POLLOUT ) {
-                rv = write( &csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+                rv = write( csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
                 memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
             } else {
                 continue;
@@ -504,13 +504,13 @@ bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) 
     if ( rv < 0 ) {
         return false;
     } else if( rv==0) {
-        continue;
+        return false;
     } else {
         if ( wPoll.revents & POLLOUT ) {
-            rv = write( &csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+            rv = write( csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
             memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
         } else {
-            continue;
+            return false;
         }
     }
 
@@ -528,7 +528,7 @@ bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) 
     return this->writeToSocket( buf , FILE_TRANSFER_BUFFER_SIZE);
 } //reader should be closed by the supplier of the program.
 
-bool Communications::readToSocket_file(std::fstream &dest, FILE_MODE mode) {
+bool Communications::readToSocket_file_old(std::fstream &dest, FILE_MODE mode) {
     /*
      *READ: the file transfer char, write continue, read into the dest until the read value is not a file wali thing.
     */
@@ -559,6 +559,16 @@ bool Communications::readToSocket_file(std::fstream &dest, FILE_MODE mode) {
         }
     }
     //End of transfer has been read already.
+}
+
+bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+    //Not gonna use poll.
+    char buf[FILE_TRANSFER_BUFFER_SIZE];
+    memset(buf, 0 , FILE_TRANSFER_BUFFER_SIZE);
+
+}
+
+bool Communications::readFromSocket_file( std::fstream& dest , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
 }
 
 #endif

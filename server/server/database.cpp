@@ -9,9 +9,9 @@ TODO list.
 #include "server.h"
 #include "serverdefinitions.h"
 #include <string>
-#include "sqlite3.h"
+#include "SQL/sqlite3.h"
 
-static int Server::callback(void *NotUsed, int argc, char **argv, char **azColName){
+static int callback(void *NotUsed, int argc, char **argv, char **azColName){
    int i;
    for(i=0; i<argc; i++){
       printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
@@ -20,16 +20,13 @@ static int Server::callback(void *NotUsed, int argc, char **argv, char **azColNa
    return 0;
 }
 
-static int CreateHashTable(void *NotUsed, int argc, char **argv, char **azColName){
-//    int i;
-//    for(i=0; i<argc; i++){
-//       printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
-//    }
-
+static int CreateHashTable(void *NotUsed, int argc, char **argv, char **azColName ){
     // Insert azColName[0] and azColName[1] in the hash table
 
-    userDetails[azColName[0]] = azColName[1];   // Check if it works.
-
+    std::string u(azColName[0]); //username
+    std::string p(azColName[1]); //password
+    //    std::pair<std::string , UserDetails> us(u,p);
+    userDetails[u] = p; //.insert(us);   // Check if it works.
     return 0;
  }
 
@@ -51,7 +48,7 @@ bool Server::main_CreateDatabase(){
    sqlite3_close(db);
 }
 
-bool Server::CreateTable(){
+bool CreateTable(){
 
     sqlite3 *db;
     char *zErrMsg = 0;
@@ -59,7 +56,7 @@ bool Server::CreateTable(){
     char *sql;
 
     /* Open database */
-    rc = sqlite3_open("DATABASE", &db);
+    rc = sqlite3_open(DATABASE, &db);
     if( rc ){
        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
        exit(0);
@@ -108,7 +105,8 @@ bool Server::AddUser(string uID, string Password, string Server_Dir, string Clie
 
    /* Create SQL statement */
    string sqlTemp = "INSERT INTO SERVER_RECORDS (USERNAME,PASSWORD,SERVER_DIR,CLIENT_DIR) " + myval;
-  sql = sqlTemp.c_str();
+   sql = (char*)malloc(sizeof(char)*(sqlTemp.size()));
+   sqlTemp.copy(sql , sqlTemp.size()); //Valid copy. c_str returns a const char*, not a char*
 
    /* Execute SQL statement */
    rc = sqlite3_exec(db, sql, callback, 0, &zErrMsg);
@@ -119,9 +117,11 @@ bool Server::AddUser(string uID, string Password, string Server_Dir, string Clie
       fprintf(stdout, "Records created successfully\n");
       userDetails[uID] = Password;
       sqlite3_close(db);
+      free(sql);
       return 1;
    }
    sqlite3_close(db);
+   free(sql);
    return 0;
 }
 
@@ -145,7 +145,8 @@ bool Server::DeleteUser(string uID){
     /* Create merged SQL statement */
 
     string del = "DELETE from SERVER_RECORDS where USERNAME=" + uID + ";" + "SELECT * from COMPANY";    // delete the user and print the table
-     sql = del.c_str();
+    sql = (char*)malloc(sizeof(char)*(del.size()));
+    del.copy(sql , del.size()); //Valid copy. c_str returns a const char*, not a char*
 
     /* Execute SQL statement */
     rc = sqlite3_exec(db, sql, callback, (void*)data, &zErrMsg);
@@ -156,6 +157,7 @@ bool Server::DeleteUser(string uID){
        fprintf(stdout, "Operation done successfully\n");
     }
     sqlite3_close(db);
+    free(sql);
 }
 
 bool UpdateDatabase( string uID, string Npassword){
@@ -192,18 +194,6 @@ bool UpdateDatabase( string uID, string Npassword){
 
 }
 
-bool Server::main_ReadDatabase() { //The structure of the reading.
-    if( main_GetAdmin() ) {
-        if (main_ReadUsers()) {
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        return false;
-    }
-}
-
 bool Server::fetchUserbyID( UserDetails& temp ){
 
     sqlite3 *db;
@@ -235,9 +225,8 @@ bool Server::fetchUserbyID( UserDetails& temp ){
     }
     sqlite3_close(db);
 
- }
-
 }
+
 
 
 bool Server::main_CreateDictionary(){
@@ -286,11 +275,9 @@ bool Server::authenticate(std::string userid , std::string passwd) {
     int rc = sqlite3_open("DATABASE", &db);
 
     if (rc != SQLITE_OK) {
-
         fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
         sqlite3_close(db);
-
-        return 1;
+        return false;
     }
 
     char *sql = "SELECT USERNAME, PASSWORD FROM SERVER_RECORDS WHERE USERNAME = @USER";
@@ -298,34 +285,29 @@ bool Server::authenticate(std::string userid , std::string passwd) {
     rc = sqlite3_prepare_v2(db, sql, -1, &res, 0);
 
     if (rc == SQLITE_OK) {
-
-    int idx = sqlite3_bind_parameter_index(res, "@USER");
-    sqlite3_bind_int(res, idx, userid);
-
+        int idx = sqlite3_bind_parameter_index(res, "@USER");
+        sqlite3_bind_text(res, idx, userid.c_str());
     } else {
-
         fprintf(stderr, "Username Does Not exist. %s\n", sqlite3_errmsg(db));
-        return 0;
+        return false;
     }
 
     int step = sqlite3_step(res);
 
     if (step == SQLITE_ROW) {
-        string temp(sqlite3_column_text(res, 1));
+        std::string temp((char*)sqlite3_column_text(res, 1));
         if(temp.compare(passwd) == 0){
             sqlite3_finalize(res);
             sqlite3_close(db);
-            return 1;
+            return true;
         }
-
-        return 0;
-
+        sqlite3_finalize(res);
+        sqlite3_close(db);
+        return false;
     }
 
     sqlite3_finalize(res);
     sqlite3_close(db);
-    
-    
     return false;
 }
 

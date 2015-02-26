@@ -24,6 +24,9 @@ using namespace std;
 #include "serverdefinitions.h"
 #include "../../common/instructions.h" //must have.
 #include "../../common/communications.h" //another must have.
+
+unordered_map< std::string , std::string > userDetails; //Effectively part of the class Server. Kept outside because sqlite3
+
 class Server{
 private:
 
@@ -31,7 +34,6 @@ private:
 	int port;
     int clientLength;
 	std::string tempPW;
-    unordered_map< std::string , struct UserDetails > userDetails;
 	struct sockaddr_in serverAddr;
 	struct sockaddr_in clientAddr;
     char clienturl[CLIENT_URL_LEN];
@@ -71,10 +73,18 @@ private:
         bool main_getAdmin();//database.cpp
         bool main_ReadUsers();//database.cpp
         bool updateDatabase(UserDetails user, EDIT_MODE mode);//database.cpp
+        //int callback(void *NotUsed, int argc, char **argv, char **azColName);//database.cpp
+        //bool CreateTable();
+        bool AddUser(string uID, string Password, string Server_Dir, string Client_Dir);
+        bool DeleteUser(string uID);
+        bool main_CreateDictionary();
+
+        //static int CreateHashTable(void *NotUsed, int argc, char **argv, char **azColName);//database.cpp
+
         bool authenticate(std::string userid, std::string passwd); // Takes userId, password as plain strings and compares against database.
         bool createNewUser( UserDetails& usr ); //register.cpp
 
-        bool createUserDirectory( userDetails& usr); //directories.cpp
+        bool createUserDirectory( UserDetails& usr); //directories.cpp
         bool makeAdminDirectory(); //directories.cpp
 public:
     Server();
