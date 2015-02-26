@@ -34,6 +34,7 @@ enum SECURITY {
 };
 
 enum FILE_MODE { NEW_FILE , DIFF_FILE , REMOTE_DIFF};
+
 class Communications {
 private:
     Socket csock;

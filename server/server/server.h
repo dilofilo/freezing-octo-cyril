@@ -14,6 +14,7 @@ using namespace std;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include "arpa/inet.h"
+#include <QtSql/QtSql>
 
 //Other stuff.
 #include <vector>
@@ -21,11 +22,15 @@ using namespace std;
 #include <poll.h>
 #include <fstream>
 
+//QtSql stuff
+#include <QtSql/QtSql>
+#include <QtSql/QSqlDatabase>
+#include <QSqlError>
+
 #include "serverdefinitions.h"
 #include "../../common/instructions.h" //must have.
 #include "../../common/communications.h" //another must have.
 
-unordered_map< std::string , std::string > userDetails; //Effectively part of the class Server. Kept outside because sqlite3
 
 class Server{
 private:
@@ -40,6 +45,8 @@ private:
 	Socket ssock;
 	Socket csock;	
     Communications conn; //In true SQL style. Created in getClient() function for child process.
+    QSqlDatabase db; //Database.
+    unordered_map< std::string , UserDetails > userDetails; //Effectively part of the class Server. Kept outside because sqlite3
 
     //Starting it up. server.cpp
 	void startServer(); //Initializes serverAddr.
@@ -60,18 +67,21 @@ private:
         bool handleShare(); //share.cpp
         bool handleUnshare(); //share.cpp
 		
-        //removal.cpp
-        bool removeFile( string filename, string dir);
+
+        bool removeFile( string filename);//removal.cpp
+
+
 
         //database.cpp :
+        bool CreateTable(); //database.cpp
         bool fetchUserbyID( UserDetails& usr ); //Returns false is no such user is present
         bool main_CreateDatabase(); //db.cpp
-        bool main_CreateTable();
         bool main_AddUser(string uID, string Password, string Server_Dir, string Client_Dir);
         bool main_DeleteUser(string uID);
+        bool UpdateDatabase(std::string uid, std::string pwd); //database.cpp
         bool main_ReadDatabase(); //database.cpp
         bool main_getAdmin();//database.cpp
-        bool main_ReadUsers();//database.cpp
+        //bool main_ReadUsers();//database.cpp
         bool updateDatabase(UserDetails user, EDIT_MODE mode);//database.cpp
         //int callback(void *NotUsed, int argc, char **argv, char **azColName);//database.cpp
         //bool CreateTable();
@@ -84,8 +94,12 @@ private:
         bool authenticate(std::string userid, std::string passwd); // Takes userId, password as plain strings and compares against database.
         bool createNewUser( UserDetails& usr ); //register.cpp
 
+        //upload.cpp
+        bool getFilestream( std::fstream& reader , std::string& _filename);
+        std::string processFileName( std::string filename);//Decides where the filename has to go.
         bool createUserDirectory( UserDetails& usr); //directories.cpp
         bool makeAdminDirectory(); //directories.cpp
+
 public:
     Server();
 	~Server();

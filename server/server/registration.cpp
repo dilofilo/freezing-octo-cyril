@@ -31,7 +31,7 @@ bool Server::createNewUser( UserDetails& newuser ) {
      * TODO : Add it to user database
      *Create Directory for him on the server side.
     */
-    this->AddUser(newuser.userID, newuser.password, newuser.ServerDirectory, newuser.ClientDirectory); //Added to database.
+    this->AddUser(newuser.userID, newuser.password, newuser.serverDirectory, newuser.clientDirectory); //Added to database.
     this->createUserDirectory( newuser );
     return true;
 }

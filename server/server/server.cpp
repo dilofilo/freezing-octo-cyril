@@ -7,6 +7,9 @@
 #include "ping.cpp"
 #include "database.cpp"
 #include "login.cpp"
+#include "upload.cpp"
+#include "download.cpp"
+#include "removal.cpp"
 
 Server::Server() {
 	//Initialize number of clients
@@ -25,8 +28,8 @@ Server::~Server() {
 void Server::startServer() {
 	
 	//Initialize server-only things.
+    main_CreateDatabase();
     main_CreateDictionary();
-    main_ReadDatabase();
 	ssock = socket(AF_INET, SOCK_STREAM, 0); //Server's half of the socket.
 	if ( ssock < 0 ) {
 		//Connection failed.

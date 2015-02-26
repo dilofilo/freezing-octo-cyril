@@ -28,7 +28,7 @@ bool Client::handleRegistration() { //Just registration, dont need to remember d
 
 bool Client::registrationRequest( std::string uid , std::string pw , std::string clidir) {
     std::string temp(REGISTRATION_REQUEST);
-    conn.writeToSocket(temp);
+    conn.writeToSocket(temp); //Send the request.
     //Write to the socket.
     //sendRegistrationDetails()
 

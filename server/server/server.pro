@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 QT       += core
-
+QT	 += sql
 QT       -= gui
 
 TARGET = server
@@ -25,7 +25,10 @@ SOURCES += main.cpp \
     directories.cpp \
     upload.cpp \
     download.cpp \
-    removal.cpp
+    removal.cpp \
+    sync.cpp \
+    share.cpp \
+    revert.cpp
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_LFLAGS += -std=c++11
 

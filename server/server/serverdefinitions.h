@@ -3,9 +3,16 @@
 
 enum EDIT_MODE { EDIT , NEW };
 
+#define TEMPPREFIX "temp"
+#define LOCAL_HOST "127.0.0.1"
+#define TABLE_NAME "USERDB"
 #define SERVER_DIRECTORY "server/Directories/"
 #define DATABASE "server/Records.db"
     //This is the beginning for all user base directories.
+#define MYFILES "myfiles.txt"
+#define SHARED_WITH_ME "filesin.txt"
+#define FILES_I_SHARED "filesout.txt"
+#define TEMP "temp.txt"
 #define ADMIN_ID "dilofilo"
 #define ADMIN_PW "lolpw"
     //I wish the admin password could be secured in a better manner, but thats alright.
