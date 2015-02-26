@@ -373,7 +373,7 @@ bool Communications::writeToSocket_user(UserDetails &usr) {
      *write TRANSFER_BEGIN
      *read the appropriate reply.
     */
-    UserDetails temp = usr;
+    UserDetails tempusr = usr;
     char beginbuf[BUFFER_SIZE];
     memset(beginbuf , 0 , BUFFER_SIZE);
     beginbuf[0] = TRANSFER_USER_BEGIN_CHAR;
@@ -394,22 +394,26 @@ bool Communications::writeToSocket_user(UserDetails &usr) {
 
     //Continue the transfer.
     //write uid, read a continue.
-    this->writeToSocket(temp.userID);
+    memset(beginbuf , 0 , BUFFER_SIZE);
+    this->writeToSocket(tempusr.userID);
     this->readFromSocket(beginbuf , BUFFER_SIZE);
     if ( strcmp(beginbuf , TRANSFER_USER_CONTINUE)!=0 ) {
         return false;
     }
-    this->writeToSocket(temp.password);
+    memset(beginbuf , 0 , BUFFER_SIZE);
+    this->writeToSocket(tempusr.password);
     this->readFromSocket(beginbuf , BUFFER_SIZE);
     if ( strcmp(beginbuf , TRANSFER_USER_CONTINUE)!=0 ) {
         return false;
     }
-    this->writeToSocket(temp.clientDirectory);
+    memset(beginbuf , 0 , BUFFER_SIZE);
+    this->writeToSocket(tempusr.clientDirectory);
     this->readFromSocket(beginbuf , BUFFER_SIZE);
     if ( strcmp(beginbuf , TRANSFER_USER_CONTINUE)!=0 ) {
         return false;
     }
-    this->writeToSocket(temp.serverDirectory);
+    memset(beginbuf , 0 , BUFFER_SIZE);
+    this->writeToSocket(tempusr.serverDirectory);
     this->readFromSocket(beginbuf , BUFFER_SIZE);
     if ( strcmp(beginbuf , TRANSFER_USER_CONTINUE)!=0 ) {
         return false;
@@ -432,7 +436,7 @@ bool Communications::readFromSocket_user(UserDetails &usr) {
     memset( buf , 0, BUFFER_SIZE);
     bool rv = this->readFromSocket( buf , BUFFER_SIZE);
 
-    if ( !rv || ( buf[0] != TRANSFER_USER_BEGIN_CHAR ) || (buf[BUFFER_SIZE-1] != '0') ) {
+    if ( (!rv) || ( buf[0] != TRANSFER_USER_BEGIN_CHAR ) || (buf[BUFFER_SIZE-1] != '0') ) {
         return false;
     } else {
         //write the transfer request.
@@ -460,13 +464,14 @@ bool Communications::readFromSocket_user(UserDetails &usr) {
 
     memset( buf , 0, BUFFER_SIZE);
     rv = this->readFromSocket( buf , BUFFER_SIZE);
-    if ( rv && (buf[0] == TRANSFER_USER_END_CHAR) && (buf[0] == '0') ) {
+    if ( rv && (buf[0] == TRANSFER_USER_END_CHAR) && (buf[BUFFER_SIZE-1] == '0') ) {
         usr.userID = uid;
         usr.password = pwd;
         usr.clientDirectory = clidir;
         usr.serverDirectory = serdir;
         return true;
     } //Done.
+    return false;
 }
 
 //File Handling
