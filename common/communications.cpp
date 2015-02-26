@@ -552,7 +552,7 @@ bool Communications::writeToSocket_file_old( std::fstream& reader , FILE_MODE mo
     return this->writeToSocket( buf , FILE_TRANSFER_BUFFER_SIZE);
 } //reader should be closed by the supplier of the program.
 
-bool Communications::readToSocket_file_old(std::fstream &dest, FILE_MODE mode) {
+bool Communications::readFromSocket_file_old(std::fstream &dest, FILE_MODE mode) {
     /*
      *READ: the file transfer char, write continue, read into the dest until the read value is not a file wali thing.
     */
@@ -603,10 +603,10 @@ bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) 
         int blocksize = 0;
         char filebuf[FILE_TRANSFER_BUFFER_SIZE];
         memset( filebuf , 0, FILE_TRANSFER_BUFFER_SIZE);
-        char ch;
+        char* ch;
         while ( (blocksize < FILE_TRANSFER_BUFFER_SIZE) && (!reader.eof() ) ) { //It breaks at eof.
             reader.get(ch , 1); //Read one character.
-            filebuf[blocksize] = ch;
+            filebuf[blocksize] = *ch;
             blocksize++;
         }
         filebuf[FILE_TRANSFER_BUFFER_SIZE-1] = '1'; //1 Represents more file to read.
@@ -650,7 +650,7 @@ bool Communications::readFromSocket_file( std::fstream& dest , FILE_MODE mode) {
         int* blocksize;
         receiveint( blocksize , csock );
         // write the file.
-        dest.write( filebuf , blocksize );
+        dest.write( filebuf , *blocksize );
         this->writeToSocket(cont); //Write a continue.
         //Now, write the file in.
     }
