@@ -7,9 +7,9 @@
 
 bool Client::handleUpload() {
     //Assume that file name is given in data.
-    if (data.filetype == NEW) {
+    if (data.filetype == NEW_FILE) {
         return this->uploadNewFile();
-    } else if (data.filetype == DIFF ) {
+    } else if (data.filetype == DIFF_FILE ) {
         return this->uploadDiffFile();
     } else if ( data.filetype == REMOTE_DIFF ) {
         return this->uploadRemoteDiff();
@@ -21,8 +21,7 @@ bool Client::uploadNewFile() {
     //ASSERT : data.filetype == FILE_TYPE_NEW
     std::string filename = this->data.filename;
     std::fstream reader( filename );
-    std::string
-    return conn.writeToSocket_file( reader , NEW);
+    return conn.writeToSocket_file( reader , NEW_FILE);
 }
 
 bool Client::uploadDiffFile() {
@@ -32,7 +31,7 @@ bool Client::uploadDiffFile() {
     */
     std::string filename = this->data.filename;
     std::fstream reader( filename );
-    return conn.writeToSocket_file( reader , DIFF);
+    return conn.writeToSocket_file( reader , DIFF_FILE);
 
 }
 

@@ -19,7 +19,7 @@ RegisterPage::RegisterPage(Client* _client , Socket& _csock) {
 
 RegisterPage::~RegisterPage()
 {
-    this->client->exit();
+    this->client->handleExit();
     delete ui;
 }
 

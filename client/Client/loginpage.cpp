@@ -20,7 +20,7 @@ LoginPage::LoginPage(Client * _client , Socket& _csock) : ui(new Ui::LoginPage) 
 
 LoginPage::~LoginPage()
 {
-    this->client->exit();
+    this->client->handleExit();
     delete ui;
 }
 
@@ -53,7 +53,7 @@ void LoginPage::on_btn_login_clicked()
 {
     //Set the data.
 
-    this->client->data->user.userID = (this->ui->txt_username)->text().toUtf8().constData();
-    this->client->user.password = (this->ui->txt_password)->text().toUtf8().constData();
+    this->client->data.user.userID = (this->ui->txt_username)->text().toUtf8().constData();
+    this->client->data.user.password = (this->ui->txt_password)->text().toUtf8().constData();
     this->client->eventHandler(LOGIN_TO_MAIN);
 }

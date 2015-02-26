@@ -29,7 +29,7 @@ DropBox::DropBox(QWidget *parent) :
 
 DropBox::~DropBox()
 {
-    this->client->exit();
+    this->client->handleExit();
     delete ui;
 }
 
@@ -178,7 +178,7 @@ void DropBox::on_btnUnshare_clicked()
     this->client->data.filename = model->filePath(this->ui->clientTreeWidget->currentIndex()).toUtf8().constData();//this is a model index, convert to string
     this->client->data.type = FILE_UNSHARE;
     QString userName= QInputDialog::getText(this,"User Name","Enter a Name");
-    this->client->data.other_user.userID = userName;
+    this->client->data.other_user.userID = userName.toUtf8().constData();
 
     bool reply= this->client->eventHandler( FILE_UNSHARE);
 

@@ -6,4 +6,8 @@ bool Client::handleShare() {
     return true;
 }
 
+bool Client::handleUnshare() {
+    return true;
+}
+
 #endif

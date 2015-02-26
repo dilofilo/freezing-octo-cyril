@@ -89,7 +89,7 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
                this->handleExit();
     } else { // to server
         //Assume exitting.
-        this->exit();
+        this->handleExit();
     }
 }
 
@@ -98,7 +98,7 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
 */
 
 
-void Client::exit() {
+void Client::handleExit() {
     std::string temp(EXIT_REQUEST);
     conn.writeToSocket( temp );
     ::close(csock);

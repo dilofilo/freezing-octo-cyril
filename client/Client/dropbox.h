@@ -37,8 +37,8 @@ private slots:
     void on_btnMake_clicked();
 
     void on_btnDelete_clicked();
-
-
+    void on_btnUnshare_clicked();
+    void on_btnConfirmRevert_clicked();
 
     void on_btnSearch_clicked();
 
@@ -55,8 +55,6 @@ private slots:
     void on_btnRemove_clicked();
 
     void on_btnShare_clicked();
-
-    void on_pushButton_5_clicked();
 
 private:
     Client* client;

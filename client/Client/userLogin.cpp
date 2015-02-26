@@ -36,7 +36,7 @@ bool Client::handleLogout() {
     if ( this->dropboxpage != NULL ) { //possible segfault.
         delete this->dropboxpage;
     }
-    this->exitRequest();
+    this->handleExit();
     ::close(csock);
     this->show(); //Back to the square one.
     return true;

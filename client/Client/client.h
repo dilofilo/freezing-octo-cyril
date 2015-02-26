@@ -64,10 +64,9 @@ public:
         bool handleSync(); //sync.cpp
         bool handleRevert(); //revert.cpp
         bool handleShare(); //share.cpp
+        bool handleUnshare(); //share.cpp
         bool handleSearch(); //search.cpp
-        void exitRequest(); //client.cpp
-    //Adverse
-    void exit();
+        void handleExit(); // client.cpp
 private slots:
     void on_btn_launch_clicked();
 
@@ -104,7 +103,7 @@ private:
         //Auxillary Functions.
         //Login, Registration
         bool registrationRequest( std::string _user , std::string _pw , std::string _dir);
-        bool sendLogin(std::string _user , std::string _pw , std::string _dir);
+        bool sendLogin( std::string& _user , std::string& _pw , std::string& _dir);
 
         //Directory Handling.
         bool handleDirectory(); //Handles the client side directory and file system.
