@@ -199,33 +199,55 @@ bool UpdateDatabase( string uID, string Npassword){
 bool Server::fetchUserbyID( UserDetails& temp ){
 
     sqlite3 *db;
-    char *zErrMsg = 0;
-    int rc;
+    char *err_msg = 0;
+    sqlite3_stmt *res;
+
+    int rc = sqlite3_open("DATABASE", &db);
+
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "Cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
+        return false;
+    }
+
     char *sql;
-    const char* data = "Callback function called";
+    string query = "SELECT USERNAME, FROM SERVER_RECORDS WHERE USERNAME =" + userid + ";";
 
-    /* Open database */
-    rc = sqlite3_open("DATABASE", &db);
-    if( rc ){
-       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
-       exit(0);
-    }else{
-       fprintf(stderr, "Opened database successfully\n");
-    }
+    sqlite3_stmt *statement;
 
-    /* Create SQL statement */
-    sql = "SELECT * from SERVER_RECORDS";
 
-    /* Execute SQL statement */
-    rc = sqlite3_exec(db, sql, CreateHashTable, (void*)data, &zErrMsg);
+    if ( sqlite3_prepare( DATABASE, query.c_str(), -1, &statement, 0 ) == SQLITE_OK )
+       {
+           int ctotal = sqlite3_column_count(statement);
+           int res = 0;
+           int count = 0;
+           while ( 1 )
+           {
+               res = sqlite3_step(statement);
 
-    if( rc != SQLITE_OK ){
-       fprintf(stderr, "SQL error: %s\n", zErrMsg);
-       sqlite3_free(zErrMsg);
-    }else{
-       fprintf(stdout, "Operation done successfully\n");
-    }
+               if ( res == SQLITE_ROW )
+               {
+                   count++
+               }
+
+               if ( res == SQLITE_DONE || res==SQLITE_ERROR)
+               {
+                   break;
+               }
+           }
+
+           if(count == 0 ){
+               cout<<"Authenticated"<<endl;
+               sqlite3_finalize(res);
+               sqlite3_close(db);
+               return true;
+           }
+       }
+
+
+    sqlite3_finalize(res);
     sqlite3_close(db);
+    return false;
 
 }
 
@@ -288,7 +310,7 @@ bool Server::authenticate(std::string userid , std::string passwd) {
     sqlite3_stmt *statement;
 
 
-       if ( sqlite3_prepare( DATABASE, query, -1, &statement, 0 ) == SQLITE_OK )
+    if ( sqlite3_prepare( DATABASE, query.c_str(), -1, &statement, 0 ) == SQLITE_OK )
        {
            int ctotal = sqlite3_column_count(statement);
            int res = 0;
