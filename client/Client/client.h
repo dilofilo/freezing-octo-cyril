@@ -59,6 +59,7 @@ public:
         bool handleLogout(); //userLogin.cpp
         bool handleUpload(); //fileUpload.cpp
         bool handleDownload(); //fileDownload.cpp
+        //bool handleDownloadAll();
         bool handleRemove(); //fileRemove.cpp
         bool handleSync(); //sync.cpp
         bool handleRevert(); //revert.cpp
@@ -100,9 +101,27 @@ private:
         //Main pages.
 
         //Auxillary Functions.
+        //Login, Registration
         bool registrationRequest( std::string _user , std::string _pw , std::string _dir);
         bool sendLogin(std::string _user , std::string _pw , std::string _dir);
 
+        //Directory Handling.
+        bool handleDirectory(); //Handles the client side directory and file system.
+
+        //File Upload
+        bool uploadNewFile();
+        bool uploadDiffFile();
+        bool uploadRemoteDiff();
+
+        //File Download.
+
+        //File Remove - from server directory.
+
+        //File Sync - Need a history file.
+
+        //File Share.
+
+        //File Revert
 };
 
 #endif // CLIENT_H

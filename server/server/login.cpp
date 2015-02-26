@@ -5,15 +5,14 @@
 #include"../../common/instructions.h"
 #include <string>
 
-bool Server::getUserdetails(  )
+bool Server::handleLogin()
 {
     string cont( CONTINUE );
-    conn.writeToSocket(s);
+    conn.writeToSocket(cont);
     struct UserDetails usr;
     readFromSocket_user( usr );
     if(authenticate(usr.userID , usr.password) == true )
     {
-
         // Modify the struct and send it back.
         string temp;
         conn.readFromSocket( temp );
@@ -21,8 +20,6 @@ bool Server::getUserdetails(  )
             string acc (LOGIN_ACCEPTED);
             conn.writeToSocket(acc);
         }
-
-
     }
     else{
         conn.writeToSocket_user( usr );
@@ -34,5 +31,14 @@ bool Server::getUserdetails(  )
     }
 }
 
+bool Server::handleLogout() {
+    //Forget user details.
+    this->user.userID = "";
+    this->user.clientDirectory = "";
+    this->user.password = "";
+    this->user.serverDirectory = "";
+    return true;
+    //Done.
+}
 
 #endif

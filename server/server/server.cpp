@@ -10,7 +10,10 @@
 
 Server::Server() {
 	//Initialize number of clients
-    activeUserID = "";
+    user.userID = "";
+    user.password = "";
+    user.clientDirectory = "";
+    user.serverDirectory = "";
 	startServer();
 }
 
@@ -22,6 +25,7 @@ Server::~Server() {
 void Server::startServer() {
 	
 	//Initialize server-only things.
+    main_CreateDictionary();
     main_ReadDatabase();
 	ssock = socket(AF_INET, SOCK_STREAM, 0); //Server's half of the socket.
 	if ( ssock < 0 ) {
@@ -115,18 +119,28 @@ bool Server::handleInstruction(std::string& instr) {
         cout << "detected ping request \n";
         return handlePing();
     }else if( instr == REGISTRATION_REQUEST ) {
-
+        return handleRegistration();
     }else if( instr == LOGIN_REQUEST ){
-
-    }else if( instr == C_TO_S_FILE ){
-
-    }else if( instr == S_TO_C_FILE ){
-
-    }else if ( instr == EXIT_REQUEST ){
-        close(csock);
-        return true;
+        return handleLogin();
+    }else if( instr == LOGOUT ){
+        return handleLogout();
+    }else if( instr == C_TO_S_FILE ){ //File upload ( to server )
+        return handleUpload();
+    }else if( instr == S_TO_C_FILE ){ //File download (from server)
+        return handleDownload();
+    }else if( instr == REMOVE_REQUEST ){ //Remove File from Server - and all its databses.
+        return handleRemoveFile();
+    }else if( instr == SYNC_REQUEST ){ //
+        return handleSync();
+    }else if( instr == REVERT_REQUEST ){
+        return handleRevert();
+    }else if( instr == SHARE_REQUEST ){
+        return handleShare();
     }else if( instr == UNSHARE_REQUEST ){
-
+        return handleUnshare();
+    }else if ( instr == EXIT_REQUEST ){
+        ::close(csock);
+        return true;
     }else {
         return false;
     }

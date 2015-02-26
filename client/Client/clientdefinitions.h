@@ -4,7 +4,7 @@
 #include <string>
 #include <string.h>
 #include "../../common/instructions.h" //includes UserDetails.
-
+#include "../../common/communications.h"
 //This enum is used to trigger events of the client.
 enum INSTRUCTION_TYPE {
     // Page Navigation
@@ -24,7 +24,8 @@ enum INSTRUCTION_TYPE {
     SYNC, //synchronize button
     REMOVE_FILE, //remove file button
     REVERT, //Revert button
-    FILE_SHARE //share button
+    FILE_SHARE, //share button
+    FILE_UNSHARE // unshare button
 };
 
 struct InstructionData {
@@ -32,6 +33,7 @@ struct InstructionData {
     UserDetails user;
     std::string filename;
     UserDetails other_user;
+    FILE_MODE filetype;
     //Add more as required.
 };
 

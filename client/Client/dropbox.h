@@ -39,6 +39,10 @@ private slots:
 
 
 
+    void on_btnSearch_clicked();
+
+    void on_btnUpload_clicked();
+
 private:
     Client* client;
     Socket csock;

@@ -5,7 +5,7 @@
     Defines functions for the class Communicaitons defined in communicaitons.h
     Sorry for the eye-sore lines in Qt's vim(dark) theme.
     Also, uint was used instead of int because Qt things that (uint == int) is a scary prospect.
-
+    Poll was used instead of select because there are practically no differences. Except that we already had some experience testing out poll.
 */
 
 #include "communications.h"
@@ -439,6 +439,126 @@ bool Communications::readFromSocket_user(UserDetails &usr) {
     if ( rv && (buf[0] == TRANSFER_USER_END_CHAR) && (buf[0] == '0') ) {
         return true;
     } //Done.
+}
+
+//File Handling
+
+bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+    //Assumes that C_TO_S_FILE has been written and stuff.
+    char buf[FILE_TRANSFER_BUFFER_SIZE];
+    memset( buf , 0, FILE_TRANSFER_BUFFER_SIZE);
+    buf[0] = TRANSFER_FILE_BEGIN_CHAR;
+    buf[FILE_TRANSFER_BUFFER_SIZE-1] = '0';
+    this->writeToSocket( buf , FILE_TRANSFER_BUFFER_SIZE);
+    std::string cont="";
+    this->readFromSocket(cont);
+    if ( cont!= CONTINUE) {
+        return false;
+    } //Sanity check.
+    cont = "";
+
+
+    char towrite[FILE_TRANSFER_BUFFER_SIZE];
+    memset( towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
+    //Read FILE_TRANSFER_BUFFER_SIZE Characters.
+    reader.read( towrite , (FILE_TRANSFER_BUFFER_SIZE-1) );
+    towrite[FILE_TRANSFER_BUFFER_SIZE-1] = '1'; //Keep Going.
+
+    //File Writing part.
+    while(!reader.eof()) {
+        //Don't care about missing bits due to write().
+
+        struct pollfd wPoll;
+            wPoll.fd = csock;
+            wPoll.events = POLLOUT;
+        int rv  = poll( &wPoll , 1 ,POLL_TIMEOUT);
+        if ( rv < 0 ) {
+            return false;
+        } else if( rv==0) {
+            continue;
+        } else {
+            if ( wPoll.revents & POLLOUT ) {
+                rv = write( &csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+                memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
+            } else {
+                continue;
+            }
+        }
+
+        //Need to read continue - as a string.
+        this->readFromSocket(cont);
+        if ( cont!= CONTINUE) { //Wierd error.
+            return false;
+        } //Could have used TRANSFER_FILE_CONTINUE but that has been deprecated.
+        cont="";
+        //Read FILE_TRANSFER_BUFFER_SIZE Characters.
+        reader.read( towrite , (FILE_TRANSFER_BUFFER_SIZE-1) );
+        towrite[FILE_TRANSFER_BUFFER_SIZE-1] = '1'; //Keep Going.
+    }
+
+    //This code is here because the while loop reads the last bit without sending it.
+    struct pollfd wPoll;
+        wPoll.fd = csock;
+        wPoll.events = POLLOUT;
+    int rv  = poll( &wPoll , 1 ,POLL_TIMEOUT);
+    if ( rv < 0 ) {
+        return false;
+    } else if( rv==0) {
+        continue;
+    } else {
+        if ( wPoll.revents & POLLOUT ) {
+            rv = write( &csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+            memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
+        } else {
+            continue;
+        }
+    }
+
+    //Need to read continue - as a string.
+    this->readFromSocket(cont);
+    if ( cont!= CONTINUE) { //Wierd error.
+        return false;
+    }
+
+    //END OF FILE SENDING.
+
+    memset(buf , 0 , FILE_TRANSFER_BUFFER_SIZE);
+    buf[0] = TRANSFER_FILE_END_CHAR;
+    buf[FILE_TRANSFER_BUFFER_SIZE-1] = '0'; //DELIMITER
+    return this->writeToSocket( buf , FILE_TRANSFER_BUFFER_SIZE);
+} //reader should be closed by the supplier of the program.
+
+bool Communications::readToSocket_file(std::fstream &dest, FILE_MODE mode) {
+    /*
+     *READ: the file transfer char, write continue, read into the dest until the read value is not a file wali thing.
+    */
+    char buf[FILE_TRANSFER_BUFFER_SIZE];
+    memset(buf, 0 ,FILE_TRANSFER_BUFFER_SIZE);
+    this->readFromSocket( buf , FILE_TRANSFER_BUFFER_SIZE);
+    std::string cont(CONTINUE);
+    if ( (buf[0]==TRANSFER_FILE_BEGIN_CHAR) && (buf[FILE_TRANSFER_BUFFER_SIZE-1] == '0') ) {
+        //write a continue!
+        this->writeToSocket(cont);
+    } else {
+        return false;
+    }
+    //Now, read the file.
+    bool moarfile = true;
+
+    char fbuf[FILE_TRANSFER_BUFFER_SIZE];
+    memset(fbuf , 0 , FILE_TRANSFER_BUFFER_SIZE);
+    while ( moarfile ) {
+        //Read into a buffer and check if its a 1 at the end.
+        this->readFromSocket( fbuf , FILE_TRANSFER_BUFFER_SIZE);
+        moarfile = ( fbuf[FILE_TRANSFER_BUFFER_SIZE-1] == '1'); //If it becomes a 0, its time to end.
+        if ( moarfile ) {
+            //write a continue.
+            this->writeToSocket(cont);
+        } else {
+            break;
+        }
+    }
+    //End of transfer has been read already.
 }
 
 #endif

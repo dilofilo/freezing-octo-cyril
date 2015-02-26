@@ -25,7 +25,6 @@ void Client::launch() {
 }
 
 void Client::unlaunch() {
-
     // this->loginpage->hide(); //MEMORY LEAK?
     this->show();
     if ( this->loginpage != NULL) {

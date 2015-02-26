@@ -33,10 +33,11 @@ enum SECURITY {
     OPEN_SSL , NO_SLL
 };
 
-
+enum FILE_MODE { NEW , DIFF , REMOTE_DIFF};
 class Communications {
 private:
     Socket csock;
+
 public:
 
        //Constructors and destructors.
@@ -62,10 +63,12 @@ public:
     bool writeToSocket_user( UserDetails& usr); //Do it bit by bit.
     bool readFromSocket_user( UserDetails& usr); //Do it bit by bit.
 
-    //Used for Files.
-    bool writeToSocket_file( std::fstream& source ); //Read character by character, put it into a buffer and send it across.
-    bool readToSocket_file( std::fstream& dest); //Read a chunk from the buffer and write it into the destination
+    //Used for Files - WORKS ONLY FOR NEW AND DIFF FILES.
+    bool writeToSocket_file( std::fstream& source , FILE_MODE mode = NEW); //Read character by character, put it into a buffer and send it across.
+    bool readToSocket_file( std::fstream& dest , FILE_MODE mode=NEW); //Read a chunk from the buffer and write it into the destination
     //Note : Sockets are closed by callers, not by communications.
+
+    //REMOTE DIFF - TO BE IMPLEMENTED.
 
 
 };

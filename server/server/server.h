@@ -37,42 +37,46 @@ private:
     char clienturl[CLIENT_URL_LEN];
 	Socket ssock;
 	Socket csock;	
-	std::string activeUserID;
     Communications conn; //In true SQL style. Created in getClient() function for child process.
 
+    //Starting it up. server.cpp
 	void startServer(); //Initializes serverAddr.
-    bool main_ReadDatabase();
-    bool main_GetAdmin();
-    bool main_ReadUsers();
-    bool updateDatabase(UserDetails user , EDIT_MODE mode = EDIT);
-    bool authenticate(std::string userid , std::string passwd);
-
 	void getClient(); //Infinite loop for the main process to keep accepting new processes,
-
     void handleClient(); // Every individual client is handled here.
-	
     bool getInstruction(std::string& inst); //Reads into the inst file.
     bool handleInstruction(std::string& inst); //Handles inputs that come in from the socket.
-		//List of instructions
-        bool handlePing();
-			
+        //List of instructions and their handlers.
+        bool handlePing(); //ping.cpp
+        bool handleRegistration(); //registration.cpp
+        bool handleLogin(); //login.cpp
+        bool handleLogout(); //login.cpp
+        bool handleUpload(); //upload.cpp
+        bool handleDownload(); //download.cpp
+        bool handleRemoveFile(); //removal.cpp
+        bool handleSync(); //sync.cpp
+        bool handleRevert(); //revert.cpp
+        bool handleShare(); //share.cpp
+        bool handleUnshare(); //share.cpp
 		
-		void mainRegisterUser();
-		void mainAuthenticateUser();
-		void mainFileToServer();
-			bool getFileNameFromClient(char* buffer);
-			bool readFileFromClient(char* buffer);
-		void mainFileToClient();
+        //removal.cpp
+        bool removeFile( string filename, string dir);
 
-		bool authenticateUser(std::string& output); //Authentitcates using userID and password given by client. Also takes in Directory stuff. Sets the user details.
-		bool registerUser( std::string& output ); //Other options too.	
-		bool checkPassword( std::string pw );
-		bool checkUsername( std::string& uID );
+        //database.cpp :
+        bool fetchUserbyID( UserDetails& usr ); //Returns false is no such user is present
+        bool main_CreateDatabase(); //db.cpp
+        bool main_CreateTable();
+        bool main_AddUser(string uID, string Password, string Server_Dir, string Client_Dir);
+        bool main_DeleteUser(string uID);
+        bool main_ReadDatabase(); //database.cpp
+        bool main_getAdmin();//database.cpp
+        bool main_ReadUsers();//database.cpp
+        bool updateDatabase(UserDetails user, EDIT_MODE mode);//database.cpp
+        bool authenticate(std::string userid, std::string passwd); // Takes userId, password as plain strings and compares against database.
 
+        bool createNewUser( UserDetails& usr ); //register.cpp
 
-		bool fileToServer( std::string& filename , Socket& csock ); //Transfers fileToServer 
-		bool fileToClient( std::string& filename , Socket& csock );
-
+        bool createUserDirectory( userDetails& usr); //directories.cpp
+        bool makeAdminDirectory(); //directories.cpp
 public:
     Server();
 	~Server();

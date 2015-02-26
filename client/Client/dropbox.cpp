@@ -3,7 +3,7 @@
 #include "dropbox.h"
 #include "ui_dropbox.h"
 #include <QTreeView>
-
+#include "clientdefinitions.h"
 DropBox::DropBox(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DropBox)
@@ -84,3 +84,13 @@ void DropBox::on_btnDelete_clicked()
     }
 }
 #endif
+
+void DropBox::on_btnSearch_clicked()
+{
+
+}
+
+void DropBox::on_btnUpload_clicked()
+{
+    bool reply= this->client->eventHandler( UPLOAD_FILE);
+}
