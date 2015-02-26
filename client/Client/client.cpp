@@ -37,14 +37,21 @@ Client::Client(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Client)
 {
+    this->loginpage = new LoginPage(this , csock);
+    this->registerpage = new RegisterPage(this , csock);
+    this->loginpage->hide();
+    this->registerpage->hide();
     ui->setupUi(this);
     //Assert : Presently, the client wants the IP Address.
 }
 
 Client::~Client()
 {
+    this->handleExit();
     ::close(csock);
     delete ui;
+    delete this->loginpage;
+    delete this->registerpage;
 }
 
 void Client::on_btn_launch_clicked()
@@ -64,7 +71,7 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
     } else if ( instr == REGISTER_TO_LOGIN_BACK) { //internal
         this->goBackToLoginPage(); //Done.
     } else if ( instr == REGISTER_TO_LOGIN_REGISTER) { //to server
-        this->handleRegistration(); //Done. Need to write server side
+        return this->handleRegistration(); //Done. Need to write server side
     } else if ( instr == LOGIN_TO_MAIN) { //to server
         this->handleLogin(); //Done. Need to write server side.
     } else if ( instr == MAIN_TO_LOGIN) { //to server

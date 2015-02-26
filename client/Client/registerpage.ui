@@ -94,7 +94,7 @@
       <string>Desired Username</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="btn_ping">
      <property name="geometry">
       <rect>
        <x>370</x>
@@ -125,7 +125,7 @@
     <zorder>btn_back</zorder>
     <zorder>txt_password</zorder>
     <zorder>txt_username</zorder>
-    <zorder>pushButton</zorder>
+    <zorder>btn_ping</zorder>
     <zorder>btn_browse</zorder>
    </widget>
   </widget>

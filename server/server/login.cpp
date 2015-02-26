@@ -7,10 +7,14 @@
 
 bool Server::handleLogin()
 {
+    cout << "entered handleLogin() \n";
     string cont( CONTINUE );
+    cout << "writing continue \n";
     conn.writeToSocket(cont);
     struct UserDetails usr;
+    cout << "reading user \n";
     conn.readFromSocket_user( usr );
+    cout << "read user with id=" << usr.userID << "and pw=" << usr.password << "\n";
     if(authenticate(usr.userID , usr.password) == true )
     {
         // Modify the struct and send it back.

@@ -3,14 +3,13 @@
 
 #include "client.h"
 void Client::goToRegisterPage() { //Login To Register.
-    this->registerpage = new RegisterPage(this , csock);
     this->loginpage->hide();
     this->registerpage->show();
     //Complete?
 }
 
 void Client::goBackToLoginPage() {
-    delete this->registerpage;
+    this->registerpage->hide();
     this->loginpage->show();
     //Done.
 }

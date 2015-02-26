@@ -24,6 +24,10 @@ public:
 private slots:
     void on_btn_registerConfirm_clicked();
     
+    void on_btn_ping_clicked();
+
+    void on_btn_back_clicked();
+
 private:
     Socket csock;
     Client* client;
@@ -31,3 +35,4 @@ private:
 
 #include "client.h" //Safe because forward declaration and header guards.
 #endif // REGISTERPAGE_H
+

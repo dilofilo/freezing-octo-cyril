@@ -33,7 +33,7 @@ public:
     QLineEdit *txt_clientDirectory;
     QLineEdit *txt_password;
     QLineEdit *txt_username;
-    QPushButton *pushButton;
+    QPushButton *btn_ping;
     QPushButton *btn_browse;
     QStatusBar *statusbar;
 
@@ -63,9 +63,9 @@ public:
         txt_username = new QLineEdit(groupBox);
         txt_username->setObjectName(QStringLiteral("txt_username"));
         txt_username->setGeometry(QRect(0, 40, 371, 29));
-        pushButton = new QPushButton(groupBox);
-        pushButton->setObjectName(QStringLiteral("pushButton"));
-        pushButton->setGeometry(QRect(370, 180, 161, 27));
+        btn_ping = new QPushButton(groupBox);
+        btn_ping->setObjectName(QStringLiteral("btn_ping"));
+        btn_ping->setGeometry(QRect(370, 180, 161, 27));
         btn_browse = new QPushButton(groupBox);
         btn_browse->setObjectName(QStringLiteral("btn_browse"));
         btn_browse->setGeometry(QRect(0, 120, 71, 27));
@@ -74,7 +74,7 @@ public:
         btn_back->raise();
         txt_password->raise();
         txt_username->raise();
-        pushButton->raise();
+        btn_ping->raise();
         btn_browse->raise();
         RegisterPage->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(RegisterPage);
@@ -95,7 +95,7 @@ public:
         txt_clientDirectory->setText(QApplication::translate("RegisterPage", "   select directory...", 0));
         txt_password->setText(QApplication::translate("RegisterPage", "Desired Password", 0));
         txt_username->setText(QApplication::translate("RegisterPage", "Desired Username", 0));
-        pushButton->setText(QApplication::translate("RegisterPage", "Ping!", 0));
+        btn_ping->setText(QApplication::translate("RegisterPage", "Ping!", 0));
         btn_browse->setText(QApplication::translate("RegisterPage", "browse", 0));
     } // retranslateUi
 

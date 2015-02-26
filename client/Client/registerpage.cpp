@@ -40,3 +40,24 @@ void RegisterPage::on_btn_registerConfirm_clicked()
     } //Done?
 }
 #endif
+
+
+void RegisterPage::on_btn_ping_clicked()
+{
+    //call the ping function of the client.
+    bool success = this->client->eventHandler(PING_INSTR);
+    QMessageBox msg;
+    if (success) {
+        msg.setText("success!");
+    } else {
+        msg.setText("failure :(");
+    }
+    msg.exec();
+} //Done.
+
+
+void RegisterPage::on_btn_back_clicked()
+{
+    //Should go back to the login page.
+    this->client->eventHandler( REGISTER_TO_LOGIN_BACK ); //Nothing ought to go wrng.
+}

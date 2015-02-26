@@ -9,10 +9,9 @@
 
 bool Server::createUserDirectory( UserDetails& usr ) {
 
-    string mystr = SERVER_DIRECTORY;
-    int status = mkdir( mystr.c_str() , S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-
-
+    string mystr = SERVER_DIRECTORY; //  includes the '/' character at the end of it.
+    mystr += usr.userID; //Unique location for all.
+    int status = mkdir( mystr.c_str() , S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //Hopefully, it works recursively.
     if(status == 0){
         cout<<"Directory created"<<endl;
         return true;

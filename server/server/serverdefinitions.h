@@ -7,7 +7,7 @@ enum EDIT_MODE { EDIT , NEW };
 #define LOCAL_HOST "127.0.0.1"
 #define TABLE_NAME "USERDB"
 #define SERVER_DIRECTORY "server/Directories/"
-#define DATABASE "server/Records.db"
+#define DATABASE "ADMIN/Records.db"
     //This is the beginning for all user base directories.
 #define MYFILES "myfiles.txt"
 #define SHARED_WITH_ME "filesin.txt"

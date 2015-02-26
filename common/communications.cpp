@@ -419,7 +419,7 @@ bool Communications::writeToSocket_user(UserDetails &usr) {
     beginbuf[0] = TRANSFER_USER_END_CHAR;
     beginbuf[BUFFER_SIZE-1] = '0';
     this->writeToSocket(beginbuf , BUFFER_SIZE);
-
+    return true;
 }
 
 bool Communications::readFromSocket_user(UserDetails &usr) {
@@ -461,6 +461,10 @@ bool Communications::readFromSocket_user(UserDetails &usr) {
     memset( buf , 0, BUFFER_SIZE);
     rv = this->readFromSocket( buf , BUFFER_SIZE);
     if ( rv && (buf[0] == TRANSFER_USER_END_CHAR) && (buf[0] == '0') ) {
+        usr.userID = uid;
+        usr.password = pwd;
+        usr.clientDirectory = clidir;
+        usr.serverDirectory = serdir;
         return true;
     } //Done.
 }

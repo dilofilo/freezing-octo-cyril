@@ -27,7 +27,7 @@ bool Server::main_CreateDatabase(){
     bool db_open =  db.open(); //Should open the database.
     cout << "opening the database resulted in" << db_open << "\n";
     QSqlQuery table_exists;
-    string p1("SELECT tablename FROM sqlite_master WHERE type='table' AND tablename='");
+    string p1("SELECT name FROM sqlite_master WHERE type='table' AND name='");
     string p2(TABLE_NAME);
     string p3("';");
     table_exists.exec( (p1 + p2 + p3).c_str() ); //tells me if the table exists.
@@ -89,6 +89,9 @@ bool Server::AddUser(string uID, string Password, string Server_Dir, string Clie
     if ( !db.isOpen() ) {
         db.open();
     }
+    //Note : Server_Dir is not know at all. Fetch it from createDirectory.
+    Server_Dir = SERVER_DIRECTORY;
+    Server_Dir += uID; //Assert : Creates the correct server directory.
     string myval = "VALUES(" + uID + "," + Password + "," + Server_Dir + "," + Client_Dir + ");";
     QSqlQuery inserter;
     string p1("INSERT INTO " );

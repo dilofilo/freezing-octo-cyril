@@ -92,8 +92,6 @@ void Server::handleClient() {
     while ( socketAlive ) {
         if ( getInstruction(instruction) ) { //Also sets instruction = ""
             if (handleInstruction(instruction) ) { //Returns if the handler was succesful, take appropriate action.
-                cout << instruction;
-                printf( " Instruction handled successfully \n");
             } else {
                 #ifdef SERVER_SIDE
                 printf( " handle instruction failed .. \n");
@@ -119,7 +117,6 @@ bool Server::getInstruction( std::string& inst ) {
 bool Server::handleInstruction(std::string& instr) {
     cout << "handling : " << instr << "\n";
     if ( instr ==  PING_REQUEST) {//Why am I able to convert a const char[] to a string?
-        cout << "detected ping request \n";
         return handlePing();
     }else if( instr == REGISTRATION_REQUEST ) {
         return handleRegistration();
