@@ -1,7 +1,8 @@
 #ifndef SERVERDEFINITIONS_H
 #define SERVERDEFINITIONS_H
 
-#define SERVER_DIRECTORY "../mdb/"
+#define SERVER_DIRECTORY "server/Directories/"
+#define DATABASE "server/Records.db"
     //This is the beginning for all user base directories.
 #define ADMIN_ID "dilofilo"
 #define ADMIN_PW "lolpw"

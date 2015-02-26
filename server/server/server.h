@@ -72,7 +72,6 @@ private:
         bool main_ReadUsers();//database.cpp
         bool updateDatabase(UserDetails user, EDIT_MODE mode);//database.cpp
         bool authenticate(std::string userid, std::string passwd); // Takes userId, password as plain strings and compares against database.
-
         bool createNewUser( UserDetails& usr ); //register.cpp
 
         bool createUserDirectory( userDetails& usr); //directories.cpp

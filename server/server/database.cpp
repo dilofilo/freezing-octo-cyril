@@ -7,6 +7,7 @@ TODO list.
 */
 
 #include "server.h"
+#include "serverdefinitions.h"
 #include <string>
 #include "sqlite3.h"
 
@@ -19,7 +20,7 @@ static int Server::callback(void *NotUsed, int argc, char **argv, char **azColNa
    return 0;
 }
 
-bool Server::CreateHashTable(void *NotUsed, int argc, char **argv, char **azColName){
+static int CreateHashTable(void *NotUsed, int argc, char **argv, char **azColName){
 //    int i;
 //    for(i=0; i<argc; i++){
 //       printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
@@ -38,7 +39,7 @@ bool Server::main_CreateDatabase(){
    char *zErrMsg = 0;
    int rc;
 
-   rc = sqlite3_open("Records.db", &db);        // Name of the Databas is Records.db
+   rc = sqlite3_open("DATABASE", &db);        // Name of the Database is DATABASE
 
    if( rc ){
       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
@@ -58,7 +59,7 @@ bool Server::CreateTable(){
     char *sql;
 
     /* Open database */
-    rc = sqlite3_open("Records.db", &db);
+    rc = sqlite3_open("DATABASE", &db);
     if( rc ){
        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
        exit(0);
@@ -96,7 +97,7 @@ bool Server::AddUser(string uID, string Password, string Server_Dir, string Clie
    char *sql;
 
    /* Open database */
-   rc = sqlite3_open("Records.db", &db);
+   rc = sqlite3_open("DATABASE", &db);
    if( rc ){
       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
       exit(0);
@@ -133,7 +134,7 @@ bool Server::DeleteUser(string uID){
     const char* data = "Callback function called";
 
     /* Open database */
-    rc = sqlite3_open("Records.db", &db);
+    rc = sqlite3_open("DATABASE", &db);
     if( rc ){
        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
        exit(0);
@@ -166,7 +167,7 @@ bool UpdateDatabase( string uID, string Npassword){
     const char* data = "Callback function called";
 
     /* Open database */
-    rc = sqlite3_open("Records.db", &db);
+    rc = sqlite3_open("DATABASE", &db);
     if( rc ){
        fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
        exit(0);
@@ -203,6 +204,40 @@ bool Server::main_ReadDatabase() { //The structure of the reading.
     }
 }
 
+bool Server::fetchUserbyID( UserDetails& temp ){
+
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+    char *sql;
+    const char* data = "Callback function called";
+
+    /* Open database */
+    rc = sqlite3_open("DATABASE", &db);
+    if( rc ){
+       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
+       exit(0);
+    }else{
+       fprintf(stderr, "Opened database successfully\n");
+    }
+
+    /* Create SQL statement */
+    sql = "SELECT * from SERVER_RECORDS";
+
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, CreateHashTable, (void*)data, &zErrMsg);
+
+    if( rc != SQLITE_OK ){
+       fprintf(stderr, "SQL error: %s\n", zErrMsg);
+       sqlite3_free(zErrMsg);
+    }else{
+       fprintf(stdout, "Operation done successfully\n");
+    }
+    sqlite3_close(db);
+
+ }
+
+}
 
 
 bool Server::main_CreateDictionary(){
@@ -214,7 +249,7 @@ bool Server::main_CreateDictionary(){
    const char* data = "Callback function called";
 
    /* Open database */
-   rc = sqlite3_open("Records.db", &db);
+   rc = sqlite3_open("DATABASE", &db);
    if( rc ){
       fprintf(stderr, "Can't open database: %s\n", sqlite3_errmsg(db));
       exit(0);
@@ -248,7 +283,7 @@ bool Server::authenticate(std::string userid , std::string passwd) {
     char *err_msg = 0;
     sqlite3_stmt *res;
 
-    int rc = sqlite3_open("Records.db", &db);
+    int rc = sqlite3_open("DATABASE", &db);
 
     if (rc != SQLITE_OK) {
 

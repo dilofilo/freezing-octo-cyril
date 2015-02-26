@@ -2,10 +2,10 @@
 #define REMOVAL_CPP
 
 #include <stdio.h>
+#include "serverdefinitions.h"
+bool Server::removeFile(string filename){
 
-bool Server::removeFile(string filename, string directory){
-
-    string newfilename = directory + filename;
+    string newfilename = SERVER_DIRECTORY + user.userID + "/" + filename;
     if(remove(newfilename.c_str()) == 0){
         cout<<"File Deleted Successfully."<<endl;
         return true;

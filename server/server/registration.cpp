@@ -24,7 +24,6 @@ bool Server::handleRegistration() {
         this->createNewUser( newuser );
         return true;
     }
-
 }
 
 bool Server::createNewUser( UserDetails& newuser ) {
