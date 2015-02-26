@@ -39,7 +39,7 @@ void RegisterPage::on_btn_registerConfirm_clicked()
         msgBox.exec();
     } //Done?
 }
-#endif
+
 
 
 void RegisterPage::on_btn_ping_clicked()
@@ -61,3 +61,4 @@ void RegisterPage::on_btn_back_clicked()
     //Should go back to the login page.
     this->client->eventHandler( REGISTER_TO_LOGIN_BACK ); //Nothing ought to go wrng.
 }
+#endif

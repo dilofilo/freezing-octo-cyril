@@ -67,6 +67,7 @@ public:
         bool handleUnshare(); //share.cpp
         bool handleSearch(); //search.cpp
         void handleExit(); // client.cpp
+        void showMain();
 private slots:
     void on_btn_launch_clicked();
 

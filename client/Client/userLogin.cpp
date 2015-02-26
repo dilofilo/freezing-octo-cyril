@@ -13,32 +13,21 @@ bool Client::handleLogin() {
         this->user.password = data.user.password;
         this->user.clientDirectory = data.user.clientDirectory; //NEED TO GET FROM THE SERVER.
         //Dont need server directory for the client.
+        //TODO : Fetch the file system
         return true;
     } else {
         this->user.userID = "";
         this->user.password = "";
         this->user.clientDirectory = "";
-
+        //TODO : Do Nothing.
         return false;
     }
 }
 
 bool Client::handleLogout() {
-    //Close the connection to the launch screen.
-    ::close(csock);
-    this->dropboxpage->hide();
-    if ( this->loginpage != NULL ) { //possible segfault
-        delete this->loginpage;
-    }
-    if ( this->registerpage != NULL ) { //possible segfault.
-        delete this->registerpage;
-    }
-    if ( this->dropboxpage != NULL ) { //possible segfault.
-        delete this->dropboxpage;
-    }
-    this->handleExit();
-    ::close(csock);
+    // to the launch screen.
     this->show(); //Back to the square one.
+    if ( this->dropboxpage != NULL ) delete this->dropboxpage;
     return true;
 }
 

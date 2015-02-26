@@ -47,7 +47,7 @@ void LoginPage::on_btn_register_clicked()
 {
     this->client->eventHandler(LOGIN_TO_REGISTER);
 }
-#endif
+
 
 void LoginPage::on_btn_login_clicked()
 {
@@ -55,5 +55,13 @@ void LoginPage::on_btn_login_clicked()
 
     this->client->data.user.userID = (this->ui->txt_username)->text().toUtf8().constData();
     this->client->data.user.password = (this->ui->txt_password)->text().toUtf8().constData();
-    this->client->eventHandler(LOGIN_TO_MAIN);
+    bool reply = this->client->eventHandler(LOGIN_TO_MAIN);
+    if (reply) {
+        this->client->showMain();
+    } else {
+        QMessageBox msg;
+        msg.setText(" Invalid username/password ");
+        msg.exec();
+    }
 }
+#endif

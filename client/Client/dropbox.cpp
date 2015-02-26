@@ -27,6 +27,27 @@ DropBox::DropBox(QWidget *parent) :
     ui->clientTreeView->resizeColumnToContents(0);
     //ui->serverTreeView->setHeader("System Files");
 }
+DropBox::DropBox(Client* _client , Socket& _csock) {
+    client = _client;
+    csock = _csock;
+    ui = new Ui::DropBox();
+    ui->setupUi(this);
+    ui->serverTreeWidget->setColumnCount(1);
+    std::vector<QString> childName{"Java","CPP"};
+    AddRoot("Code",childName);
+    childName={"PL","CompArch"};
+    AddRoot("Assignments",childName);
+
+    model = new QDirModel(this);
+    model->setReadOnly(false);
+    model->setSorting(QDir::DirsFirst | QDir::IgnoreCase | QDir::Name );
+     ui->clientTreeView->setModel(model);
+    QModelIndex index =model->index(QDir::currentPath());
+    ui->clientTreeView->expand(index);
+    ui->clientTreeView->scrollTo(index);
+    ui->clientTreeView->setCurrentIndex((index));
+    ui->clientTreeView->resizeColumnToContents(0);
+}
 
 DropBox::~DropBox()
 {
@@ -84,7 +105,6 @@ void DropBox::on_btnDelete_clicked()
         model->remove(index);
     }
 }
-#endif
 
 void DropBox::on_btnSearch_clicked()
 {
@@ -199,3 +219,4 @@ void DropBox::on_btnConfirmRevert_clicked()
         QMessageBox::information(this,tr("Error"),tr("Share Failed"));
     }
 }
+#endif

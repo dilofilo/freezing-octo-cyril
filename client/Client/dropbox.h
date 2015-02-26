@@ -29,8 +29,7 @@ class DropBox : public QMainWindow
     
 public:
     explicit DropBox(QWidget *parent = 0);
-    DropBox(QMainWindow* client);
-    DropBox(Socket& _csock);
+    DropBox(Client* _client , Socket& _csock);
     ~DropBox();
     
 private slots:

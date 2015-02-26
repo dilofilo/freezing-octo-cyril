@@ -50,6 +50,7 @@ Client::~Client()
     this->handleExit();
     ::close(csock);
     delete ui;
+    if ( this->dropboxpage != NULL ) delete this->dropboxpage;
     delete this->loginpage;
     delete this->registerpage;
 }
@@ -73,7 +74,7 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
     } else if ( instr == REGISTER_TO_LOGIN_REGISTER) { //to server
         return this->handleRegistration(); //Done. Need to write server side
     } else if ( instr == LOGIN_TO_MAIN) { //to server
-        this->handleLogin(); //Done. Need to write server side.
+        return this->handleLogin(); //Done. Need to write server side.
     } else if ( instr == MAIN_TO_LOGIN) { //to server
         this->handleLogout(); // Need to link GUI click to the event
     } else if ( instr == UPLOAD_FILE) { //to server
@@ -104,6 +105,11 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
  *##################### MINION FUNCTIONS FOLLOW #############
 */
 
+void Client::showMain() {
+    this->dropboxpage = new DropBox( this , csock);
+    this->loginpage->hide();
+    this->dropboxpage->show();
+}
 
 void Client::handleExit() {
     std::string temp(EXIT_REQUEST);

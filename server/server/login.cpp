@@ -20,7 +20,7 @@ bool Server::handleLogin()
         cout << "authentication successfuly \n";
         conn.writeToSocket_user(usr);
         std::string temp;
-        conn.readFromSocket(temp);
+        conn.readFromSocket(temp); //CONTINUE STATEMENT
         std::string accepted( LOGIN_ACCEPTED );
         conn.writeToSocket(accepted);
         return true;
@@ -29,7 +29,7 @@ bool Server::handleLogin()
         cout << "authentication failed \n";
         conn.writeToSocket_user(usr);
         std::string temp;
-        conn.readFromSocket(temp);
+        conn.readFromSocket(temp); //CONTINUE INSTR
         std::string rejected( LOGIN_REJECTED );
         conn.writeToSocket(rejected);
         return false;
