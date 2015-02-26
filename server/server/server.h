@@ -92,6 +92,7 @@ private:
         //static int CreateHashTable(void *NotUsed, int argc, char **argv, char **azColName);//database.cpp
 
         bool authenticate(std::string userid, std::string passwd); // Takes userId, password as plain strings and compares against database.
+        bool authenticate(UserDetails& usr);
         bool createNewUser( UserDetails& usr ); //register.cpp
 
         //upload.cpp

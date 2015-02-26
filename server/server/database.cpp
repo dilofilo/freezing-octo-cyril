@@ -161,7 +161,18 @@ bool Server::fetchUserbyID(UserDetails &usr) {
 bool Server::authenticate(string userid, string passwd) {
     UserDetails usr;
         usr.userID = userid;
-    if ( fetchUserbyID(usr)) {
+    if ( fetchUserbyID(usr) ) {
+        cout << " fetched password is " << usr.password << " and read pw is " << passwd << "\n";
+        return (usr.password == passwd);
+    } else {
+        return false;
+    }
+}
+
+bool Server::authenticate( UserDetails& usr ) {
+    string passwd = usr.password;
+    if ( fetchUserbyID(usr) ) {
+        cout << " fetched password is " << usr.password << " and read pw is " << passwd << "\n";
         return (usr.password == passwd);
     } else {
         return false;

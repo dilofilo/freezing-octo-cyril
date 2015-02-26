@@ -15,22 +15,23 @@ bool Server::handleLogin()
     cout << "reading user \n";
     conn.readFromSocket_user( usr );
     cout << "read user with id=" << usr.userID << "and pw=" << usr.password << "\n";
-    if(authenticate(usr.userID , usr.password) == true )
-    {
-        // Modify the struct and send it back.
-        string temp;
-        conn.readFromSocket( temp );
-        if ( temp.compare( CONTINUE ) == 0 ){
-            string acc (LOGIN_ACCEPTED);
-            conn.writeToSocket(acc);
-        }
-    }
-    else{
-        conn.writeToSocket_user( usr );
-        string temp;
-        conn.readFromSocket( temp );
-        string fail( LOGIN_REJECTED );
-        conn.writeToSocket( fail );
+    if( authenticate(usr) ) { //Login was correct
+        //Authentication Successful.
+        cout << "authentication successfuly \n";
+        conn.writeToSocket_user(usr);
+        std::string temp;
+        conn.readFromSocket(temp);
+        std::string accepted( LOGIN_ACCEPTED );
+        conn.writeToSocket(accepted);
+        return true;
+    } else { //Login was not successful.
+        //Authentication Failed.
+        cout << "authentication failed \n";
+        conn.writeToSocket_user(usr);
+        std::string temp;
+        conn.readFromSocket(temp);
+        std::string rejected( LOGIN_REJECTED );
+        conn.writeToSocket(rejected);
         return false;
     }
 }
