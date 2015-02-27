@@ -16,11 +16,23 @@ bool Server::createUserDirectory( UserDetails& usr ) {
     int status = boost::filesystem::create_directories(directory);// , S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); //Hopefully, it works recursively.
     if(status == 0){
         cout<<"Directory created\n";
-        return true;
     }else{
         cout<<"Not Created\n";
         return false;
     }
+
+    for ( int i =1;i<MAX_VERSIONS; i++){
+        string foo = to_string(i);
+        string mystr = SERVER_DIRECTORY + this->user.userID + "/v_" + foo;
+        boost::filesystem::path newpath(  mystr.c_str() );
+        status = boost::filesystem::create_directories(newpath);
+        if ( status!=0) {
+            cout << "making /v_"<< i << " failed\n";
+            return false;
+        }
+    }
+    cout << "all directories created \n";
+    return true;
 }
 
 bool Server::makeAdminDirectory() {

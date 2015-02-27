@@ -7,6 +7,7 @@
 #include "../../common/instructions.h"
 #include "../../common/communications.h"
 #include <fstream>
+#include <boost/filesystem.hpp>
 #include <sys/stat.h> //for mkdir and its related definitions.
 
 bool Server::handleUpload() {
@@ -23,17 +24,12 @@ bool Server::handleUpload() {
     //ASSERT : dest is now open.
     if(conn.readFromSocket_file( dest , mode )){
 
-        ifstream f;
-        ofstream f1;
-        int ver;
-        string loc = SERVER_DIRECTORY + this->user.userID + "/" + MYFILES;
-        f.open(loc);
-        string loc1 = SERVER_DIRECTORY + this->user.userID + "/" + TEMP;
-        f1.open(loc1);
+//        string loc = SERVER_DIRECTORY + this->user.userID + "/" + MYFILES;
+//        f.open(loc);
+//        string loc1 = SERVER_DIRECTORY + this->user.userID + "/" + TEMP;
+//        f1.open(loc1); //For txt files.
         int max = 0;
         int myver = 0;
-        string filename;
-
         int version = CheckifFileExists(finame , user.userID);
 
         if(version > 0){
@@ -43,15 +39,19 @@ bool Server::handleUpload() {
 
         else{
             AddFile(finame , version+1 , user.userID);
-        }
+        } //VERSION IS NOW KNOWN.
+        conn.writeToSocket(cont);
+        std::string lal;
+        conn.readFromSocket(lal);
+        conn.sendint( version+1 , csock);
 
-        string olname = TEMPPREFIX + finame;
-        rename(olname.c_str() , finame.c_str() );
+        string olname1 = TEMPPREFIX + finame;
+        rename(olname1.c_str() , finame.c_str() );
 
         if(myver != 0){
-            // A file with the same name exists.
+            // A file with the same name exists and has to be moved for persistent storage.
 
-                string foo = to_string(myver);
+                string foo = to_string(version);
 
             if(myver > max){
 
@@ -59,7 +59,6 @@ bool Server::handleUpload() {
                 int status = mkdir( mystr.c_str() , S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
                 if(status == 0){
                     cout<<"Directory created\n";
-
                     return true;
 
                 }else{
@@ -67,39 +66,24 @@ bool Server::handleUpload() {
                     return false;
                 }
             }
-            // Moving the previous version.
-            string newname = "v_" + foo + "/" + foo + "_" + finame;
-            rename(finame.c_str() , newname.c_str() );
+            // Moving the previous version for persistant storage.
+            string olname = SERVER_DIRECTORY + user.userID + "/" + finame;
+            string newname = SERVER_DIRECTORY + user.userID + "/" + "v_" + foo + "/" + finame;
+
+            boost::filesystem::path pathol(olname.c_str() );
+            boost::filesystem::path pathnew(newname.c_str() );
+            boost::filesystem::rename(pathol , pathnew);
         }
-        else{
-            rename(loc1.c_str() ,loc.c_str() );
-            return true;
-        }
+
+        string olname = SERVER_DIRECTORY + user.userID + "/" + TEMPPREFIX + finame;
+        string newname = SERVER_DIRECTORY + user.userID + "/" + finame;
+        rename(olname.c_str() , newname.c_str());       // renaming the temporary file.
 
     }
 
-//        while(f){
-//            f>>filename>>ver;
-//            if(ver > max)     max=ver;
-
-//            if(filename.compare(finame) == 0)
-//            {
-//            // File Exists hence version modified.
-//                f1<<finame<<"\t"<<ver+1<<"\n";
-//                myver = ver+1;
-//            }
-//            else{
-//                f1<<filename<<"\t"<<ver<<"\n";
-//            }
-//        }
-
-//        f.close();
-//        f1.close();
-
-        rename(TEMP,MYFILES);
-
-
-    else return false;
+    else{
+        return false;
+    }
 }
 
 bool Server::getFilestream( std::fstream& dest, string& finame ) { //Returns if the file exists already or not.
@@ -117,7 +101,7 @@ std::string Server::processFileName( std::string filename ) {
     /*
      * TODO : Figure out what the server equivalent of the file is.
     */
-    string foobar = TEMPPREFIX + filename;
+    string foobar = SERVER_DIRECTORY + user.userID + "/" + TEMPPREFIX + filename; // Change the path here.
     return  foobar;
 }
 

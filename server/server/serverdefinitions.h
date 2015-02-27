@@ -3,6 +3,7 @@
 
 enum EDIT_MODE { EDIT , NEW };
 
+#define MAX_VERSIONS 10
 #define TEMPPREFIX "temp"
 #define USERTABLE "USERFILES"
 //#define SHAREDWITHTABLE "SHAREDWITH"

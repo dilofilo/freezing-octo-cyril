@@ -38,7 +38,7 @@ bool Server::main_CreateDatabase(){
     CreateTable();
     CreateTableuser();
     Createtableshared();
-    Createtablesharedby();
+
 }
 
 bool Server::main_CreateDictionary() {
@@ -82,9 +82,19 @@ bool Server::CreateTableuser() {
     string p4("FILENAME         VARCHAR(50) PRIMARY KEY NOT NULL,");
     string p5("VERSION          INTEGER NOT NULL," );
     string p7("OWNER            VARCHAR(50) NOT NULL);");
-    creator.exec( (p1+s+p3+p4+p5+p7).c_str() );
+    creator.exec( (p1+p2+p3+p4+p5+p7).c_str() );
     db.close();
     return true;
+}
+
+bool Server::SyncController( string uID ){
+    ofstream f;
+    f.open("log.txt");
+
+
+
+    f.close();
+
 }
 
 int Server::CheckifFileExists(string finame , string owner){
@@ -116,11 +126,11 @@ bool Server::AddFile(string finame, int version , string owner){
         db.open();
     }
     cout << " now adding user \n";
-    //Note : Server_Dir is not know at all. Fetch it from createDirectory.
-    Server_Dir = SERVER_DIRECTORY;
-    Server_Dir += uID; //Assert : Creates the correct server directory.
+    string c1 =" VALUES('";
+    string c2 ="','";
+    string c3 ="');";
 
-    string myval = " VALUES('" + finame + "','" + version + "','" + owner + "');";
+    string myval = c1 + finame + c2 + to_string(version) + c2 + owner + c3;
     QSqlQuery inserter;
     string p1("INSERT INTO " );
     string p2(USERTABLE);
@@ -144,7 +154,7 @@ bool Server::Createtableshared(){
     string p4("FILENAME         VARCHAR(50) PRIMARY KEY NOT NULL,");
     string p5("USER             VARCHAR(50) NOT NULL," );
     string p7("OWNER            VARCHAR(50) NOT NULL);");
-    creator.exec( (p1+s+p3+p4+p5+p7).c_str() );
+    creator.exec( (p1+p2+p3+p4+p5+p7).c_str() );
     db.close();
     return true;
 }

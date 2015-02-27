@@ -76,15 +76,17 @@ private:
         bool CreateTable(); //database.cpp
         bool CreateTable( string& s );
         bool CreateTableuser();
+        bool SyncController( string uID );
         bool Createtableshared();
         bool fetchUserbyID( UserDetails& usr ); //Returns false is no such user is present
         bool main_CreateDatabase(); //db.cpp
+        int  CheckifFileExists(string finame , string owner);
         bool main_AddUser(string uID, string Password, string Server_Dir, string Client_Dir);
         bool main_DeleteUser(string uID);
         bool UpdateDatabase(std::string uid, std::string pwd); //database.cpp
         bool main_ReadDatabase(); //database.cpp
         bool main_getAdmin();//database.cpp
-        //bool main_ReadUsers();//database.cpp
+        bool AddFile(string finame, int version , string owner);
         bool updateDatabase(UserDetails user, EDIT_MODE mode);//database.cpp
         //int callback(void *NotUsed, int argc, char **argv, char **azColName);//database.cpp
         //bool CreateTable();
