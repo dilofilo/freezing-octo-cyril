@@ -14,8 +14,9 @@ bool Client::handleDownload() {
     conn.writeToSocket( processedfname );
     string completepath = findFilePath(processedfname);
     //
-    fstream writer( findFilePath( processedfname) , ios::out);
-    conn.readFromSocket_file( writer );
+    //fstream writer( findFilePath( processedfname) , ios::out);
+    std::string tempfn = findFilePath( processedfname);
+    conn.readFromSocket_file( tempfn , NEW_FILE);
 }
 
 string Client::findFilePath( string pfn) { //pfn is processed filename

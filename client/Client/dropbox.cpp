@@ -13,11 +13,13 @@ DropBox::DropBox(QWidget *parent) :
     ui->setupUi(this);
 }
 
-DropBox::DropBox(Client* client , Socket& _csock) { // NECESSARY CONSTERUCTOE.
+DropBox::DropBox(Client* _client , Socket& _csock) { // NECESSARY CONSTERUCTOE.
     ui =  new Ui::DropBox();
     ui->setupUi(this);
     //this->setStyleSheet("background-color: black;");
     ui->serverTreeWidget->setColumnCount(1);
+    client = _client;
+    csock = _csock;
     std::vector<QString> childName{"Java","CPP"};
     AddRoot("Code",childName);
     childName={"PL","CompArch"};
@@ -119,8 +121,11 @@ void DropBox::on_btnUpload_clicked()
 {
 
     this->client->data.type = UPLOAD_FILE;
-    this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
-    QMessageBox brk; brk.setText( " hi "); brk.exec();
+    string pat = " hihihihih" + this->client->data.filename ;
+    QString qpat = (model->filePath(this->ui->clientTreeView->currentIndex()));
+    QMessageBox brk; brk.setText( qpat ); brk.exec();
+
+    this->client->data.filename = (model->filePath(this->ui->clientTreeView->currentIndex())).toUtf8().constData();//this is a model index, convert to string
     bool reply= this->client->eventHandler(UPLOAD_FILE);
     if(!reply)
     {

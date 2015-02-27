@@ -62,7 +62,7 @@ void Server::getClient() {
 		clientLength = sizeof(clientAddr);
 		csock = accept( ssock , (struct sockaddr*) &clientAddr , (socklen_t*) &clientLength);
 		if (csock<0) {
-			cout << " error accepting connection... \n";
+            cout << " let me check error accepting connection... \n";
 			exit(1);
 		}  else {
 			cout << " connection accepted... \n";

@@ -17,30 +17,38 @@ bool Client::handleUpload() {
     return true;
 }
 std::string Client::processFileName( std::string filename ) {
-    unsigned lastdir = filename.find_last_of("/");
+    unsigned lastdir = 1 + filename.find_last_of("/");
     return filename.substr(lastdir);
 }
 
 bool Client::uploadNewFile() {
     //ASSERT : data.filetype == FILE_TYPE_NEW
-    std::string filename = this->data.filename;
+    ofstream f;
+    f.open("MYTEST.txt");
+    std::string filename = this->data.filename; //Entire path.
+    f<<(filename);
+    f.close();
     std::fstream reader;
-    reader.open(filename ); //In mode.
+    //reader.open(filename ); //In mode.
     //Need to process file name.
     //TODO : PROCESS FILE NAME. ADD IT TO MY DATABASE.
-    std::string filename_processed = processFileName(filename);
-    conn.writeToSocket(filename_processed);
-    std:string cont;
+    std::string filename_processed = processFileName(filename); //Processes the file name.
+    cout<<"Processed the filename"<<endl;
+    conn.writeToSocket(filename_processed); //cout-ing the filename on server side works.
+    std::string cont;
     conn.readFromSocket(cont);
-    bool suc = conn.writeToSocket_file( reader , NEW_FILE);
-
+    cout<<cont<<endl;
+    conn.writeToSocket_file( filename , NEW_FILE);
+    cout<<" DONE "<<endl;
     conn.readFromSocket( cont );
     std::string t(CONTINUE);
     conn.writeToSocket(t);
-    int *version;
-    conn.receiveint(version , csock);
+    string version;
+    conn.readFromSocket(version);
+    int ver = atoi( version.c_str() );
     //need to add to file.
-    this->addToFileLog(this->user.userID , filename_processed , filename , *version);
+    this->addToFileLog(this->user.userID , filename_processed , filename , ver);
+    return true;
 }
 
 bool Client::uploadDiffFile() { //UNIMPLEMENTED
@@ -51,7 +59,7 @@ bool Client::uploadDiffFile() { //UNIMPLEMENTED
     std::string filename = this->data.filename;
     std::fstream reader( filename );
     conn.writeToSocket(filename);
-    return conn.writeToSocket_file( reader , DIFF_FILE);
+    return conn.writeToSocket_file( filename , DIFF_FILE);
 
 }
 

@@ -31,14 +31,14 @@ bool Server::main_CreateDatabase(){
     string p2(TABLE_NAME);
     string p3("';");
     table_exists.exec( (p1 + p2 + p3).c_str() ); //tells me if the table exists.
-    while( table_exists.next() ) {
-        cout << " table already exists \n";
-        return true;
-    }
+//    while( table_exists.next() ) {
+//        cout << " table already exists \n";
+//        return true;
+//    }
     CreateTable();
     CreateTableuser();
     Createtableshared();
-
+    return true;
 }
 
 bool Server::main_CreateDictionary() {
@@ -79,7 +79,7 @@ bool Server::CreateTableuser() {
     string p1("CREATE TABLE ");
     string p2(USERTABLE);
     string p3("(");
-    string p4("FILENAME         VARCHAR(50) PRIMARY KEY NOT NULL,");
+    string p4("FILENAME         VARCHAR(50) NOT NULL,");
     string p5("VERSION          INTEGER NOT NULL," );
     string p7("OWNER            VARCHAR(50) NOT NULL);");
     creator.exec( (p1+p2+p3+p4+p5+p7).c_str() );
@@ -99,7 +99,6 @@ bool Server::SyncController( string uID ){
 
 int Server::CheckifFileExists(string finame , string owner){
     if ( !db.isOpen() ) {
-        cout << "database was not open\n";
         db.open();
     }
     QSqlQuery fetcher;
@@ -114,6 +113,7 @@ int Server::CheckifFileExists(string finame , string owner){
     while ( fetcher.isSelect() && fetcher.next() ) {
         //File Exists.
         int version = fetcher.value(0).toInt();
+        db.close();
         return version;
     }
     cout << "didn't find a file \n";
@@ -125,7 +125,7 @@ bool Server::AddFile(string finame, int version , string owner){
     if ( !db.isOpen() ) {
         db.open();
     }
-    cout << " now adding user \n";
+    cout << " now adding file intro usertable owner=" << owner << "\n";
     string c1 =" VALUES('";
     string c2 ="','";
     string c3 ="');";
@@ -134,8 +134,9 @@ bool Server::AddFile(string finame, int version , string owner){
     QSqlQuery inserter;
     string p1("INSERT INTO " );
     string p2(USERTABLE);
-    string p3(" (FILENAME,VERSION,OWNER) ");
-    inserter.exec( (p1+p2+p3+myval).c_str());
+    //string p3(" (FILENAME,VERSION,OWNER) ");
+    inserter.exec( (p1+p2+myval).c_str());
+    cout << " done executing AddFile() \n";
     db.close();
     return true;
 }
@@ -151,7 +152,7 @@ bool Server::Createtableshared(){
     string p1("CREATE TABLE ");
     string p2(SHAREDTABLE);
     string p3("(");
-    string p4("FILENAME         VARCHAR(50) PRIMARY KEY NOT NULL,");
+    string p4("FILENAME         VARCHAR(50) NOT NULL,");
     string p5("USER             VARCHAR(50) NOT NULL," );
     string p7("OWNER            VARCHAR(50) NOT NULL);");
     creator.exec( (p1+p2+p3+p4+p5+p7).c_str() );
@@ -245,7 +246,6 @@ bool Server::UpdateDatabase( string uID, string Npassword){ //Change password st
 
 bool Server::fetchUserbyID(UserDetails &usr) {
     if ( !db.isOpen() ) {
-        cout << "database was not open\n";
         db.open();
     }
     QSqlQuery fetcher;
@@ -257,14 +257,14 @@ bool Server::fetchUserbyID(UserDetails &usr) {
     cout << fetcher.lastError().text().toUtf8().constData() << "\n";
     while ( fetcher.isSelect() && fetcher.next() ) {
         //usr.userID is unchanged.
-        cout << "found a value \n";
+        cout << "found a value for user\n";
         usr.password = fetcher.value(1).toString().toUtf8().constData();
         usr.serverDirectory = fetcher.value(2).toString().toUtf8().constData();
         usr.clientDirectory = fetcher.value(3).toString().toUtf8().constData();
         db.close();
         return true;
     }
-    cout << "didn't find a value \n";
+    cout << "didn't find a value for user \n";
     db.close();
         cout << "didn't find a value EITHER \n";
     return false;

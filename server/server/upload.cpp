@@ -20,80 +20,58 @@ bool Server::handleUpload() {
     std::fstream dest;
     string finame;
     bool fileuploadmode = getFilestream(dest , finame);
-    FILE_MODE mode = ((fileuploadmode)?(DIFF_FILE):(NEW_FILE));
+    //FILE_MODE mode = ((fileuploadmode)?(DIFF_FILE):(NEW_FILE));
     //ASSERT : dest is now open.
-    if(conn.readFromSocket_file( dest , mode )){
-
-//        string loc = SERVER_DIRECTORY + this->user.userID + "/" + MYFILES;
-//        f.open(loc);
-//        string loc1 = SERVER_DIRECTORY + this->user.userID + "/" + TEMP;
-//        f1.open(loc1); //For txt files.
-        int max = 0;
-        int myver = 0;
+    string myfilepass = SERVER_DIRECTORY + user.userID + "/" + TEMPPREFIX + finame;
+    bool made = conn.readFromSocket_file( myfilepass , NEW_FILE ) ;
+    if( made ){
         int version = CheckifFileExists(finame , user.userID);
 
         if(version > 0){
             // file exists.
             AddFile(finame , version+1 , user.userID);
         }
-
         else{
             AddFile(finame , version+1 , user.userID);
         } //VERSION IS NOW KNOWN.
+        cout << " server writing continue \n";
         conn.writeToSocket(cont);
         std::string lal;
+        cout << " server reading continue \n";
         conn.readFromSocket(lal);
-        conn.sendint( version+1 , csock);
-
-        string olname1 = TEMPPREFIX + finame;
-        rename(olname1.c_str() , finame.c_str() );
-
-        if(myver != 0){
-            // A file with the same name exists and has to be moved for persistent storage.
-
-                string foo = to_string(version);
-
-            if(myver > max){
-
-                string mystr = SERVER_DIRECTORY + this->user.userID + "/v_" + foo;
-                int status = mkdir( mystr.c_str() , S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-                if(status == 0){
-                    cout<<"Directory created\n";
-                    return true;
-
-                }else{
-                    cout<<"Not Created\n";
-                    return false;
-                }
-            }
+        cout << " writing version" << to_string(version+1) << "\n";
+        string ver = to_string(version+1);
+        conn.writeToSocket(ver);
+        cout << " done writing version \n";
             // Moving the previous version for persistant storage.
             string olname = SERVER_DIRECTORY + user.userID + "/" + finame;
-            string newname = SERVER_DIRECTORY + user.userID + "/" + "v_" + foo + "/" + finame;
+            string sub_finame = finame.substr(4); //Ignore the size of TEMPPREFIX
+            string newname = SERVER_DIRECTORY + user.userID + "/" + "v_" + to_string(version+1) + "/" + sub_finame;
 
+            cout << "server renaming " << olname << "\t to \t" << newname << "\n";
             boost::filesystem::path pathol(olname.c_str() );
             boost::filesystem::path pathnew(newname.c_str() );
             boost::filesystem::rename(pathol , pathnew);
-        }
+//        }
 
-        string olname = SERVER_DIRECTORY + user.userID + "/" + TEMPPREFIX + finame;
-        string newname = SERVER_DIRECTORY + user.userID + "/" + finame;
-        rename(olname.c_str() , newname.c_str());       // renaming the temporary file.
+//        string olname = SERVER_DIRECTORY + user.userID + "/" + TEMPPREFIX + finame;
+//        string newname = SERVER_DIRECTORY + user.userID + "/" + finame;
+//        rename(olname.c_str() , newname.c_str());       // renaming the temporary file.
 
-    }
-
-    else{
+    } else {
         return false;
     }
+    return true;
 }
 
 bool Server::getFilestream( std::fstream& dest, string& finame ) { //Returns if the file exists already or not.
     std::string filename = "";
     conn.readFromSocket( filename );
-    cout << filename << "will soon to uploaded to the server \n";
-    finame=filename;
+    cout << processFileName(filename) << " will soon to uploaded to the server \n";
+    finame= filename;
     std::string cont(CONTINUE);
     conn.writeToSocket( cont );
-    dest.open( processFileName(filename).c_str());
+    //dest.open( processFileName(filename).c_str() , ios::out);
     return false;
 }
 

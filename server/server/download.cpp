@@ -18,8 +18,8 @@ bool Server::handleDownload() {
     ifstream f;
     string filepath =SERVER_DIRECTORY + user.userID + "/" + file ;
     fstream reader;
-    reader.open(filepath.c_str(),ios::in);
-    conn.writeToSocket_file(reader);
+    //reader.open(filepath.c_str(),ios::in);
+    conn.writeToSocket_file(filepath);
 }
 
 #endif

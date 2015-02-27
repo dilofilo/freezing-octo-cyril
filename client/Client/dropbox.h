@@ -35,27 +35,17 @@ public:
     
 private slots:
     void on_btnMake_clicked();
-
     void on_btnDelete_clicked();
     void on_btnUnshare_clicked();
     void on_btnConfirmRevert_clicked();
-
     void on_btnSearch_clicked();
-
     void on_btnUpload_clicked();
-
     void on_btnSync_clicked();
-
     void on_btnLogout_clicked();
-
     void on_btnExit_clicked();
-
     void on_btnDownload_clicked();
-
     void on_btnRemove_clicked();
-
     void on_btnShare_clicked();
-
 private:
     Client* client;
     Socket csock;

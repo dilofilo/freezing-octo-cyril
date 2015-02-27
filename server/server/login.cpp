@@ -19,8 +19,10 @@ bool Server::handleLogin()
         //Authentication Successful.
         cout << "authentication successfuly \n";
         conn.writeToSocket_user(usr);
+
         std::string temp;
         conn.readFromSocket(temp); //CONTINUE STATEMENT
+        user = usr;
         std::string accepted( LOGIN_ACCEPTED );
         conn.writeToSocket(accepted);
         return true;

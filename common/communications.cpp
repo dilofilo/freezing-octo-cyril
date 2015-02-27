@@ -1,39 +1,13 @@
 #ifndef COMMUNICATIONS_CPP
 #define COMMUNICATIONS_CPP
-
+#include <iostream>
 /**
     Defines functions for the class Communicaitons defined in communicaitons.h
     Sorry for the eye-sore lines in Qt's vim(dark) theme.
     Also, uint was used instead of int because Qt things that (uint == int) is a scary prospect.
-    Poll was used instead of select because there are practically no differences. Except that we already had some experience testing out poll.
 */
 
 #include "communications.h"
-int Communications::sendint(int num, int fd) {
-    int32_t conv = htonl(num); //send safely.
-    char *data = (char*)&conv;
-    int left = sizeof(conv);
-    int rc;
-    while (left) { //write all of it.
-        rc = write(fd, data + sizeof(conv) - left, left);
-        if (rc < 0) return -1;
-        left -= rc;
-    }
-    return 0;
-}
-int Communications::receiveint(int *num, int fd) {
-    int32_t ret; //Safe int Reading
-    char *data = (char*)&ret;
-    int left = sizeof(ret);
-    int rc;
-    while (left) { //read all of it
-        ret = read(fd, data + sizeof(ret) - left, left);
-        if (ret < 0) return -1;
-        left -= ret;
-    }
-    *num = ret;
-    return 0;
-}
 //unnecessary incudes. TODO: REMOVE THESE UNNECESSARY INCLUDES.
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,12 +23,11 @@ int Communications::receiveint(int *num, int fd) {
 
 #include <string> //For simplicity.
 #include <vector> //For infinite string transfer
+#include <fstream>
 
-
-#include <poll.h> //For synchronousness
 
 #include "instructions.h"
-
+using namespace std;
 //Constructors and Destructors.
 Communications::Communications() {
     //Do Nothing to the sockets.
@@ -74,84 +47,38 @@ bool Communications::setSocket(Socket& sock) {
     csock = sock;
     return true;
 }
+int Communications::sendmyint(int num) {
+    std::string msg = std::to_string(num);
+    return this->writeToSocket(msg);
+}
+int Communications::receivemyint(int& num) {
+    std::string str;
+    this->readFromSocket(str);
+    num = atoi(str.c_str());
+    return true;
+}
 
 //char[] communication.
 
 bool Communications::writeToSocket(char* buffer , int buf_size = BUFFER_SIZE) {
-    struct pollfd wPoll;
-    wPoll.fd = csock;
-    wPoll.events = POLLOUT;
-
-    int rv = poll( &wPoll , 1 , POLL_TIMEOUT);
-    if ( rv < 0 ) { //Poll unsuccessful
-        #ifdef SERVER_SIDE
-        printf(" poll was unsuccessful for some reason. \n");
-        #endif
-        exit(1);
-        return false;
-    } else if( rv==0 ) { //Poll timeout occurred
-        #ifdef SERVER_SIDE
-        printf(" poll timeout \n");
-        #endif
+    int rv = write(csock, buffer, buf_size);
+    if (rv>=0) {
+        memset( buffer , 0 , buf_size );
         return true;
     } else {
-        //Poll was successful
-        if ( wPoll.revents & POLLOUT) {
-            rv = write(csock, buffer, buf_size);
-            if (rv>=0) {
-                #ifdef SERVER_SIDE
-                printf(" writing was successful \n");
-                #endif
-                memset( buffer , 0 , buf_size );
-                return true;
-            } else {
-                #ifdef SERVER_SIDE
-                printf(" ERROR!!!! writing was NOT successful \n");
-                #endif
-                return false;
-            }
-        } else {
-            return false;
-        }
+        return false;
     }
 }
 
 bool Communications::readFromSocket( char* buffer, int buf_size = BUFFER_SIZE) { //Clears the buffer.
     memset( buffer , 0 , buf_size);
-    struct pollfd rPoll;
-    rPoll.fd = csock;
-    rPoll.events = POLLIN;
-
-    int rv = poll( &rPoll , 1 , POLL_TIMEOUT);
-    if ( rv < 0 ) { //Poll unsuccessful
-        #ifdef SERVER_SIDE
-        printf(" poll was unsuccessful for some reason. \n");
-        #endif
-        return false;
-        exit(1);
-    } else if( rv==0 ) { //Poll timeout occurred
-        #ifdef SERVER_SIDE
-        printf(" poll timeout \n");
-        #endif
+    int rv = read(csock, buffer, buf_size);
+    if (rv>=0) {
+        std::cout << " read from buffer \n";
         return true;
     } else {
-        //Poll was successful
-        if ( rPoll.revents & POLLIN ) {
-            rv = read(csock, buffer, buf_size);
-            if (rv>=0) {
-                #ifdef SERVER_SIDE
-                printf(" Reading was successful \n");
-                #endif
-                return true;
-            } else {
-                #ifdef SERVER_SIDE
-                printf(" ERROR!!!! reading was NOT successful \n");
-                #endif
-                return false;
-            }
-        } else {
-            return false;
-        }
+
+        return false;
     }
 }
 //End of char[] definitions
@@ -195,177 +122,6 @@ bool Communications::readFromSocket(std::string& buffer , int buf_size ) {
 
 //Beginning of infinite write/read functions.
 
-bool Communications::writeToSocket( std::vector< std::string >& strings ) { //Assume that all of them are of the correct size. That should be enough for now.
-    /*
-        General Idea :
-        :::BEGIN::: Write the INFINITE_TRANSFER_BEGIN_CHAR with a '1' at the end .
-           :::WRITE::: Write all the strings if they are length INFINITE_TRANSFER_BUFFER_SIZE. and a '0' at the end.
-        :::END::: Write the INFINITE_TRANSFER_END_CHAR with a '1' at the end.
-    */
-    struct pollfd wPoll;
-    wPoll.fd = csock;
-    wPoll.events = POLLOUT;
-    int rv = poll( &wPoll , 1 , POLL_TIMEOUT);
-
-
-    //:::BEGIN:::
-    if ( rv < 0 ) { //Poll unsuccessful
-        #ifdef SERVER_SIDE
-        printf(" poll was unsuccessful for some reason. \n");
-        #endif
-        return false;
-    } else if( rv==0 ) { //Poll timeout occurred
-        #ifdef SERVER_SIDE
-        printf(" poll timeout \n");
-        #endif
-        return true;
-    } else {
-        //Poll was successful
-        char buffer[BUFFER_SIZE];
-        buffer[0] = INF_TRANSFER_BEGIN_CHAR;
-        buffer[INF_TRANSFER_BUFFER_SIZE] = '1';
-        rv = write(csock, buffer, BUFFER_SIZE);
-
-        if (rv>0) {
-            #ifdef SERVER_SIDE
-            printf(" writing was successful \n");
-            #endif
-        } else {
-            #ifdef SERVER_SIDE
-            printf(" ERROR!!!! writing was NOT successful \n");
-            #endif
-            return false;
-        }
-    }
-
-    //:::WRITE:::
-    for(uint i=0; i< strings.size() ; ++i) {
-        char tempArr[BUFFER_SIZE];
-        for(int pos = 0; pos < BUFFER_SIZE; ++pos) {
-            tempArr[pos] = strings[i][pos];
-        }
-        tempArr[INF_TRANSFER_BUFFER_SIZE] = '0';
-        bool returnvalue = writeToSocket( tempArr , BUFFER_SIZE);
-        if ( !returnvalue ) {
-            return false;
-        }
-    }
-    //:::END:::
-    wPoll.fd = csock;
-    wPoll.events = POLLOUT;
-    rv = poll( &wPoll , 1 , POLL_TIMEOUT);
-    if ( rv < 0 ) { //Poll unsuccessful
-        #ifdef SERVER_SIDE
-        printf(" poll was unsuccessful for some reason. \n");
-        #endif
-        return false;
-    } else if( rv==0 ) { //Poll timeout occurred
-        #ifdef SERVER_SIDE
-        printf(" poll timeout \n");
-        #endif
-        return true;
-    } else {
-        //Poll was successful - assume that the event was revents = POLLIN
-        if ( wPoll.revents & POLLOUT ) {
-            char buffer[BUFFER_SIZE];
-            buffer[0] = INF_TRANSFER_END_CHAR;
-            buffer[INF_TRANSFER_BUFFER_SIZE] = '1';
-            rv = write(csock, buffer, BUFFER_SIZE);
-
-            if (rv>0) {
-                #ifdef SERVER_SIDE
-                printf(" writing was successful \n");
-                #endif
-                return true;//we're done!
-            } else {
-                #ifdef SERVER_SIDE
-                printf(" ERROR!!!! writing was NOT successful \n");
-                #endif
-                return false;
-            }
-        }
-    }
-    return false;
-}
-
-bool Communications::readFromSocket( std::vector< std::string >& strings ) { //Assume that all of them are of the correct size. That should be enough for now.
-/*
- *General idea is :
-    :::BEGIN::: Read the INF_TRANSFER_BEGIN_CHAR with a '1' at the end.
-    ::READ::: If you read a buffer with a '0' at the end,
-    :::END::: Ends within Read,
-*/
-    //:::BEGIN:::
-    struct pollfd rPoll;
-    rPoll.fd = csock;
-    rPoll.events = POLLIN;
-
-    char buffer[BUFFER_SIZE];
-    memset(buffer, 0 , BUFFER_SIZE);
-    int rv = poll( &rPoll , 1 , POLL_TIMEOUT);
-    if ( rv < 0 ) { //Poll unsuccessful
-        #ifdef SERVER_SIDE
-        printf(" poll was unsuccessful for some reason. \n");
-        #endif
-        return false;
-    } else if( rv==0 ) { //Poll timeout occurred
-        #ifdef SERVER_SIDE
-        printf(" poll timeout \n");
-        #endif
-        return true;
-    } else {
-        //Poll was successful
-        rv = read(csock, buffer, BUFFER_SIZE);
-        if (rv>0) {
-            #ifdef SERVER_SIDE
-            printf(" Reading was successful \n");
-            #endif
-        } else {
-            #ifdef SERVER_SIDE
-            printf(" ERROR!!!! reading was NOT successful \n");
-            #endif
-            return false;
-        }
-    }
-    if ( (buffer[0] == INF_TRANSFER_BEGIN_CHAR) && ( buffer[INF_TRANSFER_BUFFER_SIZE] == '0' ) ) {
-        //Continue;
-    } else {
-        return false; // Did not request an infinite transfer.
-    }
-
-    //:::READ:::
-    while(true) {
-        //Read into a buffer, if the buffer is the end of the transfer, break out. else, push it into the vector.
-        rPoll.fd = csock;
-        rPoll.events = POLLIN;
-        rv = poll( &rPoll , 1 , POLL_TIMEOUT);
-        if ( rv < 0 ) {
-            #ifdef SERVER_SIDE
-            printf(" poll was unsuccessful for some reason. \n");
-            #endif
-            return false;
-        } else if ( rv == 0 ) {
-            #ifdef SERVER_SIDE
-            printf(" poll timeout \n");
-            #endif
-            return true;
-        } else {
-            if ( rPoll.revents & POLLIN ) {
-                //polling happened. now, just read the darned value, check it its what we want.
-                memset( buffer , 0 , BUFFER_SIZE);
-                rv = read( csock, buffer , BUFFER_SIZE);
-                //If it matches with the end of transfer token, break, else push it into the vector.
-                if ( (buffer[0] == INF_TRANSFER_END_CHAR) && (buffer[INF_TRANSFER_BUFFER_SIZE] == '0')) {
-                    return true;
-                } else {
-                    std::string tempStr( buffer );
-                    strings.push_back(tempStr);
-                }
-            }
-        }
-    }
-}
-
 //UserDetails code.
 bool Communications::writeToSocket_user(UserDetails &usr) {
     /*
@@ -378,6 +134,7 @@ bool Communications::writeToSocket_user(UserDetails &usr) {
     memset(beginbuf , 0 , BUFFER_SIZE);
     beginbuf[0] = TRANSFER_USER_BEGIN_CHAR;
     beginbuf[BUFFER_SIZE-1] = '0';
+
     bool rv = this->writeToSocket(beginbuf, BUFFER_SIZE);
     if ( !rv ) {
         return false;
@@ -424,7 +181,7 @@ bool Communications::writeToSocket_user(UserDetails &usr) {
     beginbuf[BUFFER_SIZE-1] = '0';
     this->writeToSocket(beginbuf , BUFFER_SIZE);
     return true;
-}
+} //They work.
 
 bool Communications::readFromSocket_user(UserDetails &usr) {
     /*
@@ -501,22 +258,9 @@ bool Communications::writeToSocket_file_old( std::fstream& reader , FILE_MODE mo
     while(!reader.eof()) {
         //Don't care about missing bits due to write().
 
-        struct pollfd wPoll;
-            wPoll.fd = csock;
-            wPoll.events = POLLOUT;
-        int rv  = poll( &wPoll , 1 ,POLL_TIMEOUT);
-        if ( rv < 0 ) {
-            return false;
-        } else if( rv==0) {
-            continue;
-        } else {
-            if ( wPoll.revents & POLLOUT ) {
-                rv = write( csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
-                memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
-            } else {
-                continue;
-            }
-        }
+        int rv = write( csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+        memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
+
 
         //Need to read continue - as a string.
         this->readFromSocket(cont);
@@ -530,22 +274,9 @@ bool Communications::writeToSocket_file_old( std::fstream& reader , FILE_MODE mo
     }
 
     //This code is here because the while loop reads the last bit without sending it.
-    struct pollfd wPoll;
-        wPoll.fd = csock;
-        wPoll.events = POLLOUT;
-    int rv  = poll( &wPoll , 1 ,POLL_TIMEOUT);
-    if ( rv < 0 ) {
-        return false;
-    } else if( rv==0) {
-        return false;
-    } else {
-        if ( wPoll.revents & POLLOUT ) {
-            rv = write( csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
-            memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
-        } else {
-            return false;
-        }
-    }
+    int rv = write( csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+    memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
+
 
     //Need to read continue - as a string.
     this->readFromSocket(cont);
@@ -594,9 +325,12 @@ bool Communications::readFromSocket_file_old(std::fstream &dest, FILE_MODE mode)
     //End of transfer has been read already.
 }
 
-bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+bool Communications::writeToSocket_file( std::string& readerfile , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+    std::fstream test("log.txt" , ios::out);
+    std::fstream reader;
+    reader.open(readerfile , ios::in);
     //Not gonna use poll. //Assumes that reader is open.
-    std::string cont = "";
+    std::string cont;
     char buf[FILE_TRANSFER_BUFFER_SIZE];
     memset(buf, 0 , FILE_TRANSFER_BUFFER_SIZE);
     buf[0] = TRANSFER_FILE_BEGIN_CHAR;
@@ -613,7 +347,7 @@ bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) 
         char filebuf[FILE_TRANSFER_BUFFER_SIZE];
         memset( filebuf , 0, FILE_TRANSFER_BUFFER_SIZE);
         char* ch;
-        while ( (blocksize < FILE_TRANSFER_BUFFER_SIZE-1) && (!reader.eof() ) ) { //It breaks at eof.
+        while ( (blocksize < (FILE_TRANSFER_BUFFER_SIZE-1)) && (!reader.eof() ) ) { //It breaks at eof.
             reader.get(ch , 1); //Read one character.
             filebuf[blocksize] = *ch;
             blocksize++;
@@ -622,10 +356,11 @@ bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) 
 
         //Done reading file aptly.
         //Write file into the stream and then read a continue, then an int, then a continue.
+        test.write( filebuf , FILE_TRANSFER_BUFFER_SIZE);
         this->writeToSocket( filebuf , FILE_TRANSFER_BUFFER_SIZE); //write the entire buffer. The int will convey what to read.
         this->readFromSocket( cont ); //Read a continue.
         //Now, write the int
-        sendint( blocksize , csock);
+        sendmyint( blocksize);
         this->readFromSocket(cont);
     }
     buf[0] = TRANSFER_FILE_END_CHAR;
@@ -633,16 +368,20 @@ bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) 
     return true;
 }
 
-bool Communications::readFromSocket_file( std::fstream& dest , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+bool Communications::readFromSocket_file( std::string& destfile , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+    std::fstream dest;
+    dest.open(destfile , ios::app);
+
     std::string cont(CONTINUE);
     char buf[FILE_TRANSFER_BUFFER_SIZE];
     memset(buf, 0 , FILE_TRANSFER_BUFFER_SIZE);
     this->readFromSocket(buf , FILE_TRANSFER_BUFFER_SIZE); //Read file begin character
-    if (!( (buf[0] == TRANSFER_FILE_BEGIN_CHAR) && ( buf[FILE_TRANSFER_BUFFER_SIZE-1] == '0'))) {
-        this->writeToSocket(cont); //Write a continue.
-    } else {
-        return false;
-    }
+//    if ( ( (buf[0] == TRANSFER_FILE_BEGIN_CHAR) && ( buf[FILE_TRANSFER_BUFFER_SIZE-1] == '0'))) {
+//         //Write a continue.
+//    } else {
+//        return false;
+//    }
+    this->writeToSocket(cont);//writing a continue.
     bool moarfile = true; //This will be transmitted across.
     while (moarfile) {
         //Read a string, an int and then write those many ints into the filestream
@@ -658,13 +397,16 @@ bool Communications::readFromSocket_file( std::fstream& dest , FILE_MODE mode) {
         }
         //Read an int
         this->writeToSocket(cont); //Write a continue.
-        int* blocksize;
-        receiveint( blocksize , csock );
+        int blocksize;
+        receivemyint( blocksize );
         // write the file.
-        dest.write( filebuf , *blocksize );
+        std::cout << "\t\t" << filebuf << " was read \n";
+        cout << "size =" << blocksize << "\t" << filebuf << "\n";
+        dest.write( filebuf , blocksize );
         this->writeToSocket(cont); //Write a continue.
         //Now, write the file in.
     }
+    dest.close();
     return true;
 }
 

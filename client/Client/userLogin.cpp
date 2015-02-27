@@ -26,8 +26,8 @@ bool Client::handleLogin() {
 
 bool Client::handleLogout() {
     // to the launch screen.
-    this->show(); //Back to the square one.
-    if ( this->dropboxpage != NULL ) delete this->dropboxpage;
+    this->loginpage->show(); //Back to the square one.
+    delete this->dropboxpage;
     return true;
 }
 

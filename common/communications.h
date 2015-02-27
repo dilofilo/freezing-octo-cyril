@@ -49,8 +49,8 @@ public:
     bool setSocket(Socket& sock);
 
     //Write and read int
-    int sendint(int val , Socket _csock);
-    int receiveint(int* val , Socket _csock);
+    int sendmyint(int val);
+    int receivemyint(int& val);
     //Single Read and write using char[]
     bool writeToSocket( char* buffer , int buf_size);// buf_size = BUFFER_SIZE );
     bool readFromSocket( char* buffer , int buf_size);// buf_size = BUFFER_SIZE );
@@ -60,8 +60,8 @@ public:
     bool readFromSocket( std::string& buffer , int buf_size=BUFFER_SIZE);
 
     //Infinite Read and write.
-    bool writeToSocket( std::vector< std::string >& strings );
-    bool readFromSocket( std::vector< std::string >& strings );
+    //bool writeToSocket( std::vector< std::string >& strings );
+    //bool readFromSocket( std::vector< std::string >& strings );
 
     // Used for Login and Register.
     bool writeToSocket_user( UserDetails& usr); //Do it bit by bit.
@@ -71,8 +71,8 @@ public:
     bool writeToSocket_file_old( std::fstream& source , FILE_MODE mode = NEW_FILE); //Read character by character, put it into a buffer and send it across.
     bool readFromSocket_file_old( std::fstream& dest , FILE_MODE mode=NEW_FILE); //Read a chunk from the buffer and write it into the destination
 
-    bool writeToSocket_file( std::fstream& source , FILE_MODE mode = NEW_FILE); //Read character by character, put it into a buffer and send it across.
-    bool readFromSocket_file( std::fstream& dest , FILE_MODE mode=NEW_FILE); //Read a chunk from the buffer and write it into the destination
+    bool writeToSocket_file( std::string& source , FILE_MODE mode = NEW_FILE); //Read character by character, put it into a buffer and send it across.
+    bool readFromSocket_file( std::string& dest , FILE_MODE mode=NEW_FILE); //Read a chunk from the buffer and write it into the destination
 
     //Note : Sockets are closed by callers, not by communications.
 
