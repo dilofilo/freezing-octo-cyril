@@ -110,15 +110,12 @@ int Server::CheckifFileExists(string finame , string owner){
     string p5("';");
     fetcher.exec((p1 +p2 + p3 + finame + p4 + owner + p5).c_str());
     cout << fetcher.lastError().text().toUtf8().constData() << "\n";
+    int ctr = 0;
     while ( fetcher.isSelect() && fetcher.next() ) {
-        //File Exists.
-        int version = fetcher.value(0).toInt();
-        db.close();
-        return version;
+        ctr++;
     }
-    cout << "didn't find a file \n";
     db.close();
-    return 0;
+    return ctr+1;
 }
 
 bool Server::AddFile(string finame, int version , string owner){

@@ -326,7 +326,6 @@ bool Communications::readFromSocket_file_old(std::fstream &dest, FILE_MODE mode)
 }
 
 bool Communications::writeToSocket_file( std::string& readerfile , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
-    std::fstream test("log.txt" , ios::out);
     std::fstream reader;
     reader.open(readerfile , ios::in);
     //Not gonna use poll. //Assumes that reader is open.
@@ -346,17 +345,16 @@ bool Communications::writeToSocket_file( std::string& readerfile , FILE_MODE mod
         int blocksize = 0;
         char filebuf[FILE_TRANSFER_BUFFER_SIZE];
         memset( filebuf , 0, FILE_TRANSFER_BUFFER_SIZE);
-        char* ch;
-        while ( (blocksize < (FILE_TRANSFER_BUFFER_SIZE-1)) && (!reader.eof() ) ) { //It breaks at eof.
-            reader.get(ch , 1); //Read one character.
-            filebuf[blocksize] = *ch;
+        char ch;
+        while ( (blocksize < (FILE_TRANSFER_BUFFER_SIZE-1)) && (!(reader.eof()) ) ) { //It breaks at eof.
+            reader.get(ch); //Read one character.
+            filebuf[blocksize] = ch;
             blocksize++;
         } //Prepare what to write.
         filebuf[FILE_TRANSFER_BUFFER_SIZE-1] = '1'; //1 Represents more file to read.
 
         //Done reading file aptly.
         //Write file into the stream and then read a continue, then an int, then a continue.
-        test.write( filebuf , FILE_TRANSFER_BUFFER_SIZE);
         this->writeToSocket( filebuf , FILE_TRANSFER_BUFFER_SIZE); //write the entire buffer. The int will convey what to read.
         this->readFromSocket( cont ); //Read a continue.
         //Now, write the int
@@ -400,8 +398,6 @@ bool Communications::readFromSocket_file( std::string& destfile , FILE_MODE mode
         int blocksize;
         receivemyint( blocksize );
         // write the file.
-        std::cout << "\t\t" << filebuf << " was read \n";
-        cout << "size =" << blocksize << "\t" << filebuf << "\n";
         dest.write( filebuf , blocksize );
         this->writeToSocket(cont); //Write a continue.
         //Now, write the file in.
