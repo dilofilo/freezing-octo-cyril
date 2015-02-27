@@ -48,6 +48,9 @@ public:
     Socket getSocket();
     bool setSocket(Socket& sock);
 
+    //Write and read int
+    int sendint(int val , Socket _csock);
+    int receiveint(int* val , Socket _csock);
     //Single Read and write using char[]
     bool writeToSocket( char* buffer , int buf_size);// buf_size = BUFFER_SIZE );
     bool readFromSocket( char* buffer , int buf_size);// buf_size = BUFFER_SIZE );

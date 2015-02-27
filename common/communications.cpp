@@ -9,7 +9,7 @@
 */
 
 #include "communications.h"
-int sendint(int num, int fd) {
+int Communications::sendint(int num, int fd) {
     int32_t conv = htonl(num); //send safely.
     char *data = (char*)&conv;
     int left = sizeof(conv);
@@ -21,7 +21,7 @@ int sendint(int num, int fd) {
     }
     return 0;
 }
-int receiveint(int *num, int fd) {
+int Communications::receiveint(int *num, int fd) {
     int32_t ret; //Safe int Reading
     char *data = (char*)&ret;
     int left = sizeof(ret);
@@ -613,13 +613,13 @@ bool Communications::writeToSocket_file( std::fstream& reader , FILE_MODE mode) 
         char filebuf[FILE_TRANSFER_BUFFER_SIZE];
         memset( filebuf , 0, FILE_TRANSFER_BUFFER_SIZE);
         char* ch;
-        while ( (blocksize < FILE_TRANSFER_BUFFER_SIZE) && (!reader.eof() ) ) { //It breaks at eof.
+        while ( (blocksize < FILE_TRANSFER_BUFFER_SIZE-1) && (!reader.eof() ) ) { //It breaks at eof.
             reader.get(ch , 1); //Read one character.
             filebuf[blocksize] = *ch;
             blocksize++;
-        }
+        } //Prepare what to write.
         filebuf[FILE_TRANSFER_BUFFER_SIZE-1] = '1'; //1 Represents more file to read.
-        //blocksize++; // for the '1' character - tells how many characters to write onto the file. nothing more.
+
         //Done reading file aptly.
         //Write file into the stream and then read a continue, then an int, then a continue.
         this->writeToSocket( filebuf , FILE_TRANSFER_BUFFER_SIZE); //write the entire buffer. The int will convey what to read.
@@ -640,6 +640,8 @@ bool Communications::readFromSocket_file( std::fstream& dest , FILE_MODE mode) {
     this->readFromSocket(buf , FILE_TRANSFER_BUFFER_SIZE); //Read file begin character
     if (!( (buf[0] == TRANSFER_FILE_BEGIN_CHAR) && ( buf[FILE_TRANSFER_BUFFER_SIZE-1] == '0'))) {
         this->writeToSocket(cont); //Write a continue.
+    } else {
+        return false;
     }
     bool moarfile = true; //This will be transmitted across.
     while (moarfile) {
