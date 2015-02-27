@@ -117,22 +117,26 @@ void DropBox::on_btnSearch_clicked()
 void DropBox::on_btnUpload_clicked()
 {
 
-    this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
     this->client->data.type = UPLOAD_FILE;
+    this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+
     bool reply= this->client->eventHandler( UPLOAD_FILE);
     if(!reply)
     {
-        QMessageBox::information(this,tr("Error"),tr("Upload Failed"));
+        QMessageBox msg;
+        msg.setText("File transfer error ");
+        msg.exec();
     }
-//    else
-//    {
-//        this->ui->comboRevert->addItem("");//add stuff
-//    }
+    else
+    {
+        //add it to the server dir.
+        //this->ui->comboRevert->addItem("");//add stuff
+    }
 }
 
 void DropBox::on_btnSync_clicked()
 {
-
+    this->client->data.type = SYNC;
     bool reply= this->client->eventHandler(SYNC);
     if(!reply)
     {
