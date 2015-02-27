@@ -38,6 +38,7 @@ HEADERS  += client.h \
     registerpage.h \
     dropbox.h \
     clientdefinitions.h
+LIBS += -lboost_system -lboost_filesystem
 
 FORMS    += client.ui \
     loginpage.ui \

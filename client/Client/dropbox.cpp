@@ -120,7 +120,7 @@ void DropBox::on_btnUpload_clicked()
     this->client->data.type = UPLOAD_FILE;
     this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
 
-    bool reply= this->client->eventHandler( UPLOAD_FILE);
+    bool reply= this->client->eventHandler(UPLOAD_FILE);
     if(!reply)
     {
         QMessageBox msg;

@@ -12,9 +12,13 @@ bool Client::handleUpload() {
     std::string cmd( C_TO_S_FILE );
     conn.writeToSocket(cmd);
     std::string cont;
-    conn.readFromSocket(cont);
+    conn.readFromSocket(cont); //Continue.
     uploadNewFile(); //Who cares for the other two?
     return true;
+}
+std::string Client::processFileName( std::string filename ) {
+    unsigned lastdir = filename.find_last_of("/");
+    return filename.substr(lastdir);
 }
 
 bool Client::uploadNewFile() {
@@ -22,10 +26,21 @@ bool Client::uploadNewFile() {
     std::string filename = this->data.filename;
     std::fstream reader;
     reader.open(filename ); //In mode.
-    conn.writeToSocket(filename);
+    //Need to process file name.
+    //TODO : PROCESS FILE NAME. ADD IT TO MY DATABASE.
+    std::string filename_processed = processFileName(filename);
+    conn.writeToSocket(filename_processed);
     std:string cont;
     conn.readFromSocket(cont);
-    return conn.writeToSocket_file( reader , NEW_FILE);
+    bool suc = conn.writeToSocket_file( reader , NEW_FILE);
+
+    conn.readFromSocket( cont );
+    std::string t(CONTINUE);
+    conn.writeToSocket(t);
+    int *version;
+    conn.receiveint(version , csock);
+    //need to add to file.
+    this->addToFileLog(this->user.userID , filename_processed , filename , *version);
 }
 
 bool Client::uploadDiffFile() { //UNIMPLEMENTED
@@ -47,6 +62,30 @@ bool Client::uploadRemoteDiff() { //UNIMPLEMENTED
      *TODO :
      *Figure out this part.
     */
+}
+
+// FORMAT : filename path version\n
+bool Client::addToFileLog(string uid, string fname , string fname_withpath , int version) {
+    //Add fname to the file called uid.
+    fstream reader(uid , ios::in);
+    string tuid = uid+ "_temp";
+    fstream writer((tuid) , ios::out);
+    while( !reader.eof() ) {
+        string file , path;
+        int v;
+        reader >> file;
+        reader >> path;
+        reader >> v;
+        if ( fname == file ) { //FILE FOUND!
+            writer << file << " " <<  path;
+            writer << " " << version << "\n";
+        } else {
+            writer << file << " " <<  path;
+            writer << " " << v << "\n";
+        }
+    }
+    reader.close();
+    writer.close();
 }
 
 #endif

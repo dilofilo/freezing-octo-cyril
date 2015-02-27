@@ -4,6 +4,7 @@
 #include "client.h"
 #include <string>
 #include <QString>
+#include <boost/filesystem.hpp>
 bool Client::handleRegistration() { //Just registration, dont need to remember details of users.
     //Given user name and password to database functions.
     std::string username = this->data.user.userID ; //(this->registerpage->ui->txt_username)->text().toUtf8().constData();
@@ -15,7 +16,7 @@ bool Client::handleRegistration() { //Just registration, dont need to remember d
         //this->user.password = passwd;
         //this->user.clientDirectory = clidir;
         //this->user.serverDirectory = serdir;
-
+        this->createFileLog(username , clidir);
         this->goBackToLoginPage();
         return true;
     } else {
@@ -43,6 +44,13 @@ bool Client::registrationRequest( std::string uid , std::string pw , std::string
     std::string reply = "";
     conn.readFromSocket( reply ); //Somehwere in here, the server has checked the database for the user and replied.
     return (reply == REGISTRATION_ACCEPTED);
+}
+
+bool Client::createFileLog(std::string uid ,  std::string clidir) {
+    boost::filesystem::path dir(clidir);
+    //Directory already exists.
+    fstream maker( (uid).c_str() , ios::out );//, ios::app); MAKE IN THE CLIENT DIRECTORY ITSELF.
+    maker.close();
 }
 
 #endif
