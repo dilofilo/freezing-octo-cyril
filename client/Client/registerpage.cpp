@@ -3,6 +3,7 @@
 #include "registerpage.h"
 #include "ui_registerpage.h"
 #include <QMessageBox>
+#include <QFileDialog>
 RegisterPage::RegisterPage(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::RegisterPage)
@@ -62,3 +63,15 @@ void RegisterPage::on_btn_back_clicked()
     this->client->eventHandler( REGISTER_TO_LOGIN_BACK ); //Nothing ought to go wrng.
 }
 #endif
+
+void RegisterPage::on_btn_browse_clicked()
+{
+
+    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                QDir::currentPath(),
+                                                QFileDialog::ShowDirsOnly
+                                                );
+    ui->txt_clientDirectory->setText(dir);
+    //if (filename!="")
+    //{QMessageBox::information(this,"hain na",filename);}
+}

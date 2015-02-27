@@ -28,6 +28,8 @@ private slots:
 
     void on_btn_back_clicked();
 
+    void on_btn_browse_clicked();
+
 private:
     Socket csock;
     Client* client;
