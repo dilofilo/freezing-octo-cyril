@@ -78,7 +78,7 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
     } else if ( instr == MAIN_TO_LOGIN) { //to server
         this->handleLogout(); // Need to link GUI click to the event
     } else if ( instr == UPLOAD_FILE) { //to server
-        this->handleUpload(); //Done. Need to write the communications and server side equivalent.
+        return this->handleUpload(); //Done. Need to write the communications and server side equivalent.
     } else if ( instr == DOWNLOAD_FILE) { //to server
         this->handleDownload();
     } else if ( instr == REMOVE_FILE) { //to server

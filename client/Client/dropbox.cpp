@@ -23,20 +23,21 @@ DropBox::DropBox(Client* client , Socket& _csock) { // NECESSARY CONSTERUCTOE.
     childName={"PL","CompArch"};
     AddRoot("Assignments",childName);
 
-    model = new QDirModel(this);
+    model = new QFileSystemModel(this);
     model->setReadOnly(false);
-    QString sPath = "/home/cs5130287/";
-    QFileSystemModel *dirmodel = new QFileSystemModel(this);
-    dirmodel->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
-    dirmodel->setRootPath(sPath);
+    QString sPath = "/home/cs1130225/";
+    //dirmodel = new QFileSystemModel(this);
+    //model->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
+    model->setRootPath(sPath);
 
 
 
 
 
-    model->setSorting(QDir::DirsFirst | QDir::IgnoreCase | QDir::Name );
+    //model->setSorting(QDir::DirsFirst | QDir::IgnoreCase | QDir::Name );
      ui->clientTreeView->setModel(model);
-     ui->clientTreeView->setRootIndex(dirmodel->index("/home/cs5130287/"));
+     ui->clientTreeView->setRootIndex(model->index(sPath));
+
     QModelIndex index =model->index(QDir::currentPath());
     ui->clientTreeView->expand(index);
     ui->clientTreeView->scrollTo(index);
@@ -119,7 +120,7 @@ void DropBox::on_btnUpload_clicked()
 
     this->client->data.type = UPLOAD_FILE;
     this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
-
+    QMessageBox brk; brk.setText( " hi "); brk.exec();
     bool reply= this->client->eventHandler(UPLOAD_FILE);
     if(!reply)
     {

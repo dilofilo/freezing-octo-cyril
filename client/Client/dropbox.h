@@ -10,6 +10,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QLineEdit>
+#include <QFileSystemModel>
 
 class Client;
 
@@ -59,7 +60,8 @@ private:
     Client* client;
     Socket csock;
     Ui::DropBox *ui;
-    QDirModel *model;
+    QFileSystemModel *model;
+    QFileSystemModel *dirmodel;
 };
 
 #include "client.h" //Safe because forward declarations and header guards.

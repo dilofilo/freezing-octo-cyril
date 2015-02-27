@@ -117,6 +117,7 @@ private:
 
         bool createFileLog(std::string uid , std::string clidir); //Creates the file
         bool addToFileLog(std::string uid , std::string fname , std::string path , int version); //Ensures that there are no duplicates.
+        string findFilePath(string pfn); // Handles things.
         //File Download.
 
         //File Remove - from server directory.

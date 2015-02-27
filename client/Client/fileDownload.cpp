@@ -2,8 +2,39 @@
 #define FILE_DOWNLOAD_CPP
 
 #include "client.h"
+#include <boost/filesystem.hpp>
 
 bool Client::handleDownload() {
-
+    string req(S_TO_C_FILE);
+    conn.writeToSocket(req);
+    string cont;
+    conn.readFromSocket(cont);
+    //File name should be in data.filename;
+    string processedfname = processFileName(data.filename);
+    conn.writeToSocket( processedfname );
+    string completepath = findFilePath(processedfname);
+    //
+    fstream writer( findFilePath( processedfname) , ios::out);
+    conn.readFromSocket_file( writer );
 }
+
+string Client::findFilePath( string pfn) { //pfn is processed filename
+    fstream reader( user.userID , ios::in );
+    while(!(reader.eof())) {
+        string f,p;
+        int v;
+        reader >> f;
+        reader >> p;
+        reader >> v;
+
+        if ( f== pfn ) {
+            return p;
+        }
+    }
+    fstream writer( user.userID , ios::app );
+    boost::filesystem::path cwd( boost::filesystem::current_path() );
+    writer << pfn << cwd << 1 << "\n";
+    return pfn; //Put file into pwd();
+}
+
 #endif
