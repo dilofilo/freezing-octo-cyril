@@ -36,6 +36,9 @@ bool Server::main_CreateDatabase(){
         return true;
     }
     CreateTable();
+    CreateTableuser();
+    Createtableshared();
+    Createtablesharedby();
 }
 
 bool Server::main_CreateDictionary() {
@@ -66,6 +69,106 @@ bool Server::main_CreateDictionary() {
 }
 
 
+bool Server::CreateTableuser() {
+    //Assert : This is called only if the table doesnt already exist.
+    if ( !db.isOpen() ) {
+        db.open();
+    }
+    cout << "making table \n";
+    QSqlQuery creator;
+    string p1("CREATE TABLE ");
+    string p2(USERTABLE);
+    string p3("(");
+    string p4("FILENAME         VARCHAR(50) PRIMARY KEY NOT NULL,");
+    string p5("VERSION          INTEGER NOT NULL," );
+    string p7("OWNER            VARCHAR(50) NOT NULL);");
+    creator.exec( (p1+s+p3+p4+p5+p7).c_str() );
+    db.close();
+    return true;
+}
+
+int Server::CheckifFileExists(string finame , string owner){
+    if ( !db.isOpen() ) {
+        cout << "database was not open\n";
+        db.open();
+    }
+    QSqlQuery fetcher;
+
+    string p1("SELECT VERSION FROM ");
+    string p2(USERTABLE);
+    string p3(" where FILENAME='");
+    string p4("' AND OWNER='");
+    string p5("';");
+    fetcher.exec((p1 +p2 + p3 + finame + p4 + owner + p5).c_str());
+    cout << fetcher.lastError().text().toUtf8().constData() << "\n";
+    while ( fetcher.isSelect() && fetcher.next() ) {
+        //File Exists.
+        int version = fetcher.value(0).toInt();
+        return version;
+    }
+    cout << "didn't find a file \n";
+    db.close();
+    return 0;
+}
+
+bool Server::AddFile(string finame, int version , string owner){
+    if ( !db.isOpen() ) {
+        db.open();
+    }
+    cout << " now adding user \n";
+    //Note : Server_Dir is not know at all. Fetch it from createDirectory.
+    Server_Dir = SERVER_DIRECTORY;
+    Server_Dir += uID; //Assert : Creates the correct server directory.
+
+    string myval = " VALUES('" + finame + "','" + version + "','" + owner + "');";
+    QSqlQuery inserter;
+    string p1("INSERT INTO " );
+    string p2(USERTABLE);
+    string p3(" (FILENAME,VERSION,OWNER) ");
+    inserter.exec( (p1+p2+p3+myval).c_str());
+    db.close();
+    return true;
+}
+
+bool Server::Createtableshared(){
+
+    //Assert : This is called only if the table doesnt already exist.
+    if ( !db.isOpen() ) {
+        db.open();
+    }
+    cout << "making table \n";
+    QSqlQuery creator;
+    string p1("CREATE TABLE ");
+    string p2(SHAREDTABLE);
+    string p3("(");
+    string p4("FILENAME         VARCHAR(50) PRIMARY KEY NOT NULL,");
+    string p5("USER             VARCHAR(50) NOT NULL," );
+    string p7("OWNER            VARCHAR(50) NOT NULL);");
+    creator.exec( (p1+s+p3+p4+p5+p7).c_str() );
+    db.close();
+    return true;
+}
+
+
+
+//bool Server::Createtablesharedby(){
+//    //Assert : This is called only if the table doesnt already exist.
+//    if ( !db.isOpen() ) {
+//        db.open();
+//    }
+//    cout << "making table \n";
+//    QSqlQuery creator;
+//    string p1("CREATE TABLE ");
+//    string p2(SHAREDBYTABLE);
+//    string p3("(");
+//    string p4("FILENAME         VARCHAR(50) PRIMARY KEY NOT NULL,");
+//    string p5("OWNER" );
+//    string p7("OWNER            VARCHAR(50) NOT NULL);");
+//    creator.exec( (p1+s+p3+p4+p5+p7).c_str() );
+//    db.close();
+//    return true;
+//}
+
 bool Server::CreateTable() {
     //Assert : This is called only if the table doesnt already exist.
     if ( !db.isOpen() ) {
@@ -84,7 +187,6 @@ bool Server::CreateTable() {
     db.close();
     return true;
 }
-
 bool Server::AddUser(string uID, string Password, string Server_Dir, string Client_Dir){
     if ( !db.isOpen() ) {
         db.open();
@@ -178,5 +280,6 @@ bool Server::authenticate( UserDetails& usr ) {
         return false;
     }
 }
+
 
 #endif

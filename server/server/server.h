@@ -74,6 +74,9 @@ private:
 
         //database.cpp :
         bool CreateTable(); //database.cpp
+        bool CreateTable( string& s );
+        bool CreateTableuser();
+        bool Createtableshared();
         bool fetchUserbyID( UserDetails& usr ); //Returns false is no such user is present
         bool main_CreateDatabase(); //db.cpp
         bool main_AddUser(string uID, string Password, string Server_Dir, string Client_Dir);

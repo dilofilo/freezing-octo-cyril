@@ -46,5 +46,4 @@ bool Server::createNewUser( UserDetails& newuser ) {
     return true;
 }
 
-
 #endif

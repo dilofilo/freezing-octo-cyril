@@ -34,28 +34,20 @@ bool Server::handleUpload() {
         int myver = 0;
         string filename;
 
-        while(f){
-            f>>filename>>ver;
-            if(ver > max)     max=ver;
+        int version = CheckifFileExists(finame , user.userID);
 
-            if(filename.compare(finame) == 0)
-            {
-            // File Exists hence version modified.
-                f1<<finame<<"\t"<<ver+1<<"\n";
-                myver = ver+1;
-            }
-            else{
-                f1<<filename<<"\t"<<ver<<"\n";
-            }
+        if(version > 0){
+            // file exists.
+            AddFile(finame , version+1 , user.userID);
         }
-        f.close();
-        f1.close();
 
-        rename(TEMP,MYFILES);
-
-        if(myver == 0){
-            f1<<finame<<"\t"<<"1"<<"\n";
+        else{
+            AddFile(finame , version+1 , user.userID);
         }
+
+        string olname = TEMPPREFIX + finame;
+        rename(olname.c_str() , finame.c_str() );
+
         if(myver != 0){
             // A file with the same name exists.
 
@@ -83,9 +75,30 @@ bool Server::handleUpload() {
             rename(loc1.c_str() ,loc.c_str() );
             return true;
         }
-        string olname = TEMPPREFIX + finame;
-        rename(olname.c_str() , finame.c_str() );
+
     }
+
+//        while(f){
+//            f>>filename>>ver;
+//            if(ver > max)     max=ver;
+
+//            if(filename.compare(finame) == 0)
+//            {
+//            // File Exists hence version modified.
+//                f1<<finame<<"\t"<<ver+1<<"\n";
+//                myver = ver+1;
+//            }
+//            else{
+//                f1<<filename<<"\t"<<ver<<"\n";
+//            }
+//        }
+
+//        f.close();
+//        f1.close();
+
+        rename(TEMP,MYFILES);
+
+
     else return false;
 }
 
