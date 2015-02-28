@@ -51,6 +51,7 @@ Client::Client(QWidget *parent) :
     this->loginpage->hide();
     this->registerpage->hide();
     ui->setupUi(this);
+
     //Assert : Presently, the client wants the IP Address.
 }
 

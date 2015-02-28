@@ -11,21 +11,83 @@
 #include "download.cpp"
 #include "removal.cpp"
 
+
+SSL_CTX* InitServerCTX(void) {
+    SSL_METHOD *method;
+    SSL_CTX *ctx;
+
+    OpenSSL_add_all_algorithms();		/* load & register all cryptos, etc. */
+    SSL_load_error_strings();			/* load all error messages */
+    SSL_library_init();
+
+    method = const_cast<SSL_METHOD*>(SSLv3_server_method());		/* create new server-method instance */
+    ctx = SSL_CTX_new(method);			/* create new context from method */
+    if ( ctx == NULL )
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    return ctx;
+}
+void ShowCerts(SSL* ssl)
+{   X509 *cert;
+    char *line;
+
+    cert = SSL_get_peer_certificate(ssl);	/* Get certificates (if available) */
+    if ( cert != NULL )
+    {
+        printf("Server certificates:\n");
+        line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
+        printf("Subject: %s\n", line);
+        free(line);
+        line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
+        printf("Issuer: %s\n", line);
+        free(line);
+        X509_free(cert);
+    }
+    else
+        printf("No certificates.\n");
+}
+void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
+{
+    /* set the local certificate from CertFile */
+    if ( SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0 )
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    /* set the private key from KeyFile (may be the same as CertFile) */
+    if ( SSL_CTX_use_PrivateKey_file(ctx, KeyFile, SSL_FILETYPE_PEM) <= 0 )
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    /* verify private key */
+    if ( !SSL_CTX_check_private_key(ctx) )
+    {
+        fprintf(stderr, "Private key does not match the public certificate\n");
+        abort();
+    }
+}
+
 Server::Server() {
 	//Initialize number of clients
     user.userID = "";
     user.password = "";
     user.clientDirectory = "";
     user.serverDirectory = "";
-	startServer();
+    serverCTX = InitServerCTX(); //Get a new ctx.
+    LoadCertificates(serverCTX , "mycert.pem" , "mycert.pem");
+    startServer();
 }
 
 Server::~Server() {
 	//Close windows. Close all connections etc.
+    SSL_CTX_free(serverCTX);
 }
 
 
-void Server::startServer() {
+void Server::startServer() { //Gets
 	
 	//Initialize server-only things.
     main_CreateDatabase();
@@ -50,6 +112,7 @@ void Server::startServer() {
         printf(" socket successfully binded... \n");
 	}	
 	//Assert : ssock is now ready - there is one incoming connection.
+    //ssock is now ready.
 	getClient();	
 }
 
@@ -69,19 +132,33 @@ void Server::getClient() {
 		}
 
         inet_ntop( AF_INET, &(clientAddr.sin_addr) , clienturl , CLIENT_URL_LEN );
-		
+        //SSL stuff
+        sslsock = SSL_new(serverCTX); //makes the new socket.
+        SSL_set_fd(sslsock , csock);
+        conn.setSocket(csock , sslsock); //Created. - copies code elsewhere
+        if ( SSL_accept(sslsock) == -1 ) {
+            printf("SSL ACCEPT FAILED\n");
+        } else {
+            printf("SSL ACCEPTED \n");
+        }
+        ShowCerts(sslsock);
+
 		//Create a child ID.
 		cpid = fork(); //fork returns 0 to child and process id to forker.
 		if ( cpid == 0 ) {
 			//Child ID does work.
 			//Original ID continues to listen for connections.
+
             close(ssock);
-            conn.setSocket(csock); //Created.
+
             handleClient();
 		} else {
-			close(csock);
+
+            close(csock);
 		}
 	}
+
+    close(csock);
 	close(ssock);
 }
 

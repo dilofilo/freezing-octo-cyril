@@ -20,6 +20,16 @@ using namespace std;
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+#include <malloc.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <resolv.h>
+#include <netdb.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 
 //Instructions and utility.
 #include "../../common/instructions.h"
@@ -78,6 +88,9 @@ private slots:
     void on_btn_launch_clicked();
 
 private:
+
+    SSL_CTX *clientCTX;
+    SSL *sslcsock;
     //Socket creation things.
     Socket csock;
     struct sockaddr_in serverAddress, clientAddress;

@@ -15,6 +15,15 @@ using namespace std;
 #include <netinet/in.h>
 #include "arpa/inet.h"
 #include <QtSql/QtSql>
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+#include <malloc.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <resolv.h>
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 
 //Other stuff.
 #include <vector>
@@ -107,6 +116,8 @@ private:
         bool createUserDirectory( UserDetails& usr); //directories.cpp
         bool makeAdminDirectory(); //directories.cpp
 
+    SSL_CTX *serverCTX;
+    SSL* sslsock;
 public:
     Server();
 	~Server();

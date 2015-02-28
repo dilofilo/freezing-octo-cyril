@@ -25,7 +25,8 @@
 #include <poll.h> //For synchronousness
 #include <fstream> //For file transfer.
 #include "instructions.h"
-
+#include <openssl/ssl.h>
+#include <openssl/err.h>
 
 typedef int Socket;
 
@@ -38,7 +39,7 @@ enum FILE_MODE { NEW_FILE , DIFF_FILE , REMOTE_DIFF};
 class Communications {
 private:
     Socket csock;
-
+    SSL* sslsock;
 public:
 
        //Constructors and destructors.
@@ -46,7 +47,7 @@ public:
     ~Communications();
 
     Socket getSocket();
-    bool setSocket(Socket& sock);
+    bool setSocket(Socket& sock , SSL* _sock);
 
     //Write and read int
     int sendmyint(int val);

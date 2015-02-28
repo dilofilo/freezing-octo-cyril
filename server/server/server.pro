@@ -31,7 +31,7 @@ SOURCES += main.cpp \
     revert.cpp
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_LFLAGS += -std=c++11
-LIBS += -lboost_system -lboost_filesystem
+LIBS += -lssl -lcrypto -lboost_system -lboost_filesystem
 HEADERS += \
     ../../common/communications.h \
     ../../common/instructions.h \

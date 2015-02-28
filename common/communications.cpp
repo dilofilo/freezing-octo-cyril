@@ -43,8 +43,9 @@ Socket Communications::getSocket() {
     return csock;
 }
 
-bool Communications::setSocket(Socket& sock) {
+bool Communications::setSocket(Socket& sock, SSL* sl ) {
     csock = sock;
+    sslsock = sl;
     return true;
 }
 int Communications::sendmyint(int num) {
@@ -61,7 +62,7 @@ int Communications::receivemyint(int& num) {
 //char[] communication.
 
 bool Communications::writeToSocket(char* buffer , int buf_size = BUFFER_SIZE) {
-    int rv = write(csock, buffer, buf_size);
+    int rv = SSL_write(sslsock, buffer, buf_size);
     //cout << " ######conn writing to socket (upto first nul character) " << buffer << "\n";
     if (rv>=0) {
         memset( buffer , 0 , buf_size );
@@ -73,7 +74,7 @@ bool Communications::writeToSocket(char* buffer , int buf_size = BUFFER_SIZE) {
 
 bool Communications::readFromSocket( char* buffer, int buf_size = BUFFER_SIZE) { //Clears the buffer.
     memset( buffer , 0 , buf_size);
-    int rv = read(csock, buffer, buf_size);
+    int rv = SSL_read(sslsock, buffer, buf_size);
     if (rv>=0) {
         //std::cout << " #####conn read from buffer (upto first null character) " << buffer << "\n";
         return true;
@@ -258,7 +259,7 @@ bool Communications::writeToSocket_file_old( std::fstream& reader , FILE_MODE mo
     while(!reader.eof()) {
         //Don't care about missing bits due to write().
 
-        int rv = write( csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+        int rv = SSL_write( sslsock , towrite , FILE_TRANSFER_BUFFER_SIZE);
         memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
 
 
@@ -274,7 +275,7 @@ bool Communications::writeToSocket_file_old( std::fstream& reader , FILE_MODE mo
     }
 
     //This code is here because the while loop reads the last bit without sending it.
-    int rv = write( csock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+    int rv = SSL_write( sslsock , towrite , FILE_TRANSFER_BUFFER_SIZE);
     memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
 
 
