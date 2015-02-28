@@ -87,6 +87,8 @@ public:
 private slots:
     void on_btn_launch_clicked();
 
+    void on_txt_serverip_selectionChanged();
+
 private:
 
     SSL_CTX *clientCTX;
@@ -130,13 +132,13 @@ private:
         bool uploadRemoteDiff();
         string processFileName( string fname );
 
-        bool createFileLog(std::string uid , std::string clidir); //Creates the file
+        bool createFileLog(std::string _file); //Creates the file
         bool addToFileLog(std::string uid , std::string fname , std::string path , int version); //Ensures that there are no duplicates.
         string findFilePath(string pfn); // Handles things.
 
         void getServerFiles_login();
-        void populateFileData_login_shared(std::set<string>& fn , unordered_map<string , int>& fv , unordered_map<string , string> fo); //Reads from files and puts it into this.
-        void populateFileData_login_normal(std::set<string>& fn , unordered_map<string , int>& fv , unordered_map<string , string> fo); //Reads from files and puts it into this.
+        void populateFileData_login_shared(std::set<string>& fn , unordered_map<string , int>& fv , unordered_map<string , string>& fo); //Reads from files and puts it into this.
+        void populateFileData_login_normal(std::set<string>& fn , unordered_map<string , int>& fv , unordered_map<string , string>& fo); //Reads from files and puts it into this.
 
         //File Download.
 

@@ -2,7 +2,9 @@
 #define USER_LOGIN_CPP
 #include "client.h"
 #include "ui_loginpage.h"
+#include <boost/filesystem.hpp>
 
+namespace bfs = boost::filesystem;
 bool Client::handleLogin() {
     //Fetch Login details. - Done in the caller for this.
     //Send login details to a function which returns a bool.
@@ -12,8 +14,37 @@ bool Client::handleLogin() {
         this->user.userID = data.user.userID;
         this->user.password = data.user.password;
         this->user.clientDirectory = data.user.clientDirectory; //NEED TO GET FROM THE SERVER.
-        //Dont need server directory for the client.
-        //TODO : Fetch the file system
+        //Check Directories. If No Directory, make Directories + Log files.
+
+
+        bfs::path cwd(bfs::current_path());
+        bfs::path syncpath = cwd;
+        bfs::path sharepath = cwd;
+        syncpath /= (user.userID + "/" + CLIENT_SYNC_DIR) ;
+        sharepath /= (user.userID + "/" +  CLIENT_SHARE_DIR );
+        bfs::path syncfile = syncpath;
+            syncfile /= ("/" + user.userID + CLIENT_SYNC_DIR);
+        bfs::path sharefile = sharepath;
+        sharefile /= ("/" + user.userID + CLIENT_SHARE_DIR);
+        if( bfs::exists(syncpath) ) { //dir
+        } else {
+            bfs::create_directories(syncpath);
+        }
+        if (bfs::exists(syncfile)) { //file
+        } else {
+            this->createFileLog(syncfile.string());
+        }
+        if ( bfs::exists(sharepath) ) { //dir
+        } else {
+            bfs::create_directories(sharepath);
+        }
+        if ( bfs::exists(sharefile)) { //file
+
+        } else {
+            this->createFileLog(sharefile.string());
+        }
+        //Server files are taken from the dropbox thing. i,e after dropbox is created.
+        //ASSERT : Created files.
         return true;
     } else {
         this->user.userID = "";
@@ -22,6 +53,12 @@ bool Client::handleLogin() {
         //TODO : Do Nothing.
         return false;
     }
+}
+//Log files for owner's uploaded files and another for shared files.
+bool Client::createFileLog( std::string filename ) {
+    //Directory already exists.
+    fstream maker( filename , ios::out );//, ios::app); MAKE IN THE CLIENT DIRECTORY ITSELF.
+    maker.close();
 }
 
 bool Client::handleLogout() {

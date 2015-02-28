@@ -30,6 +30,8 @@ private slots:
 
     void on_btn_browse_clicked();
 
+    void on_txt_username_selectionChanged();
+
 private:
     Socket csock;
     Client* client;

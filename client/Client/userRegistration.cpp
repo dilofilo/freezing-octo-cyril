@@ -16,7 +16,6 @@ bool Client::handleRegistration() { //Just registration, dont need to remember d
         //this->user.password = passwd;
         //this->user.clientDirectory = clidir;
         //this->user.serverDirectory = serdir;
-        this->createFileLog(username , clidir);
         this->goBackToLoginPage();
         return true;
     } else {
@@ -46,14 +45,5 @@ bool Client::registrationRequest( std::string uid , std::string pw , std::string
     return (reply == REGISTRATION_ACCEPTED);
 }
 
-//Log files for owner's uploaded files and another for shared files.
-bool Client::createFileLog(std::string uid ,  std::string clidir) {
-    boost::filesystem::path dir(clidir);
-    //Directory already exists.
-    fstream maker( (uid).c_str() , ios::out );//, ios::app); MAKE IN THE CLIENT DIRECTORY ITSELF.
-    maker.close();
-    maker.open( (uid+SHARED_EXTN).c_str() , ios::out); //Creates file for shared files.
-    maker.close();
-}
 
 #endif

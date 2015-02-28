@@ -75,3 +75,9 @@ void RegisterPage::on_btn_browse_clicked()
     //if (filename!="")
     //{QMessageBox::information(this,"hain na",filename);}
 }
+
+void RegisterPage::on_txt_username_selectionChanged()
+{
+    this->ui->txt_username->setText("");
+    this->ui->txt_password->setText("");
+}

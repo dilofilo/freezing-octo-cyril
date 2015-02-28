@@ -65,4 +65,11 @@ void LoginPage::on_btn_login_clicked()
         msg.exec();
     }
 }
+
+void LoginPage::on_txt_username_selectionChanged()
+{
+    this->ui->txt_username->setText("");
+    this->ui->txt_password->setText("");
+}
+
 #endif

@@ -42,4 +42,8 @@ struct InstructionData {
 #define POP_SUFFIX "_list"
 #define SHARED_EXTN "_shared"
 #define LOG_FILE_SUFFIX "-temp"
+#define SERVER_LOG "_SERVER"
+
+#define CLIENT_SYNC_DIR "MBDSYNC"
+#define CLIENT_SHARE_DIR "MBDSHARE"
 #endif // CLIENTDEFINITIONS_H

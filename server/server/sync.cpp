@@ -9,7 +9,6 @@
 
 bool Server::handleSync( string uid ) {
 
-    SyncController( user.userID );
     // A file named log.txt shoul've been created
     // The file is sent to the client
     string filename = uid + "log.txt"; //Slightly more unique name.

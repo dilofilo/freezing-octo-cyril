@@ -37,6 +37,18 @@ public:
         if (Client->objectName().isEmpty())
             Client->setObjectName(QStringLiteral("Client"));
         Client->resize(400, 300);
+        QPalette palette;
+        QBrush brush(QColor(255, 255, 255, 255));
+        brush.setStyle(Qt::SolidPattern);
+        palette.setBrush(QPalette::Active, QPalette::Base, brush);
+        QBrush brush1(QColor(81, 237, 117, 255));
+        brush1.setStyle(Qt::SolidPattern);
+        palette.setBrush(QPalette::Active, QPalette::Window, brush1);
+        palette.setBrush(QPalette::Inactive, QPalette::Base, brush);
+        palette.setBrush(QPalette::Inactive, QPalette::Window, brush1);
+        palette.setBrush(QPalette::Disabled, QPalette::Base, brush1);
+        palette.setBrush(QPalette::Disabled, QPalette::Window, brush1);
+        Client->setPalette(palette);
         centralWidget = new QWidget(Client);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         btn_launch = new QPushButton(centralWidget);

@@ -9,10 +9,8 @@ bool Server::handleLogin()
 {
     cout << "entered handleLogin() \n";
     string cont( CONTINUE );
-    cout << "writing continue \n";
     conn.writeToSocket(cont);
     struct UserDetails usr;
-    cout << "reading user \n";
     conn.readFromSocket_user( usr );
     cout << "read user with id=" << usr.userID << "and pw=" << usr.password << "\n";
     if( authenticate(usr) ) { //Login was correct
@@ -22,18 +20,24 @@ bool Server::handleLogin()
 
         std::string temp;
         conn.readFromSocket(temp); //CONTINUE STATEMENT
+
         user.userID = usr.userID;
+
         std::string accepted( LOGIN_ACCEPTED );
         conn.writeToSocket(accepted);
+
         handleSync( usr.userID );       // Sending the info on all files the client has access to. TODO
         return true;
     } else { //Login was not successful.
         //Authentication Failed.
         cout << "authentication failed \n";
         conn.writeToSocket_user(usr);
+
         std::string temp;
         conn.readFromSocket(temp); //CONTINUE INSTR
+
         std::string rejected( LOGIN_REJECTED );
+
         conn.writeToSocket(rejected);
         return false;
     }

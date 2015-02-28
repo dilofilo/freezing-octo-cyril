@@ -119,10 +119,15 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
 
 
 void Client::showMain() {
-    this->dropboxpage = new DropBox( this , csock);
+    bfs::path cwd(bfs::current_path());
+    bfs::path syncpath = cwd;
+    syncpath /= (user.userID + "/");
+
+    this->dropboxpage = new DropBox( this , csock , syncpath.string());
+
     this->getServerFiles_login(); //Fetches files.
     this->dropboxpage->updateServerFiles(); //Updates GUI.
-
+    cout << "got here \n";
     this->loginpage->hide();
     this->dropboxpage->show();
 }
@@ -138,3 +143,9 @@ void Client::handleExit() {
 
 
 #endif
+
+void Client::on_txt_serverip_selectionChanged()
+{
+    this->ui->txt_serverip->setText("");
+}
+

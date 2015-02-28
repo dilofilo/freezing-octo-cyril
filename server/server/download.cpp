@@ -25,6 +25,8 @@ bool Server::handleDownload() {
     fstream reader;
     //reader.open(filepath.c_str(),ios::in);
     conn.writeToSocket_file(filepath);
+
+    handleSync(user.userID);
     return true;
 }
 

@@ -68,23 +68,13 @@ bool Server::handleUpload() {
             boost::filesystem::path pathold_name(old_name.c_str() );
             boost::filesystem::rename(pathold_name , pathprior_updated );
         }
-        /*
-            string olname = SERVER_DIRECTORY + user.userID + "/" + finame;
-
-            string newname = SERVER_DIRECTORY + user.userID + "/" + "v_" + to_string(version+1) + "/" + finame;
-
-            cout << "server renaming " << olname << "\t to \t" << newname << "\n";
-            boost::filesystem::path pathol(olname.c_str() );
-            boost::filesystem::path pathnew(newname.c_str() );
-            boost::filesystem::rename(pathol , pathnew);
-
-//        string olname = SERVER_DIRECTORY + user.userID + "/" + TEMPPREFIX + finame;
-//        string newname = SERVER_DIRECTORY + user.userID + "/" + finame;
-//        rename(olname.c_str() , newname.c_str());       // renaming the temporary file.*/
-
+        std::string cont;
+        conn.readFromSocket(cont);
+        handleSync( user.userID );
     } else {
         return false;
     }
+
     return true;
 }
 

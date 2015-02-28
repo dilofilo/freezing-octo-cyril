@@ -30,7 +30,7 @@ class DropBox : public QMainWindow
     
 public:
     explicit DropBox(QWidget *parent = 0);
-    DropBox(Client* _client , Socket& _csock);
+    DropBox(Client* _client , Socket& _csock , std::string sharefile);
     ~DropBox();
     std::unordered_map< std::string , int > fileversions;
     std::set< std::string > filenames;
@@ -39,6 +39,7 @@ public:
 
     void AddItem( QString fname );
     void AddItemShare(QString fn , QString owner);
+
 private slots:
     void on_btnMake_clicked();
     void on_btnDelete_clicked();

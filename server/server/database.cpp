@@ -150,19 +150,20 @@ bool Server::SyncController( string uID ){
     fstream f; //present in server directory.
     string fn = uID + "log.txt";
     f.open( fn , ios::out ); //Always sends log.txt accross.
+    f<<"THIS FILE IS SPECIAL"<<endl;
     if ( !db.isOpen() ) {
         db.open();
     }
     QSqlQuery fetcher;
     string p1("SELECT FILENAME,VERSION FROM ");
     string p2(USERTABLE);
-    string p4("' WHERE OWNER='");
+    string p4(" WHERE OWNER='");
     string p5("';");
     cout << " ## ## ## \nexecuting command :" << (p1 +p2 + p4 + uID + p5).c_str() << "\n ## ## ##";
     fetcher.exec((p1 +p2 + p4 + uID + p5).c_str());
     while ( fetcher.isSelect() && fetcher.next() ) {
-        cout << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toInt() << endl;
-        f << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toInt() << endl;
+        cout << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toInt() << "\n";
+        f << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toInt() << "\n";
     }
     db.close();
     f.close();
@@ -175,6 +176,7 @@ bool Server::SyncControllerShared( string uID ){
     ofstream f;
     string fn = uID + "log.txt";
     f.open( fn.c_str() ,ios::out); //Refresh the file.
+    f<<"THIS FILE IS SHARED SPECIAL"<<endl;
     if ( !db.isOpen() ) {
         db.open();
     }
@@ -182,14 +184,14 @@ bool Server::SyncControllerShared( string uID ){
 
     string p1("SELECT FILENAME,OWNER FROM ");
     string p2(SHAREDTABLE);
-    string p4("' WHERE USER='");
+    string p4(" WHERE USER='");
     string p5("';");
     cout << " ## ## ## \nexecuting command :" << (p1 +p2 + p4 + uID + p5).c_str() << "\n ## ## ##";
     fetcher.exec((p1 +p2 + p4 + uID + p5).c_str());
     while ( fetcher.isSelect() && fetcher.next() ) {
 
-        cout<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toString().toUtf8().constData()<<endl;
-        f<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toString().toUtf8().constData()<<endl;
+        cout<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toString().toUtf8().constData()<< "\n";
+        f<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toString().toUtf8().constData()<<"\n";
     }
     db.close();
 

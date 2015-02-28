@@ -13,7 +13,7 @@ DropBox::DropBox(QWidget *parent) :
     ui->setupUi(this);
 }
 
-DropBox::DropBox(Client* _client , Socket& _csock) { // NECESSARY CONSTERUCTOE.
+DropBox::DropBox(Client* _client , Socket& _csock , string sharedfiledir) { // NECESSARY CONSTERUCTOE.
     ui =  new Ui::DropBox();
     ui->setupUi(this);
     //this->setStyleSheet("background-color: black;");
@@ -27,7 +27,7 @@ DropBox::DropBox(Client* _client , Socket& _csock) { // NECESSARY CONSTERUCTOE.
 
     model = new QFileSystemModel(this);
     model->setReadOnly(false);
-    QString sPath = "/home/cs1130225/";
+    QString sPath = QString::fromStdString(sharedfiledir);
     //dirmodel = new QFileSystemModel(this);
     //model->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
     model->setRootPath(sPath);
@@ -38,7 +38,7 @@ DropBox::DropBox(Client* _client , Socket& _csock) { // NECESSARY CONSTERUCTOE.
 
     //model->setSorting(QDir::DirsFirst | QDir::IgnoreCase | QDir::Name );
      ui->clientTreeView->setModel(model);
-     ui->clientTreeView->setRootIndex(model->index(sPath));
+     ui->clientTreeView->setRootIndex(model->setRootPath(sPath));
 
     QModelIndex index =model->index(QDir::currentPath());
     ui->clientTreeView->expand(index);
