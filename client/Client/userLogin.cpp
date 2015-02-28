@@ -14,6 +14,9 @@ bool Client::handleLogin() {
         this->user.clientDirectory = data.user.clientDirectory; //NEED TO GET FROM THE SERVER.
         //Dont need server directory for the client.
         //TODO : Fetch the file system
+        this->getServerFiles_login(); //Fetches files.
+        this->dropboxpage->updateServerFiles(); //Updates GUI.
+
         return true;
     } else {
         this->user.userID = "";

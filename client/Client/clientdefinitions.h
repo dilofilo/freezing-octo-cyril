@@ -34,9 +34,12 @@ struct InstructionData {
     INSTRUCTION_TYPE type;
     UserDetails user;
     std::string filename;
+    int fileversion;
     UserDetails other_user;
     FILE_MODE filetype;
     //Add more as required.
 };
-
+#define POP_SUFFIX "_list"
+#define SHARED_EXTN "_shared"
+#define LOG_FILE_SUFFIX "-temp"
 #endif // CLIENTDEFINITIONS_H

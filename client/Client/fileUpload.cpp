@@ -4,6 +4,7 @@
 
 #include <fstream>
 #include "../../common/communications.h"
+#include <boost/filesystem.hpp>
 
 bool Client::handleUpload() {
     //Assume that file name is given in data.
@@ -23,23 +24,20 @@ std::string Client::processFileName( std::string filename ) {
 
 bool Client::uploadNewFile() {
     //ASSERT : data.filetype == FILE_TYPE_NEW
-    ofstream f;
-    f.open("MYTEST.txt");
     std::string filename = this->data.filename; //Entire path.
-    f<<(filename);
-    f.close();
     std::fstream reader;
     //reader.open(filename ); //In mode.
     //Need to process file name.
     //TODO : PROCESS FILE NAME. ADD IT TO MY DATABASE.
     std::string filename_processed = processFileName(filename); //Processes the file name.
     cout<<"Processed the filename"<<endl;
+
     conn.writeToSocket(filename_processed); //cout-ing the filename on server side works.
     std::string cont;
     conn.readFromSocket(cont);
-    cout<<cont<<endl;
+
     conn.writeToSocket_file( filename , NEW_FILE);
-    cout<<" DONE "<<endl;
+
     conn.readFromSocket( cont );
     std::string t(CONTINUE);
     conn.writeToSocket(t);
@@ -51,26 +49,6 @@ bool Client::uploadNewFile() {
     return true;
 }
 
-bool Client::uploadDiffFile() { //UNIMPLEMENTED
-    /*
-     *The server calculates the diff file. The reason is processing speed ( assuming that the server is actually a server )
-     *      The other part of the rationale is data transfer. We are minimizing data transferred by the user.
-    */
-    std::string filename = this->data.filename;
-    std::fstream reader( filename );
-    conn.writeToSocket(filename);
-    return conn.writeToSocket_file( filename , DIFF_FILE);
-
-}
-
-bool Client::uploadRemoteDiff() { //UNIMPLEMENTED
-    std::string filename = this->data.filename;
-    std::fstream reader(filename);
-    /*
-     *TODO :
-     *Figure out this part.
-    */
-}
 
 // FORMAT : filename path version\n
 bool Client::addToFileLog(string uid, string fname , string fname_withpath , int version) {
@@ -94,6 +72,12 @@ bool Client::addToFileLog(string uid, string fname , string fname_withpath , int
     }
     reader.close();
     writer.close();
+    //rename tuid to uid.
+    boost::filesystem::path p(uid.c_str());
+    boost::filesystem::path ptemp(tuid.c_str());
+    boost::filesystem::rename(ptemp , p);
+
+    return true;
 }
 
 #endif

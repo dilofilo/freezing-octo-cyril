@@ -20,10 +20,10 @@ DropBox::DropBox(Client* _client , Socket& _csock) { // NECESSARY CONSTERUCTOE.
     ui->serverTreeWidget->setColumnCount(1);
     client = _client;
     csock = _csock;
-    std::vector<QString> childName{"Java","CPP"};
-    AddRoot("Code",childName);
-    childName={"PL","CompArch"};
-    AddRoot("Assignments",childName);
+//    std::vector<QString> childName{"Java","CPP"};
+//    AddRoot("Code",childName);
+//    childName={"PL","CompArch"};
+//    AddRoot("Assignments",childName);
 
     model = new QFileSystemModel(this);
     model->setReadOnly(false);
@@ -104,7 +104,6 @@ void DropBox::on_btnDelete_clicked()
         model->remove(index);
     }
 }
-#endif
 
 void DropBox::on_btnSearch_clicked()
 {
@@ -218,11 +217,66 @@ void DropBox::on_btnUnshare_clicked()
 
 void DropBox::on_btnConfirmRevert_clicked()
 {
-    this->client->data.filename = this->ui->comboRevert->currentText().toUtf8().constData();
+    this->client->data.fileversion = this->ui->comboRevert->currentText().toInt();
+    this->client->data.filename  = this->ui->serverTreeWidget->currentIndex().data().toString().toUtf8().constData();
     this->client->data.type = REVERT;
     bool reply= this->client->eventHandler( REVERT);
     if(!reply)
     {
         QMessageBox::information(this,tr("Error"),tr("Share Failed"));
     }
+}
+
+void DropBox::updateServerFiles() {
+    std::set<std::string>::iterator it = filenames.begin();
+    this->ui->serverTreeWidget->clear();
+    this->ui->shareTreeWidget->clear();
+    for( ; it != filenames.end(); ++it) {
+        //For each file name ,
+        std::string fn1 = *it; //Gets the file name.
+        std::string fo1 = fileowners[fn1];
+        QString fn = QString::fromStdString(fn1);
+        QString fo = QString::fromStdString(fo1);
+        if ( fo1 == this->client->user.userID) {
+            AddItem( fn );
+        } else {
+            AddItemShare( fn , fo );
+        }
+    }
+}
+
+void DropBox::on_shareTreeWidget_clicked(const QModelIndex &index)
+{
+    ui->comboRevert->clear();
+    //int y=this->fileversions[toString(index->data())];
+    ui->comboRevert->addItem("Version 1");//+QString::number(i));
+
+}
+
+void DropBox::AddItem(QString Name)
+{
+    QTreeWidgetItem *itm= new QTreeWidgetItem(ui->serverTreeWidget);
+    itm->setText(0,Name); // itm->setText(1,size); // itm->setText(2,version);
+}
+
+void DropBox::AddItemShare(QString Name, QString Owner)
+{
+    QTreeWidgetItem *itm= new QTreeWidgetItem(ui->shareTreeWidget);
+    itm->setText(0,Name); itm->setText(1,Owner);
+}
+#endif
+
+void DropBox::on_serverTreeWidget_clicked(const QModelIndex &index)
+{
+    ui->comboRevert->clear();
+    int y=this->fileversions[index.data().toString().toUtf8().constData()];
+    for (int i=1;i<=y;i++)
+    {
+        ui->comboRevert->addItem("Version "+QString::number(i));
+    }
+}
+
+void DropBox::on_textSearch_selectionChanged()
+{
+    this->ui->textSearch->setText("");
 }

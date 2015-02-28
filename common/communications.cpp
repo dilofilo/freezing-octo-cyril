@@ -62,6 +62,7 @@ int Communications::receivemyint(int& num) {
 
 bool Communications::writeToSocket(char* buffer , int buf_size = BUFFER_SIZE) {
     int rv = write(csock, buffer, buf_size);
+    cout << " ######conn writing to socket (upto first nul character) " << buffer << "\n";
     if (rv>=0) {
         memset( buffer , 0 , buf_size );
         return true;
@@ -74,10 +75,9 @@ bool Communications::readFromSocket( char* buffer, int buf_size = BUFFER_SIZE) {
     memset( buffer , 0 , buf_size);
     int rv = read(csock, buffer, buf_size);
     if (rv>=0) {
-        std::cout << " read from buffer \n";
+        std::cout << " #####conn read from buffer (upto first null character) " << buffer << "\n";
         return true;
     } else {
-
         return false;
     }
 }
@@ -328,12 +328,14 @@ bool Communications::readFromSocket_file_old(std::fstream &dest, FILE_MODE mode)
 bool Communications::writeToSocket_file( std::string& readerfile , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
     std::fstream reader;
     reader.open(readerfile , ios::in);
+    //cout << "#####WRITING THE FOLLOWING FILE ONTO THE SOCKET \n\n\t\t" << readerfile << "\n\n\n";
     //Not gonna use poll. //Assumes that reader is open.
     std::string cont;
     char buf[FILE_TRANSFER_BUFFER_SIZE];
     memset(buf, 0 , FILE_TRANSFER_BUFFER_SIZE);
     buf[0] = TRANSFER_FILE_BEGIN_CHAR;
     buf[FILE_TRANSFER_BUFFER_SIZE-1] = '0';
+
     this->writeToSocket( buf , FILE_TRANSFER_BUFFER_SIZE);
     this->readFromSocket(cont);
     if (!( cont == CONTINUE )) {
@@ -352,24 +354,27 @@ bool Communications::writeToSocket_file( std::string& readerfile , FILE_MODE mod
             blocksize++;
         } //Prepare what to write.
         filebuf[FILE_TRANSFER_BUFFER_SIZE-1] = '1'; //1 Represents more file to read.
-
+        //cout << " #####the file was read as : " << filebuf << "\n" ;
+        //cout << " #####the file size read was" << blocksize << "\n";
         //Done reading file aptly.
         //Write file into the stream and then read a continue, then an int, then a continue.
         this->writeToSocket( filebuf , FILE_TRANSFER_BUFFER_SIZE); //write the entire buffer. The int will convey what to read.
         this->readFromSocket( cont ); //Read a continue.
         //Now, write the int
+
         sendmyint( blocksize);
         this->readFromSocket(cont);
     }
     buf[0] = TRANSFER_FILE_END_CHAR;
     this->writeToSocket( buf , FILE_TRANSFER_BUFFER_SIZE);
     return true;
-}
+} //Writing file correctly.
 
 bool Communications::readFromSocket_file( std::string& destfile , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+    FILE_MODE lol = mode;
     std::fstream dest;
-    dest.open(destfile , ios::app);
-
+    dest.open(destfile , ios::out);
+    //cout << " ####WRITING INTO FILE NAME :" << destfile << "\n";
     std::string cont(CONTINUE);
     char buf[FILE_TRANSFER_BUFFER_SIZE];
     memset(buf, 0 , FILE_TRANSFER_BUFFER_SIZE);
@@ -398,6 +403,7 @@ bool Communications::readFromSocket_file( std::string& destfile , FILE_MODE mode
         int blocksize;
         receivemyint( blocksize );
         // write the file.
+        //cout << " ###########going to write the following into the file : " << filebuf << "\n";
         dest.write( filebuf , blocksize );
         this->writeToSocket(cont); //Write a continue.
         //Now, write the file in.

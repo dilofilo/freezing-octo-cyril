@@ -48,6 +48,7 @@ public:
     QComboBox *comboRevert;
     QPushButton *btnConfirmRevert;
     QTreeWidget *serverTreeWidget;
+    QTreeWidget *shareTreeWidget;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *DropBox)
@@ -169,6 +170,12 @@ public:
         palette2.setBrush(QPalette::Disabled, QPalette::Text, brush3);
         palette2.setBrush(QPalette::Disabled, QPalette::Base, brush);
         serverTreeWidget->setPalette(palette2);
+        shareTreeWidget = new QTreeWidget(centralwidget);
+        QTreeWidgetItem *__qtreewidgetitem1 = new QTreeWidgetItem();
+        __qtreewidgetitem1->setText(0, QStringLiteral("1"));
+        shareTreeWidget->setHeaderItem(__qtreewidgetitem1);
+        shareTreeWidget->setObjectName(QStringLiteral("shareTreeWidget"));
+        shareTreeWidget->setGeometry(QRect(10, 490, 241, 181));
         DropBox->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(DropBox);
         statusbar->setObjectName(QStringLiteral("statusbar"));

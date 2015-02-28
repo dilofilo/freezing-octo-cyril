@@ -8,6 +8,7 @@
 bool Client::handleSearch()
 {
     //index inside the separate folder
+    return true;
 }
 
 #endif

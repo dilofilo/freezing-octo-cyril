@@ -45,6 +45,9 @@ public:
     explicit Client(QWidget *parent = 0);
     ~Client();
     //Event Handler.
+    //User
+    UserDetails user;
+
     bool eventHandler( INSTRUCTION_TYPE instr ); //This is the handler.
         InstructionData data; //This data conveys data you might need.
         bool handlePing(); //clientping
@@ -64,14 +67,15 @@ public:
         bool handleSync(); //sync.cpp
         bool handleRevert(); //revert.cpp
         bool handleShare(); //share.cpp
+        bool addToFileLog_shared(string uid, string fname, string owner);
         bool handleUnshare(); //share.cpp
         bool handleSearch(); //search.cpp
         void handleExit(); // client.cpp
         void showMain();
+        bool populateSyncFileList(); //sync.cpp
+
 private slots:
     void on_btn_launch_clicked();
-
-
 
 private:
     //Socket creation things.
@@ -80,8 +84,6 @@ private:
     //struct hostent* server_entity; Not necessary.
     std::string serverAddress_string;
 
-    //User
-    UserDetails user;
 
     //UI Related object pointers. To be initialized upon connection.
     Ui::Client *ui; //Disabled after creation
@@ -118,6 +120,11 @@ private:
         bool createFileLog(std::string uid , std::string clidir); //Creates the file
         bool addToFileLog(std::string uid , std::string fname , std::string path , int version); //Ensures that there are no duplicates.
         string findFilePath(string pfn); // Handles things.
+
+        void getServerFiles_login();
+        void populateFileData_login_shared(std::set<string>& fn , unordered_map<string , int>& fv , unordered_map<string , string> fo); //Reads from files and puts it into this.
+        void populateFileData_login_normal(std::set<string>& fn , unordered_map<string , int>& fv , unordered_map<string , string> fo); //Reads from files and puts it into this.
+
         //File Download.
 
         //File Remove - from server directory.
@@ -130,4 +137,3 @@ private:
 };
 
 #endif // CLIENT_H
-

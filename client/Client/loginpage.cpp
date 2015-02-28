@@ -58,6 +58,7 @@ void LoginPage::on_btn_login_clicked()
     bool reply = this->client->eventHandler(LOGIN_TO_MAIN);
     if (reply) {
         this->client->showMain();
+//        this->client->dropboxpage->updateServerFiles(); HAPPENS IN THE eventHandler for login
     } else {
         QMessageBox msg;
         msg.setText(" Invalid username/password ");

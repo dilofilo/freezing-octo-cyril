@@ -33,6 +33,15 @@
 #include "logintoreg.cpp" //
 #include "userRegistration.cpp" //handleRegistration()
 #include "userLogin.cpp" // handleLogin();
+#include "fileUpload.cpp" // handleUpload();
+#include "fileDownload.cpp" //handleDownload();
+#include "fileRemove.cpp"
+#include "sync.cpp"
+#include "revert.cpp"
+#include "share.cpp"
+
+#include <unordered_map>
+
 Client::Client(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::Client)
@@ -99,11 +108,14 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
         //Assume exitting.
         this->handleExit();
     }
+    return true;
 }
 
 /*
  *##################### MINION FUNCTIONS FOLLOW #############
 */
+
+
 
 void Client::showMain() {
     this->dropboxpage = new DropBox( this , csock);
@@ -116,4 +128,9 @@ void Client::handleExit() {
     conn.writeToSocket( temp );
     ::close(csock);
 }
+
+//Populate Server List.
+
+
+
 #endif

@@ -16,8 +16,8 @@ class Client;
 
 #include "../../common/instructions.h"
 #include "../../common/communications.h" //Defines socket.
-
-
+#include <unordered_map>
+#include <set>
 namespace Ui {
 class DropBox;
 }
@@ -32,7 +32,13 @@ public:
     explicit DropBox(QWidget *parent = 0);
     DropBox(Client* _client , Socket& _csock);
     ~DropBox();
-    
+    std::unordered_map< std::string , int > fileversions;
+    std::set< std::string > filenames;
+    std::unordered_map< std::string , std::string > fileowners;
+    void updateServerFiles();
+
+    void AddItem( QString fname );
+    void AddItemShare(QString fn , QString owner);
 private slots:
     void on_btnMake_clicked();
     void on_btnDelete_clicked();
@@ -46,6 +52,10 @@ private slots:
     void on_btnDownload_clicked();
     void on_btnRemove_clicked();
     void on_btnShare_clicked();
+    void on_shareTreeWidget_clicked(const QModelIndex &index);
+
+    void on_serverTreeWidget_clicked(const QModelIndex &index);
+
 private:
     Client* client;
     Socket csock;

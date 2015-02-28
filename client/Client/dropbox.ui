@@ -573,6 +573,21 @@
      </property>
     </column>
    </widget>
+   <widget class="QTreeWidget" name="shareTreeWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>490</y>
+      <width>241</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <column>
+     <property name="text">
+      <string notr="true">1</string>
+     </property>
+    </column>
+   </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>

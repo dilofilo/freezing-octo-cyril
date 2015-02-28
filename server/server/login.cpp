@@ -25,6 +25,7 @@ bool Server::handleLogin()
         user = usr;
         std::string accepted( LOGIN_ACCEPTED );
         conn.writeToSocket(accepted);
+        handleSync();       // Sending the info on all files the client has access to. TODO
         return true;
     } else { //Login was not successful.
         //Authentication Failed.

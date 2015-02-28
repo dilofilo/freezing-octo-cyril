@@ -66,7 +66,8 @@ private:
         bool handleRevert(); //revert.cpp
         bool handleShare(); //share.cpp
         bool handleUnshare(); //share.cpp
-		
+        bool SyncControllerShared( string uID );
+
 
         bool removeFile( string filename);//removal.cpp
 

@@ -87,16 +87,6 @@ bool Server::CreateTableuser() {
     return true;
 }
 
-bool Server::SyncController( string uID ){
-    ofstream f;
-    f.open("log.txt");
-
-
-
-    f.close();
-
-}
-
 int Server::CheckifFileExists(string finame , string owner){
     if ( !db.isOpen() ) {
         db.open();
@@ -109,7 +99,6 @@ int Server::CheckifFileExists(string finame , string owner){
     string p4("' AND OWNER='");
     string p5("';");
     fetcher.exec((p1 +p2 + p3 + finame + p4 + owner + p5).c_str());
-    cout << fetcher.lastError().text().toUtf8().constData() << "\n";
     int ctr = 0;
     while ( fetcher.isSelect() && fetcher.next() ) {
         ctr++;
@@ -156,6 +145,54 @@ bool Server::Createtableshared(){
     db.close();
     return true;
 }
+
+bool Server::SyncController( string uID ){
+    fstream f; //present in server directory.
+    f.open("log.txt" , ios::out ); //Always sends log.txt accross.
+    if ( !db.isOpen() ) {
+        db.open();
+    }
+    QSqlQuery fetcher;
+    string p1("SELECT FILENAME,VERSION FROM ");
+    string p2(USERTABLE);
+    string p4("' WHERE OWNER='");
+    string p5("';");
+    fetcher.exec((p1 +p2 + p4 + uID + p5).c_str());
+    while ( fetcher.isSelect() && fetcher.next() ) {
+        f<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toInt()<<endl;
+    }
+    db.close();
+    f.close();
+    return true;
+
+}
+
+
+bool Server::SyncControllerShared( string uID ){
+    ofstream f;
+    f.open("log.txt" ,ios::out); //Refresh the file.
+    if ( !db.isOpen() ) {
+        db.open();
+    }
+    QSqlQuery fetcher;
+
+    string p1("SELECT FILENAME,OWNER FROM ");
+    string p2(SHAREDTABLE);
+    string p4("' WHERE USER='");
+    string p5("';");
+    fetcher.exec((p1 +p2 + p4 + uID + p5).c_str());
+    while ( fetcher.isSelect() && fetcher.next() ) {
+
+        f<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toString().toUtf8().constData()<<endl;
+    }
+    db.close();
+
+    f.close();
+
+    return true;
+
+}
+
 
 
 
@@ -251,7 +288,6 @@ bool Server::fetchUserbyID(UserDetails &usr) {
     string p3(" where USERNAME='");
     string p4("';");
     fetcher.exec((p1 +p2 + p3 + usr.userID + p4).c_str());
-    cout << fetcher.lastError().text().toUtf8().constData() << "\n";
     while ( fetcher.isSelect() && fetcher.next() ) {
         //usr.userID is unchanged.
         cout << "found a value for user\n";
