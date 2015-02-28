@@ -59,12 +59,15 @@ private slots:
 
     void on_textSearch_selectionChanged();
 
+
+
 private:
     Client* client;
     Socket csock;
     Ui::DropBox *ui;
     QFileSystemModel *model;
     QFileSystemModel *dirmodel;
+    bool distinguisher;
 };
 
 #include "client.h" //Safe because forward declarations and header guards.

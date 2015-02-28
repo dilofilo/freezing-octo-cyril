@@ -134,7 +134,7 @@ private:
 
         bool createFileLog(std::string _file); //Creates the file
         bool addToFileLog(std::string uid , std::string fname , std::string path , int version); //Ensures that there are no duplicates.
-        string findFilePath(string pfn); // Handles things.
+        string findFilePath(string src , string pfn); // Handles things.
 
         void getServerFiles_login();
         void populateFileData_login_shared(std::set<string>& fn , unordered_map<string , int>& fv , unordered_map<string , string>& fo); //Reads from files and puts it into this.

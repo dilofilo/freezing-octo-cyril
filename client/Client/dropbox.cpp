@@ -16,6 +16,7 @@ DropBox::DropBox(QWidget *parent) :
 DropBox::DropBox(Client* _client , Socket& _csock , string sharedfiledir) { // NECESSARY CONSTERUCTOE.
     ui =  new Ui::DropBox();
     ui->setupUi(this);
+    this->distinguisher=1;
     //this->setStyleSheet("background-color: black;");
     ui->serverTreeWidget->setColumnCount(1);
     client = _client;
@@ -169,12 +170,32 @@ void DropBox::on_btnExit_clicked()
 
 void DropBox::on_btnDownload_clicked()
 {
-    this->client->data.filename = model->filePath(this->ui->serverTreeWidget->currentIndex()).toUtf8().constData(); //this is a model index, convert to string
-    this->client->data.type = DOWNLOAD_FILE;
-    bool reply= this->client->eventHandler(DOWNLOAD_FILE);
-    if(!reply)
+    cout << "click detected and distinguisher=" << distinguisher << "\n";
+    if(this->distinguisher==1)
     {
-        QMessageBox::information(this,tr("Error"),tr("Download Failed"));
+
+        this->client->data.filename = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
+        cout<< " set data.filename \n";
+        this->client->data.type = DOWNLOAD_FILE;
+        this->client->data.other_user.userID=this->client->user.userID;
+        bool reply= this->client->eventHandler(DOWNLOAD_FILE);
+        if(!reply)
+        {
+            QMessageBox::information(this,tr("Error"),tr("Download Failed"));
+        }
+    }
+    else
+    {
+        this->client->data.filename = this->ui->shareTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
+        cout<< " set data.filename \n";
+        this->client->data.type = DOWNLOAD_FILE;
+        this->client->data.other_user.userID=this->ui->shareTreeWidget->selectedItems()[0]->text(1).toUtf8().constData();
+
+        bool reply= this->client->eventHandler(DOWNLOAD_FILE);
+        if(!reply)
+        {
+            QMessageBox::information(this,tr("Error"),tr("Download Failed"));
+        }
     }
 }
 
@@ -250,6 +271,8 @@ void DropBox::on_shareTreeWidget_clicked(const QModelIndex &index)
     ui->comboRevert->clear();
     //int y=this->fileversions[toString(index->data())];
     ui->comboRevert->addItem("Version 1");//+QString::number(i));
+    if(this->distinguisher==1)
+        this->distinguisher=0;
 
 }
 
@@ -274,9 +297,12 @@ void DropBox::on_serverTreeWidget_clicked(const QModelIndex &index)
     {
         ui->comboRevert->addItem("Version "+QString::number(i));
     }
+    if (this->distinguisher==0)
+        this->distinguisher=1;
 }
 
 void DropBox::on_textSearch_selectionChanged()
 {
     this->ui->textSearch->setText("");
 }
+

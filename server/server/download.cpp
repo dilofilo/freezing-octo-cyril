@@ -12,19 +12,22 @@ bool Server::handleDownload() {
     std::string cont(CONTINUE);
     conn.writeToSocket(cont); //write continue
 
-    std::string file = "";
-    conn.readFromSocket(file); //Gets the file to be downloaded.
+    std::string filename = "";
+    conn.readFromSocket(filename); //Gets the file to be downloaded.
 
     conn.writeToSocket(cont); //write a continue;
 
     std::string owner = "";
     conn.readFromSocket(owner);
 
-    ifstream f;
-    string filepath =SERVER_DIRECTORY + user.userID + "/" + file ;
-    fstream reader;
+
+    string filepath = SERVER_DIRECTORY + owner + "/" + filename ; //Sends the latest version.
+
     //reader.open(filepath.c_str(),ios::in);
-    conn.writeToSocket_file(filepath);
+    conn.writeToSocket_file(filepath); //correct file.
+
+    std::string rcont;
+    conn.readFromSocket(rcont); //read a continue.
 
     handleSync(user.userID);
     return true;
