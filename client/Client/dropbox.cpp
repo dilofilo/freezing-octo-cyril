@@ -6,13 +6,15 @@
 #include <QDirModel>
 #include <QFileSystemModel>
 #include "clientdefinitions.h"
+#include <boost/filesystem.hpp>
+
 DropBox::DropBox(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::DropBox)
 {
     ui->setupUi(this);
 }
-
+namespace bfs = boost::filesystem;
 DropBox::DropBox(Client* _client , Socket& _csock , string sharedfiledir) { // NECESSARY CONSTERUCTOE.
     ui =  new Ui::DropBox();
     ui->setupUi(this);
@@ -212,7 +214,20 @@ void DropBox::on_btnRemove_clicked()
 
 void DropBox::on_btnShare_clicked()
 {
+    //Need to get username with which to share.
     this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    bfs::path f(this->client->data.filename);
+    string fn = f.filename().string();
+    bool ok;
+    string templol = "SHARE FILE " + fn + " WITH " ;
+    QString text = QInputDialog::getText(this, tr(templol.c_str()),
+                                         tr("User name:"), QLineEdit::Normal,
+                                         QDir::home().dirName(), &ok);
+    if (ok && !text.isEmpty()) {
+        this->client->data.other_user.userID = text.toStdString(); //Far simpler to std::string !
+    } else {
+
+    }
     this->client->data.type = FILE_SHARE;
     bool reply= this->client->eventHandler( FILE_SHARE);
     if(!reply)
@@ -224,15 +239,22 @@ void DropBox::on_btnShare_clicked()
 void DropBox::on_btnUnshare_clicked()
 {
     this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    bfs::path f(this->client->data.filename);
+    string fn = f.filename().string();
+    bool ok;
+    string templol = "UNSHARE FILE " + fn + " FROM ";
+    QString text = QInputDialog::getText(this, tr(templol.c_str() ),
+                                         tr("User name:"), QLineEdit::Normal,
+                                         QDir::home().dirName(), &ok);
+    if (ok && !text.isEmpty()) {
+        this->client->data.other_user.userID = text.toStdString(); //Far simpler to std::string !
+    } else {
+    }
     this->client->data.type = FILE_UNSHARE;
-    QString userName= QInputDialog::getText(this,"User Name","Enter a Name");
-    this->client->data.other_user.userID = userName.toUtf8().constData();
-
     bool reply= this->client->eventHandler( FILE_UNSHARE);
-
     if(!reply)
     {
-        QMessageBox::information(this,tr("Error"),tr("Unshare Failed"));
+        QMessageBox::information(this,tr("Error"),tr("UnShare Failed"));
     }
 }
 

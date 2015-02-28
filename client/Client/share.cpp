@@ -3,11 +3,43 @@
 #include "client.h"
 
 bool Client::handleShare() {
-    return true;
+    std::string filename = data.filename;
+    std::string otheruser = data.other_user.userID;
+
+    std::string cont;
+    std::string conti(CONTINUE);
+    std::string req(SHARE_REQUEST);
+    conn.writeToSocket(req); //Write request
+    conn.readFromSocket(cont); //read a continue
+    conn.writeToSocket(otheruser); //Write the other user.
+    //Read answer.
+    std::string answer;
+    conn.readFromSocket(answer);
+    conn.writeToSocket(conti);
+    this->getServerFiles_login();
+    this->dropboxpage->updateServerFiles();
+    //And we're done.
+    return (answer == SHARE_ACCEPTED);
 }
 
 bool Client::handleUnshare() {
-    return true;
+    std::string filename = data.filename;
+    std::string otheruser = data.other_user.userID;
+
+    std::string cont;
+    std::string conti(CONTINUE);
+    std::string req(UNSHARE_REQUEST);
+    conn.writeToSocket(req); //Write request
+    conn.readFromSocket(cont); //read a continue
+    conn.writeToSocket(otheruser); //Write the other user.
+    //Read answer.
+    std::string answer;
+    conn.readFromSocket(answer);
+    conn.writeToSocket(conti);
+    this->getServerFiles_login();
+    this->dropboxpage->updateServerFiles();
+    //And we're done.
+    return (answer == UNSHARE_ACCEPTED);
 }
 
 bool Client::addToFileLog_shared(string uid, string fname, string _owner) {
