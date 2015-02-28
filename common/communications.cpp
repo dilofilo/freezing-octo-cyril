@@ -62,7 +62,7 @@ int Communications::receivemyint(int& num) {
 
 bool Communications::writeToSocket(char* buffer , int buf_size = BUFFER_SIZE) {
     int rv = write(csock, buffer, buf_size);
-    cout << " ######conn writing to socket (upto first nul character) " << buffer << "\n";
+    //cout << " ######conn writing to socket (upto first nul character) " << buffer << "\n";
     if (rv>=0) {
         memset( buffer , 0 , buf_size );
         return true;
@@ -75,7 +75,7 @@ bool Communications::readFromSocket( char* buffer, int buf_size = BUFFER_SIZE) {
     memset( buffer , 0 , buf_size);
     int rv = read(csock, buffer, buf_size);
     if (rv>=0) {
-        std::cout << " #####conn read from buffer (upto first null character) " << buffer << "\n";
+        //std::cout << " #####conn read from buffer (upto first null character) " << buffer << "\n";
         return true;
     } else {
         return false;

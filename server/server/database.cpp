@@ -148,7 +148,8 @@ bool Server::Createtableshared(){
 
 bool Server::SyncController( string uID ){
     fstream f; //present in server directory.
-    f.open("log.txt" , ios::out ); //Always sends log.txt accross.
+    string fn = uID + "log.txt";
+    f.open( fn , ios::out ); //Always sends log.txt accross.
     if ( !db.isOpen() ) {
         db.open();
     }
@@ -157,9 +158,11 @@ bool Server::SyncController( string uID ){
     string p2(USERTABLE);
     string p4("' WHERE OWNER='");
     string p5("';");
+    cout << " ## ## ## \nexecuting command :" << (p1 +p2 + p4 + uID + p5).c_str() << "\n ## ## ##";
     fetcher.exec((p1 +p2 + p4 + uID + p5).c_str());
     while ( fetcher.isSelect() && fetcher.next() ) {
-        f<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toInt()<<endl;
+        cout << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toInt() << endl;
+        f << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toInt() << endl;
     }
     db.close();
     f.close();
@@ -170,7 +173,8 @@ bool Server::SyncController( string uID ){
 
 bool Server::SyncControllerShared( string uID ){
     ofstream f;
-    f.open("log.txt" ,ios::out); //Refresh the file.
+    string fn = uID + "log.txt";
+    f.open( fn.c_str() ,ios::out); //Refresh the file.
     if ( !db.isOpen() ) {
         db.open();
     }
@@ -180,9 +184,11 @@ bool Server::SyncControllerShared( string uID ){
     string p2(SHAREDTABLE);
     string p4("' WHERE USER='");
     string p5("';");
+    cout << " ## ## ## \nexecuting command :" << (p1 +p2 + p4 + uID + p5).c_str() << "\n ## ## ##";
     fetcher.exec((p1 +p2 + p4 + uID + p5).c_str());
     while ( fetcher.isSelect() && fetcher.next() ) {
 
+        cout<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toString().toUtf8().constData()<<endl;
         f<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toString().toUtf8().constData()<<endl;
     }
     db.close();

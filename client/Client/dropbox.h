@@ -56,6 +56,8 @@ private slots:
 
     void on_serverTreeWidget_clicked(const QModelIndex &index);
 
+    void on_textSearch_selectionChanged();
+
 private:
     Client* client;
     Socket csock;

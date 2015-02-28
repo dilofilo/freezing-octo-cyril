@@ -7,22 +7,27 @@
  #include <boost/filesystem.hpp>
 
 
-bool Server::handleSync() {
+bool Server::handleSync( string uid ) {
 
     SyncController( user.userID );
     // A file named log.txt shoul've been created
     // The file is sent to the client
-    string filename = user.userID + "log.txt"; //Slightly more unique name.
-    this->SyncController(user.userID);
+    string filename = uid + "log.txt"; //Slightly more unique name.
+    cout << user.userID << "\n";
+    this->SyncController(uid);
+    cout << "prepareing to write log.txt \n";
     conn.writeToSocket_file(filename); //All files that the user has access to and owns.
     // Remove log.txt
+    cout << "wrote log.txt \n";
+    boost::filesystem::remove(filename);
 
 
     string cont;
     conn.readFromSocket( cont );    // Reading a continue.
-    this->SyncControllerShared(user.userID);
+    this->SyncControllerShared(uid);
+    cout << " writing loglt.xt \n";
     conn.writeToSocket_file(filename); //All the files that the uses has access to but doesnt own.
-
+    cout << "wrote log.txt \n";
     boost::filesystem::remove(filename);
     return true; //Then, the client sends apt upload and download requests.
 }

@@ -119,6 +119,9 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
 
 void Client::showMain() {
     this->dropboxpage = new DropBox( this , csock);
+    this->getServerFiles_login(); //Fetches files.
+    this->dropboxpage->updateServerFiles(); //Updates GUI.
+
     this->loginpage->hide();
     this->dropboxpage->show();
 }
