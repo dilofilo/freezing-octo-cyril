@@ -171,28 +171,52 @@ void DropBox::on_btnDownload_clicked()
 {
     if(this->distinguisher==1)
     {
-        string beginningpart = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
-        QMessageBox::information(this,"hi",QString::fromStdString(beginningpart));
-        for( std::set<string>::iterator it = filenames.begin() ; it !=  filenames.end() ; ++it) {
+        QTreeWidgetItem* indie=(ui->serverTreeWidget->currentItem());
+
+        std::string indexer=indie->text(0).toStdString();
+        QMessageBox::information(this,"hi",QString::fromStdString(indexer));
+        while (indie->parent()!=NULL)
+        {
+            indie=(indie->parent());
+            indexer= indie->text(0).toStdString() + "/" + indexer; //toString().toUtf8().constData();
+        }
+
+        std::set<string> filenames_copy = filenames;
+        for( std::set<string>::iterator it = filenames_copy.begin() ; it !=  filenames_copy.end() ; ++it) {
+            cout << "one of the filenames is=" << *it << "\n";
+
+        }
+
+        string beginningpart = indexer; //this is a model index, convert to string
+        cout << " got beginning part=" << indexer << "\n";
+        //QMessageBox::information(this,"hi",QString::fromStdString(beginningpart));
+        for( std::set<string>::iterator it = filenames_copy.begin() ; it !=  filenames_copy.end() ; ++it) {
             std::string its = *it;
+
             auto res = std::mismatch(beginningpart.begin() ,  beginningpart.end() , its.begin());//Return mistmatch thingy
-            if (  (fileowners[*it] == this->client->user.userID) && (res.first == beginningpart.end()) ) {
+            cout << "done mismatching \n";
+            if (  (its != "") && (fileowners[its] == this->client->user.userID) && (res.first == beginningpart.end()) ) {
                 this->client->data.filename = its;
                 //This thing should send a request for all files that are a subset
                 this->client->data.type = DOWNLOAD_FILE;
                 this->client->data.other_user.userID=this->client->user.userID;
                 bool reply= this->client->eventHandler(DOWNLOAD_FILE);
+
                 if(!reply)
                 {
                     QMessageBox::information(this,tr("Error"),tr("Download Failed"));
                 }
+                cout << "received a file=" << its << " &  reply=" << reply <<  "\n";
             }
+            cout << " got past the if statement \n";
         }
+        cout << "got outside the for loop, iterates over filenames\n";
     }
     else
     {
         string beginningpart = this->ui->shareTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
-        for( std::set<string>::iterator it = filenames.begin() ; it !=  filenames.end() ; ++it) {
+        std::set<string> filenames_copy = filenames;
+        for( std::set<string>::iterator it = filenames_copy.begin() ; it !=  filenames_copy.end() ; ++it) {
             std::string its = *it;
             auto res = std::mismatch(beginningpart.begin() ,  beginningpart.end() , its.begin());//Return mistmatch thingy
             if (  (fileowners[*it] != this->client->user.userID) && (res.first == beginningpart.end()) ) {
@@ -329,10 +353,14 @@ void DropBox::on_serverTreeWidget_clicked(const QModelIndex &index)
 {
     ui->comboRevert->clear();
     std::string indexer=index.data().toString().toUtf8().constData();
-    QTreeWidgetItem *itm
-    while ()
-    int y=this->fileversions[index.data().toString().toUtf8().constData()];
-    QMessageBox::information(this,"hi",index.data().toString().toUtf8().constData());
+    QModelIndex indie=index;
+    while (indie.parent()!=QModelIndex())
+    {
+        indie=indie.parent();
+        indexer= indie.data().toString().toStdString() + "/" + indexer; //toString().toUtf8().constData();
+    }
+    int y= this->fileversions[indexer];
+    QMessageBox::information(this,"hi",QString::fromStdString(indexer));
     for (int i=1;i<=y;i++)
     {
         ui->comboRevert->addItem("Version "+QString::number(i));
@@ -405,8 +433,11 @@ void DropBox::populateServer()
 
     std::set<string>::iterator it = filenames.begin();
     for ( ; it != filenames.end() ; ++it) {
-        QString qfilenamesi = QString::fromStdString(*it);
-        fileNames << qfilenamesi;
+        std::string its = *it;
+        if(its != "") {
+            QString qfilenamesi = QString::fromStdString(its);
+            fileNames << qfilenamesi;
+        }
     } //ASSERT : Converted it.
 
 

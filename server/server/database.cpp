@@ -24,8 +24,9 @@ bool Server::main_CreateDatabase(){
     db.setUserName(ADMIN_ID);
     db.setPassword(ADMIN_PW);
     // If the table TABLE_NAME doesnt exist, make it.
-    bool db_open =  db.open(); //Should open the database.
-    cout << "opening the database resulted in" << db_open << "\n";
+//    bool db_open =  db.open(); //Should open the database.
+//    cout << "opening the database resulted in" << db_open << "\n";
+    db.open();
     QSqlQuery table_exists;
     string p1("SELECT name FROM sqlite_master WHERE type='table' AND name='");
     string p2(TABLE_NAME);
@@ -35,6 +36,7 @@ bool Server::main_CreateDatabase(){
 //        cout << " table already exists \n";
 //        return true;
 //    }
+    db.close();
     CreateTable();
     CreateTableuser();
     Createtableshared();
@@ -74,7 +76,7 @@ bool Server::CreateTableuser() {
     if ( !db.isOpen() ) {
         db.open();
     }
-    cout << "making table \n";
+//    cout << "making table \n";
     QSqlQuery creator;
     string p1("CREATE TABLE ");
     string p2(USERTABLE);
@@ -111,7 +113,7 @@ bool Server::AddFile(string finame, int version , string owner){
     if ( !db.isOpen() ) {
         db.open();
     }
-    cout << " now adding file intro usertable owner=" << owner << "\n";
+    cout << " now adding file=" << finame <<  "\tinto usertable owner=" << owner << "\n";
     string c1 =" VALUES('";
     string c2 ="','";
     string c3 ="');";
@@ -122,7 +124,6 @@ bool Server::AddFile(string finame, int version , string owner){
     string p2(USERTABLE);
     //string p3(" (FILENAME,VERSION,OWNER) ");
     inserter.exec( (p1+p2+myval).c_str());
-    cout << " done executing AddFile() \n";
     db.close();
     return true;
 }
@@ -133,7 +134,6 @@ bool Server::Createtableshared(){
     if ( !db.isOpen() ) {
         db.open();
     }
-    cout << "making table \n";
     QSqlQuery creator;
     string p1("CREATE TABLE ");
     string p2(SHAREDTABLE);
@@ -186,7 +186,7 @@ bool Server::SyncControllerShared( string uID ){
     string p2(SHAREDTABLE);
     string p4(" WHERE USER='");
     string p5("';");
-    cout << " ## ## ## \nexecuting command :" << (p1 +p2 + p4 + uID + p5).c_str() << "\n ## ## ##";
+    //cout << " ## ## ## \nexecuting command :" << (p1 +p2 + p4 + uID + p5).c_str() << "\n ## ## ##";
     fetcher.exec((p1 +p2 + p4 + uID + p5).c_str());
     while ( fetcher.isSelect() && fetcher.next() ) {
         cout << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toString().toUtf8().constData() << "\n";
@@ -202,7 +202,7 @@ bool Server::CreateTable() {
     if ( !db.isOpen() ) {
         db.open();
     }
-    cout << "making table \n";
+    //cout << "making table \n";
     QSqlQuery creator;
     string p1("CREATE TABLE ");
     string p2(TABLE_NAME);
@@ -219,7 +219,7 @@ bool Server::AddUser(string uID, string Password, string Server_Dir, string Clie
     if ( !db.isOpen() ) {
         db.open();
     }
-    cout << " now adding user \n";
+    //cout << " now adding user \n";
     //Note : Server_Dir is not know at all. Fetch it from createDirectory.
     Server_Dir = SERVER_DIRECTORY;
     Server_Dir += uID; //Assert : Creates the correct server directory.
@@ -273,7 +273,7 @@ bool Server::fetchUserbyID(UserDetails &usr) {
     fetcher.exec((p1 +p2 + p3 + usr.userID + p4).c_str());
     while ( fetcher.isSelect() && fetcher.next() ) {
         //usr.userID is unchanged.
-        cout << "found a value for user\n";
+        //cout << "found a value for user\n";
         usr.password = fetcher.value(1).toString().toUtf8().constData();
         usr.serverDirectory = fetcher.value(2).toString().toUtf8().constData();
         usr.clientDirectory = fetcher.value(3).toString().toUtf8().constData();
@@ -289,7 +289,7 @@ bool Server::authenticate(string userid, string passwd) {
     UserDetails usr;
         usr.userID = userid;
     if ( fetchUserbyID(usr) ) {
-        cout << " fetched password is " << usr.password << " and read pw is " << passwd << "\n";
+        //cout << " fetched password is " << usr.password << " and read pw is " << passwd << "\n";
         return (usr.password == passwd);
     } else {
         return false;
@@ -299,7 +299,7 @@ bool Server::authenticate(string userid, string passwd) {
 bool Server::authenticate( UserDetails& usr ) {
     string passwd = usr.password;
     if ( fetchUserbyID(usr) ) {
-        cout << " fetched password is " << usr.password << " and read pw is " << passwd << "\n";
+        //cout << " fetched password is " << usr.password << " and read pw is " << passwd << "\n";
         return (usr.password == passwd);
     } else {
         return false;

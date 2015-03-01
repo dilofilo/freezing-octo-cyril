@@ -20,16 +20,16 @@ bool Server::handleDownload() {
     std::string owner = "";
     conn.readFromSocket(owner);
 
-
     string filepath = SERVER_DIRECTORY + owner + "/" + filename ; //Sends the latest version.
-
+    cout << "fetching file=" << filepath << "\n";
     //reader.open(filepath.c_str(),ios::in);
     conn.writeToSocket_file(filepath); //correct file.
-
+    cout << "wrote file into the socket. FILE=" << filepath << "\n";
     std::string rcont;
     conn.readFromSocket(rcont); //read a continue.
 
     handleSync(user.userID);
+
     return true;
 }
 

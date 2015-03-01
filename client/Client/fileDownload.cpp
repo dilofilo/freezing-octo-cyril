@@ -9,58 +9,84 @@ bool Client::handleDownload() {
 
     //Comes with file and owner.
     cout << "#### data.filename\t" << data.filename << "\ndata.other_user\t" << data.other_user.userID << "\n";
-
-    string filedir = conn.returnAllButFileName(data.filename);
-    boost::filesystem::path filedir_path(filedir);
-    if (boost::filesystem::exists(filedir)) {
-
-    } else {
-        boost::filesystem::create_directories(filedir_path);
-    }
+    //Data.filename is relative path, wrt ClientDirectory.
 
     string uid = user.userID;
     string req(S_TO_C_FILE);
     conn.writeToSocket(req);
     string cont;
     conn.readFromSocket(cont); //read continue.
-    //File name should be in data.filename;
-    string processedfname = processFileName(data.filename); //Gets file name here.
-    string owner = data.other_user.userID;
-    conn.writeToSocket( processedfname );
+    cout << " before processing filename \n";
+
+    string owner = data.other_user.userID; //Should be me.
+
+    cout << "asking for file=" << data.filename << "\n";
+
+    conn.writeToSocket( data.filename ); //Write file name
+
+    cout << "wrote the filename to be gotten.\n";
     conn.readFromSocket(cont);
+
     conn.writeToSocket(owner);
     //Reading the file.
-    string temppath = user.userID + "/mytempfile";
-    conn.readFromSocket_file( temppath , NEW_FILE);
+
+    cout << " owner written \n";
+    string finalpath = user.userID + "/" + CLIENT_SYNC_DIR + "/" + data.filename ;
+    cout << "final path will be=" << finalpath << "\n";
+    cout << "### \t\t brk1 \t\t ###\n";
+    string finalpathdir = conn.returnAllButFileName(finalpath);
+    cout << "### \t\t brk2 \t\t ###\n";
+    boost::filesystem::path finalpathdirpath( finalpathdir);
+    cout << "### \t\t brk3 \t\t ###\n";
+    if (boost::filesystem::exists(finalpathdirpath)) {
+        cout << "path exists \n";
+    } else {
+        cout << "creating the following directory =" << finalpathdir << "\n";
+        boost::filesystem::create_directories(finalpathdirpath);
+    }
+    cout << "writing file into" << finalpath << "\n";
+    conn.readFromSocket_file( finalpath , NEW_FILE); //READING THE FILE INTO THE CORRECT LOCAITON.
 
     std::string conti(CONTINUE);
     conn.writeToSocket(conti);
+
     this->getServerFiles_login(); //Have the two things updated.
     this->dropboxpage->updateServerFiles(); //Doesn't care about the downloaded section.
-    //Now i need to get the version;
+    //Now i need to get the version; Yes, indeed.
+
     string src = uid + "/" + CLIENT_SYNC_DIR + "/" + SERVER_LOG;
-    //string completepath = findFilePath(src , processedfname);
+            //string completepath = findFilePath(src , processedfname); WHAT?
+    int version = findverfile( src , data.filename); //handles the cases where the file is a shared file too.
+    this->addToFileLog( user.userID , data.filename , finalpath , version );
+//Deprecated code follows. read with caution.
+//bool wasasyncfile = (owner == user.userID);
 
-    int version = findverfile( src , processedfname); //handles the cases where the file is a shared file too.
-    bool wasasyncfile = (owner == user.userID);
 
-    if ( wasasyncfile ) {
-        string filepath = uid + "/" + CLIENT_SYNC_DIR + "/" + processedfname;
-        if ( filepath == "\0") {
-            return false;
-        }
-        boost::filesystem::path newloc( filepath );
-        boost::filesystem::path oldloc( temppath );
-        boost::filesystem::rename( oldloc , newloc );
-        this->addToFileLog(user.userID , processedfname , newloc.string() , version);
-    } else {
-        string filepath = uid + "/" + CLIENT_SHARE_DIR + "/" + processedfname;
+//    if ( wasasyncfile ) { //Assert : Always a sync file.
+//        string filepath = uid + "/" + CLIENT_SYNC_DIR + "/" + processedfname;
+//        if ( filepath == "\0") {
+//            return false;
+//        }
+//        string filepath_dir = conn.returnAllButFileName(filepath);
+//        if (boost::filesystem::exists(filepath_dir)) {
 
-        boost::filesystem::path newloc( filepath );
-        boost::filesystem::path oldloc( temppath );
-        boost::filesystem::rename( oldloc , newloc );
-        this->addToFileLog_shared(uid , processedfname , owner);
-    }
+//        } else {
+//            boost::filesystem::path filepath_dir_path(filepath_dir);
+//            boost::filesystem::create_directories( filepath_dir_path );
+//        }
+//        //Check if filepath is a valid locaiton.
+//        boost::filesystem::path newloc( filepath );
+//        boost::filesystem::path oldloc( temppath );
+//        boost::filesystem::rename( oldloc , newloc ); //Move the old file over.
+//        this->addToFileLog(user.userID , processedfname , newloc.string() , version);
+//    } else {
+//        string filepath = uid + "/" + CLIENT_SHARE_DIR + "/" + processedfname;
+
+//        boost::filesystem::path newloc( filepath );
+//        boost::filesystem::path oldloc( temppath );
+//        boost::filesystem::rename( oldloc , newloc );
+//        this->addToFileLog_shared(uid , processedfname , owner);
+//    }
     return true;
 }
 
