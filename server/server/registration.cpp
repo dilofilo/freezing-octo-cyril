@@ -13,7 +13,6 @@ bool Server::handleRegistration() {
      *Write continue.
      * Read the struct.
     */
-    cout << "read a reg_request . now writing continue\n";
     std::string cont(CONTINUE);
     conn.writeToSocket(cont);
     UserDetails newuser;
@@ -40,7 +39,7 @@ bool Server::createNewUser( UserDetails& newuser ) {
      * TODO : Add it to user database
      *Create Directory for him on the server side.
     */
-    cout << "new user to be created \n";
+    cout << "new user =" << newuser.userID << " | " << newuser.password << " \n";
     this->AddUser(newuser.userID, newuser.password, newuser.serverDirectory, newuser.clientDirectory); //Added to database.
     this->createUserDirectory( newuser );
     return true;

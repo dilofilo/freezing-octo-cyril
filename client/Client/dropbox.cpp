@@ -169,12 +169,10 @@ void DropBox::on_btnExit_clicked()
 
 void DropBox::on_btnDownload_clicked()
 {
-    cout << "click detected and distinguisher=" << distinguisher << "\n";
     if(this->distinguisher==1)
     {
 
         this->client->data.filename = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
-        cout<< " set data.filename \n";
         this->client->data.type = DOWNLOAD_FILE;
         this->client->data.other_user.userID=this->client->user.userID;
         bool reply= this->client->eventHandler(DOWNLOAD_FILE);
@@ -186,10 +184,9 @@ void DropBox::on_btnDownload_clicked()
     else
     {
         this->client->data.filename = this->ui->shareTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
-        cout<< " set data.filename \n";
         this->client->data.type = DOWNLOAD_FILE;
         this->client->data.other_user.userID=this->ui->shareTreeWidget->selectedItems()[0]->text(1).toUtf8().constData();
-
+        cout << "filename=" << this->client->data.filename << " |owner=" << this->client->data.other_user.userID << "\n";
         bool reply= this->client->eventHandler(DOWNLOAD_FILE);
         if(!reply)
         {
@@ -268,9 +265,13 @@ void DropBox::on_btnConfirmRevert_clicked()
 }
 
 void DropBox::updateServerFiles() {
-    std::set<std::string>::iterator it = filenames.begin();
+
+    std::set<std::string>::iterator it;
+    it =filenames.begin();
+
     this->ui->serverTreeWidget->clear();
     this->ui->shareTreeWidget->clear();
+
     for( ; it != filenames.end(); ++it) {
         //For each file name ,
         std::string fn1 = *it; //Gets the file name.
@@ -329,31 +330,48 @@ void DropBox::on_btnMove_clicked()
 {
     using namespace boost::filesystem;
     QMessageBox::StandardButton reply;
-    QString dir;
+
     reply=QMessageBox::question(this,"hi","Do you want to move a directory?",QMessageBox::Yes|QMessageBox::No);
     if (reply==QMessageBox::Yes)
     {
-        dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+        QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                         QDir::currentPath()
                                                         );
+        std::string dir1=dir.toUtf8().constData();
+        if (!exists(dir1)) {
+            return;
+        }
+        boost::filesystem::path sourcepath(dir1);
+        std::string pathcreator = this->client->user.userID+"/"+ CLIENT_SYNC_DIR + "/" + sourcepath.filename().string();
+
+
+        path destinationpath(pathcreator);
+    //        copy(sourcepath,destinationpath);
+
+        this->client->conn.copy_directory_contents(sourcepath,destinationpath);
+
+        QMessageBox::information(this,"hi",dir);
     }
-    else
+    else if( reply==QMessageBox::No)
     {
-        dir = QFileDialog::getOpenFileName(this, tr("Open Directory"),
+        QString dir = QFileDialog::getOpenFileName(this, tr("Open Directory"),
                                                         QDir::currentPath()
                                                         );
+        std::string dir1=dir.toUtf8().constData();
+        if (!exists(dir1)) {
+            return;
+        }
+        boost::filesystem::path sourcepath(dir1);
+        std::string pathcreator = this->client->user.userID+"/"+ CLIENT_SYNC_DIR + "/" + sourcepath.filename().string();
+
+
+        path destinationpath(pathcreator);
+        copy(sourcepath,destinationpath);
+        QMessageBox::information(this,"hi",dir);
+    } else {
+        return;
     }
 
-    std::string dir1=dir.toUtf8().constData();
-    boost::filesystem::path sourcepath(dir1);
-    std::string pathcreator = this->client->user.userID+"/"+ CLIENT_SYNC_DIR + "/" + sourcepath.filename().string();
 
-
-    path destinationpath(pathcreator);
-//        copy(sourcepath,destinationpath);
-
-    this->client->conn.copy_directory_contents(sourcepath,destinationpath);
-
-    QMessageBox::information(this,"hi",dir);
 }
 #endif

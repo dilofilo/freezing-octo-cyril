@@ -159,10 +159,10 @@ bool Server::SyncController( string uID ){
     string p2(USERTABLE);
     string p4(" WHERE OWNER='");
     string p5("';");
-    cout << " ## ## ## \nexecuting command :" << (p1 +p2 + p4 + uID + p5).c_str() << "\n ## ## ##";
+//    cout << " ## ## ## \nexecuting command :" << (p1 +p2 + p4 + uID + p5).c_str() << "\n ## ## ##";
     fetcher.exec((p1 +p2 + p4 + uID + p5).c_str());
     while ( fetcher.isSelect() && fetcher.next() ) {
-        cout << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toInt() << "\n";
+//        cout << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toInt() << "\n";
         f << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toInt() << "\n";
     }
     db.close();
@@ -173,7 +173,7 @@ bool Server::SyncController( string uID ){
 
 
 bool Server::SyncControllerShared( string uID ){
-    ofstream f;
+    fstream f;
     string fn = uID + "log.txt";
     f.open( fn.c_str() ,ios::out); //Refresh the file.
     f<<"THIS FILE IS SHARED SPECIAL"<<endl;
@@ -189,38 +189,13 @@ bool Server::SyncControllerShared( string uID ){
     cout << " ## ## ## \nexecuting command :" << (p1 +p2 + p4 + uID + p5).c_str() << "\n ## ## ##";
     fetcher.exec((p1 +p2 + p4 + uID + p5).c_str());
     while ( fetcher.isSelect() && fetcher.next() ) {
-
-        cout<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toString().toUtf8().constData()<< "\n";
+        cout << fetcher.value(0).toString().toUtf8().constData() << "\t" << fetcher.value(1).toString().toUtf8().constData() << "\n";
         f<<fetcher.value(0).toString().toUtf8().constData()<<"\t"<<fetcher.value(1).toString().toUtf8().constData()<<"\n";
     }
     db.close();
-
     f.close();
-
     return true;
-
 }
-
-
-
-
-//bool Server::Createtablesharedby(){
-//    //Assert : This is called only if the table doesnt already exist.
-//    if ( !db.isOpen() ) {
-//        db.open();
-//    }
-//    cout << "making table \n";
-//    QSqlQuery creator;
-//    string p1("CREATE TABLE ");
-//    string p2(SHAREDBYTABLE);
-//    string p3("(");
-//    string p4("FILENAME         VARCHAR(50) PRIMARY KEY NOT NULL,");
-//    string p5("OWNER" );
-//    string p7("OWNER            VARCHAR(50) NOT NULL);");
-//    creator.exec( (p1+s+p3+p4+p5+p7).c_str() );
-//    db.close();
-//    return true;
-//}
 
 bool Server::CreateTable() {
     //Assert : This is called only if the table doesnt already exist.
@@ -235,7 +210,7 @@ bool Server::CreateTable() {
     string p4("USERNAME         VARCHAR(50) PRIMARY KEY NOT NULL,");
     string p5("PASSWORD         VARCHAR(50) NOT NULL," );
     string p6("SERVER_DIR        VARCHAR(50) NOT NULL,");
-    string p7("CLIENT_DIR        VARCHAR(50) NOT NULL);");
+    string p7("CLIENT_DIR        VARCHAR(50));");
     creator.exec( (p1+p2+p3+p4+p5+p6+p7).c_str() );
     db.close();
     return true;
@@ -305,9 +280,8 @@ bool Server::fetchUserbyID(UserDetails &usr) {
         db.close();
         return true;
     }
-    cout << "didn't find a value for user \n";
+
     db.close();
-        cout << "didn't find a value EITHER \n";
     return false;
 }
 

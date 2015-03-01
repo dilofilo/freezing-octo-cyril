@@ -10,7 +10,7 @@
 #include "upload.cpp"
 #include "download.cpp"
 #include "removal.cpp"
-
+#include "share.cpp"
 
 SSL_CTX* InitServerCTX(void) {
     SSL_METHOD *method;
@@ -100,7 +100,7 @@ void Server::startServer() { //Gets
         printf(" host socket creation failed...exitting. please ensure that the appropriate ports are open. \n");
         exit(1);
     } else {
-        printf(" host socket created... \n");
+//        printf(" host socket created... \n");
 	}
 	memset( &serverAddr , 0 , sizeof(serverAddr));
  	serverAddr.sin_family = AF_INET;  
@@ -111,7 +111,7 @@ void Server::startServer() { //Gets
         printf(" socket binding failed... \n");
 		exit(1);
 	} else {
-        printf(" socket successfully binded... \n");
+//        printf(" socket successfully binded... \n");
 	}	
 	//Assert : ssock is now ready - there is one incoming connection.
     //ssock is now ready.
@@ -130,7 +130,7 @@ void Server::getClient() {
             cout << " let me check error accepting connection... \n";
 			exit(1);
 		}  else {
-			cout << " connection accepted... \n";
+//			cout << " connection accepted... \n";
 		}
 
         inet_ntop( AF_INET, &(clientAddr.sin_addr) , clienturl , CLIENT_URL_LEN );
@@ -141,7 +141,7 @@ void Server::getClient() {
         if ( SSL_accept(sslsock) == -1 ) {
             printf("SSL ACCEPT FAILED\n");
         } else {
-            printf("SSL ACCEPTED \n");
+            //printf("SSL ACCEPTED \n");
         }
         ShowCerts(sslsock);
 
@@ -186,12 +186,12 @@ void Server::handleClient() {
 
 bool Server::getInstruction( std::string& inst ) {
     inst = "";
-    printf( " waiting for instructions \n");
+    //printf( " waiting for instructions \n");
     return conn.readFromSocket( inst );
 }
 
 bool Server::handleInstruction(std::string& instr) {
-    cout << "handling : " << instr << "\n";
+    //cout << "handling : " << instr << "\n";
     if ( instr ==  PING_REQUEST) {//Why am I able to convert a const char[] to a string?
         return handlePing();
     }else if( instr == REGISTRATION_REQUEST ) {
@@ -215,7 +215,6 @@ bool Server::handleInstruction(std::string& instr) {
     }else if( instr == UNSHARE_REQUEST ){
         return handleUnshare();
     }else if ( instr == EXIT_REQUEST ){
-        ::close(csock);
         return true;
     }else {
         return false;

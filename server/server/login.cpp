@@ -7,7 +7,6 @@
 
 bool Server::handleLogin()
 {
-    cout << "entered handleLogin() \n";
     string cont( CONTINUE );
     conn.writeToSocket(cont);
     struct UserDetails usr;

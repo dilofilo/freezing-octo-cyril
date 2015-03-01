@@ -94,9 +94,9 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
     } else if ( instr == REVERT) { //to server
         this->handleRevert();
     } else if ( instr == FILE_SHARE) { //to server
-        this->handleShare();
+        return this->handleShare();
     } else if ( instr == FILE_UNSHARE ) {
-        this->handleUnshare();
+        return this->handleUnshare();
     } else if ( instr == FILE_SEARCH ) {
         this->handleSearch();
     } else if ( instr == MAIN_TO_DESKTOP ) {//have you handled this already?? its for exiting

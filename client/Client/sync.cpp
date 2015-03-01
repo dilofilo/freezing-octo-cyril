@@ -23,7 +23,6 @@ bool Client::handleSync() {
 }
 
 void Client::getServerFiles_login() { //Puts them into the dropbox.
-    cout << "getting server log files\n";
     //Assert : The Server is sending log files accross.
     string syncfilename = user.userID + "/" + CLIENT_SYNC_DIR + "/" +SERVER_LOG;
     //Put file into that file name.
@@ -37,14 +36,12 @@ void Client::getServerFiles_login() { //Puts them into the dropbox.
 
     populateFileData_login_normal( this->dropboxpage->filenames , this->dropboxpage->fileversions , this->dropboxpage->fileowners); //Populate the maps.
 
-    cout << "got normal server log file \n";
     std::string cont(CONTINUE);
     conn.writeToSocket(cont); //Write a continue.
 
     string sharefilename = user.userID + "/" + CLIENT_SHARE_DIR +"/" +  SERVER_LOG;
     conn.readFromSocket_file(sharefilename); //Read the shared files
     populateFileData_login_shared( this->dropboxpage->filenames , this->dropboxpage->fileversions , this->dropboxpage->fileowners); //Populate the maps.
-    cout << " got server shared log file \n";
     //These maps need to go to dropboxpage.
 }
 
@@ -55,7 +52,7 @@ void Client::populateFileData_login_normal(std::set<string>& fn , unordered_map<
     string trash;
 
     fstream reader(tfn , ios::in);
-    reader >> trash; reader >> trash ; reader >> trash ; reader >> trash ;
+    reader >> trash; reader >> trash ; reader >> trash ; reader >> trash ; //Useless line was sent to me.
     //File is of the form : filename , version
     while(!reader.eof()) {
         string fname;
@@ -73,7 +70,7 @@ void Client::populateFileData_login_shared(std::set<string>& fn , unordered_map<
     string tfn = user.userID + "/" + CLIENT_SHARE_DIR + "/" + SERVER_LOG;
     fstream reader(tfn , ios::in);
     //File is of the form : filename , version
-    string trash; reader >> trash ; reader >> trash ; reader >> trash  ;reader >> trash ;reader >> trash ;
+    string trash; reader >> trash ; reader >> trash ; reader >> trash  ;reader >> trash ;reader >> trash ;//useless line was sent to me.
     while(!reader.eof()) {
         string fname;
         string owner;
@@ -81,6 +78,7 @@ void Client::populateFileData_login_shared(std::set<string>& fn , unordered_map<
         reader >> owner;
         fn.insert(fname);
         fo[fname] = owner;
+        fv[fname] = 1; //Sets the version of the file to 1.
     }
     reader.close();
 } //Assert : Read the file.

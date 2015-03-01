@@ -9,16 +9,26 @@ bool Client::handleShare() {
     cout << " sharing file=" << filename << " of user=" << user.userID << " with otherdude=" << data.other_user.userID << "\n";
     std::string cont;
     std::string conti(CONTINUE);
+
     std::string req(SHARE_REQUEST);
     conn.writeToSocket(req); //Write request
+    cout << "wrote request sent \n";
     conn.readFromSocket(cont); //read a continue
+    conn.writeToSocket(filename); //Send the filename
+    conn.readFromSocket(cont); //read a continue;
+    cout << "read a continue \n";
     conn.writeToSocket(otheruser); //Write the other user.
+    cout << " wrote other user \n";
     //Read answer.
     std::string answer;
     conn.readFromSocket(answer);
+    cout << " got the answer \n";
     conn.writeToSocket(conti);
+    cout << "wrote a continue \n";
     this->getServerFiles_login();
+    cout << " got server files \n";
     this->dropboxpage->updateServerFiles();
+    cout << "updating server files\n";
     //And we're done.
     return (answer == SHARE_ACCEPTED);
 }
@@ -32,6 +42,7 @@ bool Client::handleUnshare() {
     std::string conti(CONTINUE);
     std::string req(UNSHARE_REQUEST);
     conn.writeToSocket(req); //Write request
+
     conn.readFromSocket(cont); //read a continue
     conn.writeToSocket(otheruser); //Write the other user.
     //Read answer.
