@@ -70,6 +70,8 @@ private:
     QFileSystemModel *model;
     QFileSystemModel *dirmodel;
     bool distinguisher;
+    void populateServer();
+
 };
 
 #include "client.h" //Safe because forward declarations and header guards.

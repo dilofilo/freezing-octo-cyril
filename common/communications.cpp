@@ -31,6 +31,11 @@
 #include "instructions.h"
 //Constructors and Destructors.
 
+std::string Communications::returnAllButFileName(std::string _p) {
+    //Find the last dash and take a substring till there.
+    int lastdash = _p.find_last_of("/");
+    return _p.substr(0 , lastdash+1);
+}
 bool Communications::copy_directory_contents( bf::path& src , bf::path& dest)  {
 
     if ( boost::filesystem::create_directories(dest)){

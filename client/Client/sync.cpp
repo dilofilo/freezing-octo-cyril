@@ -10,19 +10,30 @@
 
 using namespace std;
 bool Client::handleSync() {
-    string syncreq(SYNC_REQUEST);
-    conn.writeToSocket(syncreq); //Write sync request
-    string tempfile = user.userID + LOG_FILE_SUFFIX;
-    conn.readFromSocket_file(tempfile); //Assert : File ready.
-    set<string>  filenames;
-    unordered_map<string , int> fileversions; //Valid for all files.
-    unordered_map<string , string> fileowners; //File owners.
-    populateFileData_login_normal(filenames , fileversions , fileowners);
-    populateFileData_login_shared(filenames , fileversions , fileowners);
-
+//    string syncreq(SYNC_REQUEST);
+//    conn.writeToSocket(syncreq); //Write sync request
+//    string tempfile = user.userID + LOG_FILE_SUFFIX;
+//    conn.readFromSocket_file(tempfile); //Assert : File ready.
+//    set<string>  filenames;
+//    unordered_map<string , int> fileversions; //Valid for all files.
+//    unordered_map<string , string> fileowners; //File owners.
+//    populateFileData_login_normal(filenames , fileversions , fileowners);
+//    populateFileData_login_shared(filenames , fileversions , fileowners);
     //Need to figure out which files to upload and download, then send appropriate download requests.
+
+     string syncreq(SYNC_REQUEST);
+     conn.writeToSocket(syncreq); //Write sync request
+     string tempfile = user.userID + LOG_FILE_SUFFIX;
+     conn.readFromSocket_file(tempfile); //Assert : File ready.
+
+
+
+
     return true;
 }
+
+
+
 
 void Client::getServerFiles_login() { //Puts them into the dropbox.
     //Assert : The Server is sending log files accross.

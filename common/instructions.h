@@ -2,6 +2,7 @@
 #define INSTRUCTIONS_H
 #include <string>
 #include <boost/filesystem.hpp>
+
 struct UserDetails {
     std::string userID;
     std::string password;

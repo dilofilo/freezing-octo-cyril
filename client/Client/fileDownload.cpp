@@ -9,6 +9,15 @@ bool Client::handleDownload() {
 
     //Comes with file and owner.
     cout << "#### data.filename\t" << data.filename << "\ndata.other_user\t" << data.other_user.userID << "\n";
+
+    string filedir = conn.returnAllButFileName(data.filename);
+    boost::filesystem::path filedir_path(filedir);
+    if (boost::filesystem::exists(filedir)) {
+
+    } else {
+        boost::filesystem::create_directories(filedir_path);
+    }
+
     string uid = user.userID;
     string req(S_TO_C_FILE);
     conn.writeToSocket(req);

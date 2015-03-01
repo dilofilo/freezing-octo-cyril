@@ -171,26 +171,41 @@ void DropBox::on_btnDownload_clicked()
 {
     if(this->distinguisher==1)
     {
-
-        this->client->data.filename = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
-        this->client->data.type = DOWNLOAD_FILE;
-        this->client->data.other_user.userID=this->client->user.userID;
-        bool reply= this->client->eventHandler(DOWNLOAD_FILE);
-        if(!reply)
-        {
-            QMessageBox::information(this,tr("Error"),tr("Download Failed"));
+        string beginningpart = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
+        QMessageBox::information(this,"hi",QString::fromStdString(beginningpart));
+        for( std::set<string>::iterator it = filenames.begin() ; it !=  filenames.end() ; ++it) {
+            std::string its = *it;
+            auto res = std::mismatch(beginningpart.begin() ,  beginningpart.end() , its.begin());//Return mistmatch thingy
+            if (  (fileowners[*it] == this->client->user.userID) && (res.first == beginningpart.end()) ) {
+                this->client->data.filename = its;
+                //This thing should send a request for all files that are a subset
+                this->client->data.type = DOWNLOAD_FILE;
+                this->client->data.other_user.userID=this->client->user.userID;
+                bool reply= this->client->eventHandler(DOWNLOAD_FILE);
+                if(!reply)
+                {
+                    QMessageBox::information(this,tr("Error"),tr("Download Failed"));
+                }
+            }
         }
     }
     else
     {
-        this->client->data.filename = this->ui->shareTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
-        this->client->data.type = DOWNLOAD_SHARED_FILE;
-        this->client->data.other_user.userID=this->ui->shareTreeWidget->selectedItems()[0]->text(1).toUtf8().constData();
-        cout << "filename=" << this->client->data.filename << " |owner=" << this->client->data.other_user.userID << "\n";
-        bool reply= this->client->eventHandler(DOWNLOAD_SHARED_FILE);
-        if(!reply)
-        {
-            QMessageBox::information(this,tr("Error"),tr("Download Failed"));
+        string beginningpart = this->ui->shareTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
+        for( std::set<string>::iterator it = filenames.begin() ; it !=  filenames.end() ; ++it) {
+            std::string its = *it;
+            auto res = std::mismatch(beginningpart.begin() ,  beginningpart.end() , its.begin());//Return mistmatch thingy
+            if (  (fileowners[*it] != this->client->user.userID) && (res.first == beginningpart.end()) ) {
+                this->client->data.filename = its;
+                //This thing should send a request for all files that are a subset
+                this->client->data.type = DOWNLOAD_SHARED_FILE;
+                this->client->data.other_user.userID=this->ui->shareTreeWidget->selectedItems()[0]->text(1).toUtf8().constData();
+                bool reply= this->client->eventHandler(DOWNLOAD_SHARED_FILE);
+                if(!reply)
+                {
+                    QMessageBox::information(this,tr("Error"),tr("Download Failed"));
+                }
+            }
         }
     }
 }
@@ -272,18 +287,20 @@ void DropBox::updateServerFiles() {
     this->ui->serverTreeWidget->clear();
     this->ui->shareTreeWidget->clear();
 
-    for( ; it != filenames.end(); ++it) {
-        //For each file name ,
-        std::string fn1 = *it; //Gets the file name.
-        std::string fo1 = fileowners[fn1];
-        QString fn = QString::fromStdString(fn1);
-        QString fo = QString::fromStdString(fo1);
-        if ( fo1 == this->client->user.userID) {
-            AddItem( fn );
-        } else {
-            AddItemShare( fn , fo );
-        }
-    }
+//    for( ; it != filenames.end(); ++it) {
+//        //For each file name ,
+//        std::string fn1 = *it; //Gets the file name.
+//        std::string fo1 = fileowners[fn1];
+//        QString fn = QString::fromStdString(fn1);
+//        QString fo = QString::fromStdString(fo1);
+//        if ( fo1 == this->client->user.userID) {
+//            AddItem( fn );
+//        } else {
+//            AddItemShare( fn , fo );
+//        }
+//    }
+
+    this->populateServer();
 }
 
 void DropBox::on_shareTreeWidget_clicked(const QModelIndex &index)
@@ -311,7 +328,11 @@ void DropBox::AddItemShare(QString Name, QString Owner)
 void DropBox::on_serverTreeWidget_clicked(const QModelIndex &index)
 {
     ui->comboRevert->clear();
+    std::string indexer=index.data().toString().toUtf8().constData();
+    QTreeWidgetItem *itm
+    while ()
     int y=this->fileversions[index.data().toString().toUtf8().constData()];
+    QMessageBox::information(this,"hi",index.data().toString().toUtf8().constData());
     for (int i=1;i<=y;i++)
     {
         ui->comboRevert->addItem("Version "+QString::number(i));
@@ -374,4 +395,62 @@ void DropBox::on_btnMove_clicked()
 
 
 }
+
+void DropBox::populateServer()
+{
+            // filenames --> QStringList fileNames
+
+
+    QStringList fileNames;//convert filenames to this
+
+    std::set<string>::iterator it = filenames.begin();
+    for ( ; it != filenames.end() ; ++it) {
+        QString qfilenamesi = QString::fromStdString(*it);
+        fileNames << qfilenamesi;
+    } //ASSERT : Converted it.
+
+
+    QTreeWidgetItem *topLevelItem = NULL;
+    foreach (const QString &fileName, fileNames)
+    {
+        QStringList splitFileName = fileName.split("/");
+
+        // add root folder as top level item if treeWidget doesn't already have it
+        if (this->ui->serverTreeWidget->findItems(splitFileName[0], Qt::MatchFixedString).isEmpty())
+        {
+            topLevelItem = new QTreeWidgetItem;
+            topLevelItem->setText(0, splitFileName[0]);
+            this->ui->serverTreeWidget->addTopLevelItem(topLevelItem);
+        }
+
+        QTreeWidgetItem *parentItem = topLevelItem;
+
+        // iterate through non-root directories (file name comes after)
+        for (int i = 1; i < splitFileName.size() - 1; ++i)
+        {
+            // iterate through children of parentItem to see if this directory exists
+            bool thisDirectoryExists = false;
+            for (int j = 0; j < parentItem->childCount(); ++j)
+            {
+                if (splitFileName[i] == parentItem->child(j)->text(0))
+                {
+                    thisDirectoryExists = true;
+                    parentItem = parentItem->child(j);
+                    break;
+                }
+            }
+
+            if (!thisDirectoryExists)
+            {
+                parentItem = new QTreeWidgetItem(parentItem);
+                parentItem->setText(0, splitFileName[i]);
+            }
+        }
+
+        QTreeWidgetItem *childItem = new QTreeWidgetItem(parentItem);
+        childItem->setText(0, splitFileName.last());
+    }
+
+}
+
 #endif

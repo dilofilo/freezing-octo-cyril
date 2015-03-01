@@ -11,12 +11,6 @@
 #include <boost/filesystem/operations.hpp>
 #include <sys/stat.h> //for mkdir and its related definitions.
 
-std::string returnAllButFileName(string _p) {
-    //Find the last dash and take a substring till there.
-    int lastdash = _p.find_last_of("/");
-    return _p.substr(0 , lastdash+1);
-}
-
 bool Server::handleUpload() {
     //I'm told that the file name will be sent to me.
     /*
@@ -30,17 +24,23 @@ bool Server::handleUpload() {
     //FILE_MODE mode = ((fileuploadmode)?(DIFF_FILE):(NEW_FILE));
     //ASSERT : dest is now open.
     string myfilepass = SERVER_DIRECTORY + user.userID + "/" + TEMPPREFIX + finame;
-    string myfilepass_dir = returnAllButFileName(myfilepass);
+
+    string myfilepass_dir = conn.returnAllButFileName(myfilepass);
+
+    cout << "###detected TEMP filepath is" << myfilepass_dir << "\n";
+
     boost::filesystem::path myfilepass_dir_path(myfilepass_dir);
     if ( boost::filesystem::exists(myfilepass_dir_path)) {
-
+        cout << "it exists\n";
     } else {
+        cout << "creation\n";
         boost::filesystem::create_directories(myfilepass_dir_path);
+        cout << "created\n";
     }
+    cout << "about to read the file into" << myfilepass << "\n";
     bool made = conn.readFromSocket_file( myfilepass , NEW_FILE ) ;
     if( made ){
         int version = CheckifFileExists(finame , user.userID);
-
         AddFile(finame , version , user.userID);
         /*if(version > 1){
             // file exists.
@@ -62,25 +62,54 @@ bool Server::handleUpload() {
         /*
          *Files storage : latest version is present freely. diff files in v1...vn
         */
-        if (version == 1) {
+        if (version == 1) { //New file.
             string old_name = myfilepass;
             string new_name =SERVER_DIRECTORY + user.userID + "/" + finame;
-            string new_name_dir = SERVER_DIRECTORY + user.userID + "/";
-            boost::filesystem::path new_name_dir_path( new_name_dir );
+
+            boost::filesystem::path old_dir_path(conn.returnAllButFileName(old_name));
+            if ( exists(old_dir_path)) {
+
+            } else {
+                boost::filesystem::create_directories(old_dir_path);
+            }
+
+            boost::filesystem::path new_dir_path(conn.returnAllButFileName(new_name));
+            if ( exists(new_dir_path)) {
+
+            } else {
+                boost::filesystem::create_directories(new_dir_path);
+            }
+            //Checked for existence of all directories.
             //Now, make their paths and rename.
             boost::filesystem::path pathold(old_name.c_str() );
             boost::filesystem::path pathnew(new_name.c_str() );
-            if ( exists(new_name_dir_path)) {
-                //Nothing to do. just throw it in.
+            boost::filesystem::rename(pathold , pathnew);
+
+        } else { // Old versions.
+            string prior = SERVER_DIRECTORY + user.userID + "/" + finame; //The latest present in DB before the new upload
+            boost::filesystem::path prior_dir_path(conn.returnAllButFileName(prior));
+            if ( exists(prior_dir_path)) {
+
             } else {
-                boost::filesystem::create_directories(new_name_dir_path);
+                boost::filesystem::create_directories(prior_dir_path);
+            }
+            string vminus1 = SERVER_DIRECTORY + user.userID + "/v_" + to_string(version-1) + "/" + finame;
+            boost::filesystem::path vm1_dir_path(conn.returnAllButFileName(vminus1));
+            if ( exists(vm1_dir_path)) {
+
+            } else {
+                boost::filesystem::create_directories(vm1_dir_path);
             }
 
-            boost::filesystem::rename(pathold , pathnew);
-        } else { //Will never happen.
-            string prior = SERVER_DIRECTORY + user.userID + "/" + finame; //The latest present in DB before the new upload
-            string vminus1 = SERVER_DIRECTORY + user.userID + "/v_" + to_string(version-1) + "/" + finame;
             string old_name = myfilepass; //Uploaded file.
+            boost::filesystem::path old_dir_path(conn.returnAllButFileName(old_name));
+            if ( exists(old_dir_path)) {
+
+            } else {
+                boost::filesystem::create_directories(old_dir_path);
+            }
+
+            //Checked for existence of all those paths.
             boost::filesystem::path pathprior(prior.c_str() );
             boost::filesystem::path pathvm1(vminus1.c_str() );
                 //Move prior to vm1
