@@ -30,7 +30,7 @@ void RegisterPage::on_btn_registerConfirm_clicked()
     this->client->data.type = REGISTER_TO_LOGIN_REGISTER;
     this->client->data.user.userID = ((this->ui->txt_username)->text()).toUtf8().constData();
     this->client->data.user.password = ((this->ui->txt_password)->text()).toUtf8().constData();
-    this->client->data.user.clientDirectory = ((this->ui->txt_clientDirectory)->text()).toUtf8().constData();
+    //this->client->data.user.clientDirectory = ((this->ui->txt_clientDirectory)->text()).toUtf8().constData();
     //Passes data across.
     bool reply = this->client->eventHandler(REGISTER_TO_LOGIN_REGISTER);
     if (!reply) {
@@ -62,22 +62,22 @@ void RegisterPage::on_btn_back_clicked()
     //Should go back to the login page.
     this->client->eventHandler( REGISTER_TO_LOGIN_BACK ); //Nothing ought to go wrng.
 }
-#endif
 
-void RegisterPage::on_btn_browse_clicked()
-{
+//void RegisterPage::on_btn_browse_clicked()
+//{
 
-    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
-                                                QDir::currentPath(),
-                                                QFileDialog::ShowDirsOnly
-                                                );
-    ui->txt_clientDirectory->setText(dir);
-    //if (filename!="")
-    //{QMessageBox::information(this,"hain na",filename);}
-}
+//    QString dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+//                                                QDir::currentPath(),
+//                                                QFileDialog::ShowDirsOnly
+//                                                );
+//    ui->txt_clientDirectory->setText(dir);
+//    //if (filename!="")
+//    //{QMessageBox::information(this,"hain na",filename);}
+//}
 
 void RegisterPage::on_txt_username_selectionChanged()
 {
     this->ui->txt_username->setText("");
     this->ui->txt_password->setText("");
 }
+#endif

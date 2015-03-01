@@ -49,6 +49,7 @@ public:
     QPushButton *btnConfirmRevert;
     QTreeWidget *serverTreeWidget;
     QTreeWidget *shareTreeWidget;
+    QPushButton *btnMove;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *DropBox)
@@ -186,6 +187,9 @@ public:
         shareTreeWidget->setHeaderItem(__qtreewidgetitem1);
         shareTreeWidget->setObjectName(QStringLiteral("shareTreeWidget"));
         shareTreeWidget->setGeometry(QRect(10, 490, 241, 181));
+        btnMove = new QPushButton(centralwidget);
+        btnMove->setObjectName(QStringLiteral("btnMove"));
+        btnMove->setGeometry(QRect(820, 480, 99, 27));
         DropBox->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(DropBox);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -217,6 +221,7 @@ public:
          << QApplication::translate("DropBox", "Version 1", 0)
         );
         btnConfirmRevert->setText(QApplication::translate("DropBox", "Revert!", 0));
+        btnMove->setText(QApplication::translate("DropBox", "Move", 0));
     } // retranslateUi
 
 };

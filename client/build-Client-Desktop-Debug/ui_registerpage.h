@@ -30,11 +30,9 @@ public:
     QGroupBox *groupBox;
     QPushButton *btn_registerConfirm;
     QPushButton *btn_back;
-    QLineEdit *txt_clientDirectory;
     QLineEdit *txt_password;
     QLineEdit *txt_username;
     QPushButton *btn_ping;
-    QPushButton *btn_browse;
     QStatusBar *statusbar;
 
     void setupUi(QMainWindow *RegisterPage)
@@ -65,9 +63,6 @@ public:
         btn_back = new QPushButton(groupBox);
         btn_back->setObjectName(QStringLiteral("btn_back"));
         btn_back->setGeometry(QRect(370, 150, 161, 27));
-        txt_clientDirectory = new QLineEdit(groupBox);
-        txt_clientDirectory->setObjectName(QStringLiteral("txt_clientDirectory"));
-        txt_clientDirectory->setGeometry(QRect(60, 120, 321, 29));
         txt_password = new QLineEdit(groupBox);
         txt_password->setObjectName(QStringLiteral("txt_password"));
         txt_password->setGeometry(QRect(0, 80, 371, 29));
@@ -78,16 +73,6 @@ public:
         btn_ping = new QPushButton(groupBox);
         btn_ping->setObjectName(QStringLiteral("btn_ping"));
         btn_ping->setGeometry(QRect(370, 180, 161, 27));
-        btn_browse = new QPushButton(groupBox);
-        btn_browse->setObjectName(QStringLiteral("btn_browse"));
-        btn_browse->setGeometry(QRect(0, 120, 71, 27));
-        txt_clientDirectory->raise();
-        btn_registerConfirm->raise();
-        btn_back->raise();
-        txt_password->raise();
-        txt_username->raise();
-        btn_ping->raise();
-        btn_browse->raise();
         RegisterPage->setCentralWidget(centralwidget);
         statusbar = new QStatusBar(RegisterPage);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -104,11 +89,9 @@ public:
         groupBox->setTitle(QApplication::translate("RegisterPage", "yourRegistrationDetails", 0));
         btn_registerConfirm->setText(QApplication::translate("RegisterPage", "Confirm Registration!", 0));
         btn_back->setText(QApplication::translate("RegisterPage", "Back :(", 0));
-        txt_clientDirectory->setText(QApplication::translate("RegisterPage", "   select directory...", 0));
         txt_password->setText(QApplication::translate("RegisterPage", "Desired Password", 0));
         txt_username->setText(QApplication::translate("RegisterPage", "Desired Username", 0));
         btn_ping->setText(QApplication::translate("RegisterPage", "Ping!", 0));
-        btn_browse->setText(QApplication::translate("RegisterPage", "browse", 0));
     } // retranslateUi
 
 };

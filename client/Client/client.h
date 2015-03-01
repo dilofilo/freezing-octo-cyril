@@ -83,6 +83,7 @@ public:
         void handleExit(); // client.cpp
         void showMain();
         bool populateSyncFileList(); //sync.cpp
+        Communications conn; // following that old PHP-SQL stile maen. \_|_/
 
 private slots:
     void on_btn_launch_clicked();
@@ -107,7 +108,6 @@ private:
     DropBox *dropboxpage; //Show after successful login.
 
     //Communications Object
-    Communications conn; // following that old PHP-SQL stile maen. \_|_/
     //Connection functions.
     bool prepareSocket(std::string serveraddress);
 

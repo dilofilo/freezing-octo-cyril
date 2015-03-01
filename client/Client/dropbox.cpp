@@ -7,6 +7,7 @@
 #include <QFileSystemModel>
 #include "clientdefinitions.h"
 #include <boost/filesystem.hpp>
+#include <QFileDialog>
 
 DropBox::DropBox(QWidget *parent) :
     QMainWindow(parent),
@@ -203,7 +204,7 @@ void DropBox::on_btnDownload_clicked()
 
 void DropBox::on_btnRemove_clicked()
 {
-    this->client->data.filename = model->filePath(this->ui->serverTreeWidget->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.filename = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData();//this is a model index, convert to string
     this->client->data.type = REMOVE_FILE;
     bool reply= this->client->eventHandler(REMOVE_FILE);
     if(!reply)
@@ -215,7 +216,7 @@ void DropBox::on_btnRemove_clicked()
 void DropBox::on_btnShare_clicked()
 {
     //Need to get username with which to share.
-    this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.filename = this->ui->clientTreeView->currentIndex().data().toString().toUtf8().constData();//this is a model index, convert to string
     bfs::path f(this->client->data.filename);
     string fn = f.filename().string();
     bool ok;
@@ -238,7 +239,7 @@ void DropBox::on_btnShare_clicked()
 
 void DropBox::on_btnUnshare_clicked()
 {
-    this->client->data.filename = model->filePath(this->ui->clientTreeView->currentIndex()).toUtf8().constData();//this is a model index, convert to string
+    this->client->data.filename = this->ui->clientTreeView->currentIndex().data().toString().toUtf8().constData();//this is a model index, convert to string
     bfs::path f(this->client->data.filename);
     string fn = f.filename().string();
     bool ok;
@@ -309,7 +310,6 @@ void DropBox::AddItemShare(QString Name, QString Owner)
     QTreeWidgetItem *itm= new QTreeWidgetItem(ui->shareTreeWidget);
     itm->setText(0,Name); itm->setText(1,Owner);
 }
-#endif
 
 void DropBox::on_serverTreeWidget_clicked(const QModelIndex &index)
 {
@@ -328,3 +328,40 @@ void DropBox::on_textSearch_selectionChanged()
     this->ui->textSearch->setText("");
 }
 
+
+void DropBox::on_btnMove_clicked()
+{
+    using namespace boost::filesystem;
+    QMessageBox::StandardButton reply;
+    QString dir;
+    reply=QMessageBox::question(this,"hi","Do you want to move a directory?",QMessageBox::Yes|QMessageBox::No);
+    if (reply==QMessageBox::Yes)
+    {
+        dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
+                                                        QDir::currentPath()
+                                                        );
+
+
+    }
+    else
+    {
+        dir = QFileDialog::getOpenFileName(this, tr("Open Directory"),
+                                                        QDir::currentPath()
+                                                        );
+
+
+    }
+
+    std::string dir1=dir.toUtf8().constData();
+    boost::filesystem::path sourcepath(dir1);
+    std::string pathcreator = this->client->user.userID+"/"+ CLIENT_SYNC_DIR + "/" + sourcepath.filename().string();
+
+
+    path destinationpath(pathcreator);
+//        copy(sourcepath,destinationpath);
+
+    this->client->conn.copy_directory_contents(sourcepath,destinationpath);
+
+    QMessageBox::information(this,"hi",dir);
+}
+#endif

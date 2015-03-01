@@ -142,10 +142,10 @@ void Client::handleExit() {
 
 
 
-#endif
 
 void Client::on_txt_serverip_selectionChanged()
 {
     this->ui->txt_serverip->setText("");
 }
 
+#endif

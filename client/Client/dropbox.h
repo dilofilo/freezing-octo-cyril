@@ -61,6 +61,8 @@ private slots:
 
 
 
+    void on_btnMove_clicked();
+
 private:
     Client* client;
     Socket csock;

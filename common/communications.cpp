@@ -24,11 +24,37 @@
 #include <string> //For simplicity.
 #include <vector> //For infinite string transfer
 #include <fstream>
+#include <boost/filesystem.hpp>
+
 
 
 #include "instructions.h"
-using namespace std;
 //Constructors and Destructors.
+
+bool Communications::copy_directory_contents( bf::path& src , bf::path& dest)  {
+
+    if ( boost::filesystem::create_directories(dest)){
+        std::cout << "directory=" << dest.string() << " was created \n";
+    }
+
+    //Check if src is a file, if yes, copy it. Else, throw the directory into a source vector
+    for ( bf::directory_iterator file(src) ; file != bf::directory_iterator() ; ++file) {
+        //If its a file, copy, else call the same thing.
+        boost::filesystem::path current = file->path();
+        boost::filesystem::path destprime = (dest/(current.filename()));
+
+        if ( boost::filesystem::is_directory(current) ) {
+            copy_directory_contents( current , destprime );
+        } else {
+            copy( current , destprime );
+        }
+    }
+    return true;
+}
+
+
+
+
 Communications::Communications() {
     //Do Nothing to the sockets.
 }
@@ -259,7 +285,7 @@ bool Communications::writeToSocket_file_old( std::fstream& reader , FILE_MODE mo
     while(!reader.eof()) {
         //Don't care about missing bits due to write().
 
-        int rv = SSL_write( sslsock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+        SSL_write( sslsock , towrite , FILE_TRANSFER_BUFFER_SIZE);
         memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
 
 
@@ -275,7 +301,7 @@ bool Communications::writeToSocket_file_old( std::fstream& reader , FILE_MODE mo
     }
 
     //This code is here because the while loop reads the last bit without sending it.
-    int rv = SSL_write( sslsock , towrite , FILE_TRANSFER_BUFFER_SIZE);
+    SSL_write( sslsock , towrite , FILE_TRANSFER_BUFFER_SIZE);
     memset(towrite , 0 , FILE_TRANSFER_BUFFER_SIZE);
 
 
@@ -323,10 +349,12 @@ bool Communications::readFromSocket_file_old(std::fstream &dest, FILE_MODE mode)
             break;
         }
     }
+    return true;
     //End of transfer has been read already.
 }
 
 bool Communications::writeToSocket_file( std::string& readerfile , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
+    using namespace std;
     std::fstream reader;
     reader.open(readerfile , ios::in);
     //cout << "#####WRITING THE FOLLOWING FILE ONTO THE SOCKET \n\n\t\t" << readerfile << "\n\n\n";
@@ -372,7 +400,7 @@ bool Communications::writeToSocket_file( std::string& readerfile , FILE_MODE mod
 } //Writing file correctly.
 
 bool Communications::readFromSocket_file( std::string& destfile , FILE_MODE mode) { //Assumes that the reader is open and will be closed.
-    FILE_MODE lol = mode;
+    using namespace std;
     std::fstream dest;
     dest.open(destfile , ios::out);
     //cout << " ####WRITING INTO FILE NAME :" << destfile << "\n";

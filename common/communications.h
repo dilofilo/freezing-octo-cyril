@@ -27,6 +27,10 @@
 #include "instructions.h"
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+#define BOOST_NO_SCOPED_ENUMS
+#include <boost/filesystem.hpp>
+
+namespace bf=boost::filesystem;
 
 typedef int Socket;
 
@@ -74,7 +78,7 @@ public:
 
     bool writeToSocket_file( std::string& source , FILE_MODE mode = NEW_FILE); //Read character by character, put it into a buffer and send it across.
     bool readFromSocket_file( std::string& dest , FILE_MODE mode=NEW_FILE); //Read a chunk from the buffer and write it into the destination
-
+    bool copy_directory_contents( bf::path& src , bf::path& dest);
     //Note : Sockets are closed by callers, not by communications.
 
     //REMOTE DIFF - TO BE IMPLEMENTED.
