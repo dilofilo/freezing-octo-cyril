@@ -55,6 +55,34 @@ bool Client::handleDownload() {
     return true;
 }
 
+bool Client::handleSharedDownload() {
+
+    string fn = processFileName(data.filename);
+    string owner = data.other_user.userID;
+    cout << "filename=" << fn << " and owner=" << data.other_user.userID<< "\n";
+    string req(S_TO_C_SHARED);
+    conn.writeToSocket(req);
+    string conti;
+    string cont(CONTINUE);
+    conn.readFromSocket(conti);
+    conn.writeToSocket(fn);
+    conn.readFromSocket(conti);
+    conn.writeToSocket(owner);
+    conn.readFromSocket(conti);
+    conn.writeToSocket(cont);
+
+    string filepath = user.userID + "/" + CLIENT_SHARE_DIR + "/" + fn;
+    cout << " downloading file to" << filepath << "\n";
+    conn.readFromSocket_file(filepath);
+    conn.writeToSocket(cont);
+    //Update files.
+    this->getServerFiles_login();
+    this->dropboxpage->updateServerFiles();
+    cout << " updated server files \n";
+//    this->addToFileLog_shared( user.userID , fn , owner);
+    cout << "added to file log ";
+}
+
 int findverfile(string& srcfile , string& findfile){
     fstream f;
 //    string fi = uid + "/" + CLIENT_SYNC_DIR + "/" + SERVER_LOG ;
@@ -64,7 +92,7 @@ int findverfile(string& srcfile , string& findfile){
     int ver = 0;
     int temp;
 
-    while(f){
+    while(f) {
         f>>s1>>temp;
         if(s1.compare(findfile) == 0){
             if(temp > ver){

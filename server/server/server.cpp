@@ -204,6 +204,8 @@ bool Server::handleInstruction(std::string& instr) {
         return handleUpload();
     }else if( instr == S_TO_C_FILE ){ //File download (from server)
         return handleDownload();
+    }else if (instr == S_TO_C_SHARED){
+        return handleSharedDownload();
     }else if( instr == REMOVE_REQUEST ){ //Remove File from Server - and all its databses.
         return handleRemoveFile();
     }else if( instr == SYNC_REQUEST ){ //

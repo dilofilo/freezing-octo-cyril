@@ -42,13 +42,15 @@ bool Client::handleUnshare() {
     std::string conti(CONTINUE);
     std::string req(UNSHARE_REQUEST);
     conn.writeToSocket(req); //Write request
-
+    conn.readFromSocket(cont);
+    conn.writeToSocket(filename);
     conn.readFromSocket(cont); //read a continue
     conn.writeToSocket(otheruser); //Write the other user.
     //Read answer.
     std::string answer;
     conn.readFromSocket(answer);
     conn.writeToSocket(conti);
+
     this->getServerFiles_login();
     this->dropboxpage->updateServerFiles();
     //And we're done.
@@ -60,6 +62,7 @@ bool Client::addToFileLog_shared(string uid, string fname, string _owner) {
     fstream reader(logfilepath , ios::in);
     string logfilepathtemp = uid + "/" + CLIENT_SHARE_DIR + "/" + uid + CLIENT_SHARE_DIR + "temp";
     fstream writer(logfilepathtemp , ios::out);
+
 
     bool found = false;
     string file , owner;
@@ -77,6 +80,10 @@ bool Client::addToFileLog_shared(string uid, string fname, string _owner) {
     if ( !found ) {
         writer << fname << "\t" << _owner << "\n";
     }
+
+    boost::filesystem::path olfile( logfilepathtemp );
+    boost::filesystem::path newfile( logfilepath );
+    boost::filesystem::rename( olfile, newfile );
     return true;
 }
 

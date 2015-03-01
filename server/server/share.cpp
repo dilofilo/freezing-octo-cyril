@@ -68,7 +68,7 @@ bool Server::handleUnshare() {
     conn.writeToSocket(cont);
     //Read the owner.
     std::string owner;
-    conn.readFromSocket(owner);
+    conn.readFromSocket(owner);//Owner is the other yser.
 
     //Check if unshare request is valid.
     db.open();

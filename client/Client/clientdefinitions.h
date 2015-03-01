@@ -27,7 +27,8 @@ enum INSTRUCTION_TYPE {
     FILE_SHARE, //share button
     FILE_UNSHARE, // unshare button
     FILE_SEARCH, //To search for files on the server
-    MAIN_TO_DESKTOP //Exit
+    MAIN_TO_DESKTOP, //Exit
+    DOWNLOAD_SHARED_FILE
 };
 
 struct InstructionData {

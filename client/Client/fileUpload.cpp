@@ -21,14 +21,19 @@ bool Client::handleUpload() {
     return true;
 }
 std::string Client::processFileName( std::string filename ) {
-    unsigned lastdir = 1 + filename.find_last_of("/");
-    return filename.substr(lastdir);
+    //Get path relative to the present working directory.
+    string p = filename;
+    string cwd = (boost::filesystem::current_path()).string();
+    cwd += user.userID + "/" + CLIENT_SYNC_DIR + "/";
+    p = p.substr( cwd.size() + 1 );
+    cout << "###return ralative path=" << p << "####\n";
+    return p;
 }
 
 bool Client::uploadNewFile() {
     //ASSERT : data.filetype == FILE_TYPE_NEW
     std::string filename = this->data.filename; //Entire path.
-    std::fstream reader;
+    cout << "uploadNewFile() detects:" << filename << "\n";
     //reader.open(filename ); //In mode.
     //Need to process file name.
     //TODO : PROCESS FILE NAME. ADD IT TO MY DATABASE.

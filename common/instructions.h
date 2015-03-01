@@ -60,6 +60,7 @@ struct UserDetails {
     #define C_TO_S_FILE "C_TO_S_FILE"
         //The above one is upload
     #define S_TO_C_FILE "S_TO_C_FILE"
+#define S_TO_C_SHARED "S_TO_C_SHARED"
         //The above one is download.
 
     //File removal.

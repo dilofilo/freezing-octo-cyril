@@ -24,7 +24,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-
+#include <queue>
 #include <QLineEdit>
 #include <QMessageBox>
 
@@ -39,7 +39,7 @@
 #include "sync.cpp"
 #include "revert.cpp"
 #include "share.cpp"
-
+#include <boost/filesystem.hpp>
 #include <unordered_map>
 
 Client::Client(QWidget *parent) :
@@ -84,9 +84,36 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
     } else if ( instr == MAIN_TO_LOGIN) { //to server
         this->handleLogout(); // Need to link GUI click to the event
     } else if ( instr == UPLOAD_FILE) { //to server
-        return this->handleUpload(); //Done. Need to write the communications and server side equivalent.
+        std::queue<string> paths;
+        string present = data.filename;
+//        cout << "request to upload " << present << "\n";
+        paths.push(present);
+        bool rv =true;
+        while ( paths.size() > 0 ) {
+            //Get p.
+            boost::filesystem::path p( paths.front() );
+            paths.pop();
+            if( boost::filesystem::is_directory(p)) {
+//                cout << p.string() << " it is a directory\n";
+                //Add all its kids into the vector of paths.
+                for( boost::filesystem::directory_iterator it(p) ; it != boost::filesystem::directory_iterator() ; ++it) {
+                    boost::filesystem::path nt = p/((it->path()).filename());
+//                    cout << " #### NT=" <<  nt.string() << " #### ";
+                    paths.push(nt.string());
+                }
+            } else {
+//                cout << "file to be uploaded=" << p.string() << "\n";
+                data.filename = p.string();
+                rv = rv && this->handleUpload(); //Done. Need to write the communications and server side equivalent.
+            }
+        }
+        return rv;
+        //Haroun magic 1.
+
     } else if ( instr == DOWNLOAD_FILE) { //to server
         this->handleDownload();
+    } else if (instr == DOWNLOAD_SHARED_FILE) {
+        this->handleSharedDownload();
     } else if ( instr == REMOVE_FILE) { //to server
         this->handleRemove();
     } else if ( instr == SYNC) { //to server - retrieves dates and decides. Works only for files which have been uploaded at least once.

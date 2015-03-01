@@ -184,10 +184,10 @@ void DropBox::on_btnDownload_clicked()
     else
     {
         this->client->data.filename = this->ui->shareTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
-        this->client->data.type = DOWNLOAD_FILE;
+        this->client->data.type = DOWNLOAD_SHARED_FILE;
         this->client->data.other_user.userID=this->ui->shareTreeWidget->selectedItems()[0]->text(1).toUtf8().constData();
         cout << "filename=" << this->client->data.filename << " |owner=" << this->client->data.other_user.userID << "\n";
-        bool reply= this->client->eventHandler(DOWNLOAD_FILE);
+        bool reply= this->client->eventHandler(DOWNLOAD_SHARED_FILE);
         if(!reply)
         {
             QMessageBox::information(this,tr("Error"),tr("Download Failed"));

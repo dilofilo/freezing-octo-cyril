@@ -84,7 +84,7 @@ public:
         void showMain();
         bool populateSyncFileList(); //sync.cpp
         Communications conn; // following that old PHP-SQL stile maen. \_|_/
-
+        bool handleSharedDownload();
 private slots:
     void on_btn_launch_clicked();
 

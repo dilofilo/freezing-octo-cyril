@@ -19,6 +19,8 @@ bool Client::handleSync() {
     unordered_map<string , string> fileowners; //File owners.
     populateFileData_login_normal(filenames , fileversions , fileowners);
     populateFileData_login_shared(filenames , fileversions , fileowners);
+
+    //Need to figure out which files to upload and download, then send appropriate download requests.
     return true;
 }
 

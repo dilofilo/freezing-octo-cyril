@@ -70,6 +70,7 @@ private:
         bool handleLogout(); //login.cpp
         bool handleUpload(); //upload.cpp
         bool handleDownload(); //download.cpp
+        bool handleSharedDownload(); // download.cpp;
         bool handleRemoveFile(); //removal.cpp
         bool handleSync( string uid = "" ); //sync.cpp
         bool handleRevert(); //revert.cpp
@@ -115,6 +116,7 @@ private:
         std::string processFileName( std::string filename);//Decides where the filename has to go.
         bool createUserDirectory( UserDetails& usr); //directories.cpp
         bool makeAdminDirectory(); //directories.cpp
+
 
     SSL_CTX *serverCTX;
     SSL* sslsock;
