@@ -54,7 +54,6 @@ DropBox::DropBox(Client* _client , Socket& _csock , string sharedfiledir) { // N
 
 DropBox::~DropBox()
 {
-    this->client->handleExit();
     delete ui;
 }
 
@@ -155,20 +154,17 @@ void DropBox::on_btnSync_clicked()
 
 void DropBox::on_btnLogout_clicked()
 {
-    bool reply= this->client->eventHandler(MAIN_TO_LOGIN);
-    if(!reply)
-    {
-        QMessageBox::information(this,tr("Error"),tr("Logout Failed"));
-    }
+    //bool reply =
+    this->client->eventHandler(MAIN_TO_LOGIN);
+//    if(!reply)
+//    {
+//        QMessageBox::information(this,tr("Error"),tr("Logout Failed"));
+//    }
 }
 
 void DropBox::on_btnExit_clicked()
 {
-    bool reply= this->client->eventHandler(MAIN_TO_DESKTOP);
-    if(!reply)
-    {
-        QMessageBox::information(this,tr("Error"),tr("Exit Failed"));
-    }
+    this->client->eventHandler(MAIN_TO_DESKTOP);
 }
 
 void DropBox::on_btnDownload_clicked()
@@ -216,7 +212,7 @@ void DropBox::on_btnRemove_clicked()
 void DropBox::on_btnShare_clicked()
 {
     //Need to get username with which to share.
-    this->client->data.filename = this->ui->clientTreeView->currentIndex().data().toString().toUtf8().constData();//this is a model index, convert to string
+    this->client->data.filename = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData();//this is a model index, convert to string
     bfs::path f(this->client->data.filename);
     string fn = f.filename().string();
     bool ok;
@@ -239,7 +235,7 @@ void DropBox::on_btnShare_clicked()
 
 void DropBox::on_btnUnshare_clicked()
 {
-    this->client->data.filename = this->ui->clientTreeView->currentIndex().data().toString().toUtf8().constData();//this is a model index, convert to string
+    this->client->data.filename = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData();//this is a model index, convert to string
     bfs::path f(this->client->data.filename);
     string fn = f.filename().string();
     bool ok;
@@ -340,16 +336,12 @@ void DropBox::on_btnMove_clicked()
         dir = QFileDialog::getExistingDirectory(this, tr("Open Directory"),
                                                         QDir::currentPath()
                                                         );
-
-
     }
     else
     {
         dir = QFileDialog::getOpenFileName(this, tr("Open Directory"),
                                                         QDir::currentPath()
                                                         );
-
-
     }
 
     std::string dir1=dir.toUtf8().constData();

@@ -6,6 +6,7 @@ bool Client::handleShare() {
     std::string filename = data.filename;
     std::string otheruser = data.other_user.userID;
 
+    cout << " sharing file=" << filename << " of user=" << user.userID << " with otherdude=" << data.other_user.userID << "\n";
     std::string cont;
     std::string conti(CONTINUE);
     std::string req(SHARE_REQUEST);
@@ -25,6 +26,7 @@ bool Client::handleShare() {
 bool Client::handleUnshare() {
     std::string filename = data.filename;
     std::string otheruser = data.other_user.userID;
+    cout << " unsharing file=" << filename << " of user=" << user.userID << " with otherdude=" << data.other_user.userID << "\n";
 
     std::string cont;
     std::string conti(CONTINUE);
@@ -47,6 +49,7 @@ bool Client::addToFileLog_shared(string uid, string fname, string _owner) {
     fstream reader(logfilepath , ios::in);
     string logfilepathtemp = uid + "/" + CLIENT_SHARE_DIR + "/" + uid + CLIENT_SHARE_DIR + "temp";
     fstream writer(logfilepathtemp , ios::out);
+
     bool found = false;
     string file , owner;
     while ( !found ) {

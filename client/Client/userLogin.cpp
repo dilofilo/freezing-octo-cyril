@@ -64,7 +64,9 @@ bool Client::createFileLog( std::string filename ) {
 bool Client::handleLogout() {
     // to the launch screen.
     this->loginpage->show(); //Back to the square one.
+    cout << "got here \n";
     delete this->dropboxpage;
+    cout << "got here \n";
     return true;
 }
 

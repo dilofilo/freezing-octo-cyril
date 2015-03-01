@@ -83,6 +83,8 @@ Server::Server() {
 
 Server::~Server() {
 	//Close windows. Close all connections etc.
+    ::close(ssock);
+    ::close(csock);
     SSL_CTX_free(serverCTX);
 }
 
@@ -157,9 +159,6 @@ void Server::getClient() {
             close(csock);
 		}
 	}
-
-    close(csock);
-	close(ssock);
 }
 
 

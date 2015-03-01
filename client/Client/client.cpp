@@ -50,6 +50,7 @@ Client::Client(QWidget *parent) :
     this->registerpage = new RegisterPage(this , csock);
     this->loginpage->hide();
     this->registerpage->hide();
+    this->dropboxpage = NULL;
     ui->setupUi(this);
 
     //Assert : Presently, the client wants the IP Address.
@@ -57,12 +58,7 @@ Client::Client(QWidget *parent) :
 
 Client::~Client()
 {
-    this->handleExit();
-    ::close(csock);
     delete ui;
-    if ( this->dropboxpage != NULL ) delete this->dropboxpage;
-    delete this->loginpage;
-    delete this->registerpage;
 }
 
 void Client::on_btn_launch_clicked()
@@ -116,8 +112,6 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
  *##################### MINION FUNCTIONS FOLLOW #############
 */
 
-
-
 void Client::showMain() {
     bfs::path cwd(bfs::current_path());
     bfs::path syncpath = cwd;
@@ -136,6 +130,11 @@ void Client::handleExit() {
     std::string temp(EXIT_REQUEST);
     conn.writeToSocket( temp );
     ::close(csock);
+    SSL_CTX_free(clientCTX);
+    if (this->dropboxpage != NULL ) delete this->dropboxpage;
+    if (this->loginpage != NULL) delete this->loginpage;
+    if (this->registerpage != NULL) delete this->registerpage;
+    delete ui;
 }
 
 //Populate Server List.
