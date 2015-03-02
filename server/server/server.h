@@ -72,7 +72,7 @@ private:
         bool handleDownload(); //download.cpp
         bool handleSharedDownload(); // download.cpp;
         bool handleRemoveFile(); //removal.cpp
-        bool handleSync( string uid = "" ); //sync.cpp
+        bool handleSync( string uid ); //sync.cpp
         bool handleRevert(); //revert.cpp
         bool handleShare(); //share.cpp
         bool handleUnshare(); //share.cpp

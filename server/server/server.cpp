@@ -209,7 +209,7 @@ bool Server::handleInstruction(std::string& instr) {
     }else if( instr == REMOVE_REQUEST ){ //Remove File from Server - and all its databses.
         return handleRemoveFile();
     }else if( instr == SYNC_REQUEST ){ //
-        return handleSync();
+        return handleSync( user.userID );
     }else if( instr == REVERT_REQUEST ){
         return handleRevert();
     }else if( instr == SHARE_REQUEST ){

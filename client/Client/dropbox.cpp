@@ -212,14 +212,42 @@ void DropBox::on_btnDownload_clicked()
     }
 }
 
-void DropBox::on_btnRemove_clicked()
+void DropBox::on_btnRemove_clicked() //TODEBUG.
 {
-    this->client->data.filename = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData();//this is a model index, convert to string
-    this->client->data.type = REMOVE_FILE;
-    bool reply= this->client->eventHandler(REMOVE_FILE);
-    if(!reply)
-    {
-        QMessageBox::information(this,tr("Error"),tr("Remove Failed"));
+    if (distinguisher==0) {
+    } else { //Take from the server tree widget.
+        string target;
+        QTreeWidgetItem* indie=(ui->serverTreeWidget->currentItem());
+
+        std::string indexer=indie->text(0).toStdString();
+        //QMessageBox::information(this,"hi",QString::fromStdString(indexer));
+        while (indie->parent()!=NULL)
+        {
+            indie=(indie->parent());
+            indexer= indie->text(0).toStdString() + "/" + indexer; //toString().toUtf8().constData();
+        } //GET THE INITIAL NODE
+
+        //TODO : ASK FOR CONFIRMATION.
+
+        std::set<string> filenames_copy = filenames;
+        string beginningpart = indexer; //this is a model index, convert to string
+        for( std::set<string>::iterator it = filenames_copy.begin() ; it !=  filenames_copy.end() ; ++it) {
+            std::string its = *it;
+
+            auto res = std::mismatch(beginningpart.begin() ,  beginningpart.end() , its.begin());//Return mistmatch thingy
+            if (  (its != "") && (fileowners[its] == this->client->user.userID) && (res.first == beginningpart.end()) ) {
+                this->client->data.filename = its;
+                //This thing should send a request for all files that are a subset
+                this->client->data.type = REMOVE_FILE;
+                this->client->data.other_user.userID= this->client->user.userID;
+                bool reply= this->client->eventHandler(REMOVE_FILE);
+
+                if(!reply)
+                {
+                    QMessageBox::information(this,tr("Error"),tr("Share Failed"));
+                }
+            }
+        }
     }
 }
 
