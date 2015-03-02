@@ -84,7 +84,9 @@ public:
         void showMain();
         bool populateSyncFileList(); //sync.cpp
         Communications conn; // following that old PHP-SQL stile maen. \_|_/
-        bool handleSharedDownload();
+        bool handleSharedDownload(); //download.cpp
+        void HarmanGetHashSync( string filename , std::unordered_map<std::string, int>& mymap , int iscli); //sync.cpp
+
 private slots:
     void on_btn_launch_clicked();
 

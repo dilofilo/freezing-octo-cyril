@@ -71,6 +71,7 @@ private:
     QFileSystemModel *dirmodel;
     bool distinguisher;
     void populateServer();
+    void populateShareTree();
 
 };
 

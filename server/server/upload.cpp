@@ -28,7 +28,6 @@ bool Server::handleUpload() {
 
     string myfilepass_dir = conn.returnAllButFileName(myfilepass); //Get the directory into which the file should go.
 
-    cout << "###detected filepath is" << myfilepass_dir << "\n";
 
     boost::filesystem::path myfilepass_dir_path(myfilepass_dir);
     if ( boost::filesystem::exists(myfilepass_dir_path)) { //If path doesn't exist, make it.
@@ -39,7 +38,6 @@ bool Server::handleUpload() {
         cout << "created\n";
     }
 
-    cout << "about to read the file into" << myfilepass << "\n";
     bool made = conn.readFromSocket_file( myfilepass , NEW_FILE ) ; //Read the file.
 
 
@@ -52,10 +50,8 @@ bool Server::handleUpload() {
         std::string lal;
         conn.readFromSocket(lal);
 
-        cout << "writing version \n";
         std::string ver = to_string(version+1);
         conn.writeToSocket(ver);
-        cout << " done writing version \n";
 
         /*
          *Files storage : latest version is present freely. diff files in v1...vn
@@ -126,7 +122,6 @@ bool Server::handleUpload() {
         } else { //There is a backslash, means that the thing was a folder.
             string p = finame.substr(0 , firstdash);
             p = SERVER_DIRECTORY + user.userID + "/" + TEMPPREFIX + p;
-            cout << "deleting the path=" << p << "\n";
             boost::filesystem::path pp(p);
             boost::filesystem::remove_all(pp);
         }

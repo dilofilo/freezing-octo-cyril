@@ -24,21 +24,12 @@ DropBox::DropBox(Client* _client , Socket& _csock , string sharedfiledir) { // N
     ui->serverTreeWidget->setColumnCount(1);
     client = _client;
     csock = _csock;
-//    std::vector<QString> childName{"Java","CPP"};
-//    AddRoot("Code",childName);
-//    childName={"PL","CompArch"};
-//    AddRoot("Assignments",childName);
-
     model = new QFileSystemModel(this);
     model->setReadOnly(false);
     QString sPath = QString::fromStdString(sharedfiledir);
     //dirmodel = new QFileSystemModel(this);
     //model->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs);
     model->setRootPath(sPath);
-
-
-
-
 
     //model->setSorting(QDir::DirsFirst | QDir::IgnoreCase | QDir::Name );
      ui->clientTreeView->setModel(model);
@@ -79,25 +70,19 @@ void DropBox::AddChild(QTreeWidgetItem *parent,QString Name)
 
 void DropBox::on_btnMake_clicked()
 {
-
     QModelIndex index=ui->clientTreeView->currentIndex();
     if (!index.isValid())
         return;
-
     QString name = QInputDialog::getText(this,"Name","Enter a Name");
-
     if(name.isEmpty()) return;
-
     model->mkdir(index,name);
 }
 
 void DropBox::on_btnDelete_clicked()
 {
-    //delete
     QModelIndex index=ui->clientTreeView->currentIndex();
     if (!index.isValid())
         return;
-
     if (model->fileInfo(index).isDir())
     {
         model->rmdir(index);
@@ -121,12 +106,10 @@ void DropBox::on_btnSearch_clicked()
 
 void DropBox::on_btnUpload_clicked()
 {
-
     this->client->data.type = UPLOAD_FILE;
     string pat = " hihihihih" + this->client->data.filename ;
     QString qpat = (model->filePath(this->ui->clientTreeView->currentIndex()));
     QMessageBox brk; brk.setText( qpat ); brk.exec();
-
     this->client->data.filename = (model->filePath(this->ui->clientTreeView->currentIndex())).toUtf8().constData();//this is a model index, convert to string
     bool reply= this->client->eventHandler(UPLOAD_FILE);
     if(!reply)
@@ -134,11 +117,6 @@ void DropBox::on_btnUpload_clicked()
         QMessageBox msg;
         msg.setText("File transfer error ");
         msg.exec();
-    }
-    else
-    {
-        //add it to the server dir.
-        //this->ui->comboRevert->addItem("");//add stuff
     }
 }
 
@@ -154,12 +132,7 @@ void DropBox::on_btnSync_clicked()
 
 void DropBox::on_btnLogout_clicked()
 {
-    //bool reply =
     this->client->eventHandler(MAIN_TO_LOGIN);
-//    if(!reply)
-//    {
-//        QMessageBox::information(this,tr("Error"),tr("Logout Failed"));
-//    }
 }
 
 void DropBox::on_btnExit_clicked()
@@ -174,7 +147,7 @@ void DropBox::on_btnDownload_clicked()
         QTreeWidgetItem* indie=(ui->serverTreeWidget->currentItem());
 
         std::string indexer=indie->text(0).toStdString();
-        QMessageBox::information(this,"hi",QString::fromStdString(indexer));
+        //QMessageBox::information(this,"hi",QString::fromStdString(indexer));
         while (indie->parent()!=NULL)
         {
             indie=(indie->parent());
@@ -182,19 +155,13 @@ void DropBox::on_btnDownload_clicked()
         }
 
         std::set<string> filenames_copy = filenames;
-        for( std::set<string>::iterator it = filenames_copy.begin() ; it !=  filenames_copy.end() ; ++it) {
-            cout << "one of the filenames is=" << *it << "\n";
-
-        }
 
         string beginningpart = indexer; //this is a model index, convert to string
-        cout << " got beginning part=" << indexer << "\n";
         //QMessageBox::information(this,"hi",QString::fromStdString(beginningpart));
         for( std::set<string>::iterator it = filenames_copy.begin() ; it !=  filenames_copy.end() ; ++it) {
             std::string its = *it;
 
             auto res = std::mismatch(beginningpart.begin() ,  beginningpart.end() , its.begin());//Return mistmatch thingy
-            cout << "done mismatching \n";
             if (  (its != "") && (fileowners[its] == this->client->user.userID) && (res.first == beginningpart.end()) ) {
                 this->client->data.filename = its;
                 //This thing should send a request for all files that are a subset
@@ -206,25 +173,36 @@ void DropBox::on_btnDownload_clicked()
                 {
                     QMessageBox::information(this,tr("Error"),tr("Download Failed"));
                 }
-                cout << "received a file=" << its << " &  reply=" << reply <<  "\n";
             }
-            cout << " got past the if statement \n";
         }
-        cout << "got outside the for loop, iterates over filenames\n";
     }
     else
     {
-        string beginningpart = this->ui->shareTreeWidget->selectedItems()[0]->text(0).toUtf8().constData(); //this is a model index, convert to string
+        QTreeWidgetItem* indie=(ui->shareTreeWidget->currentItem());
+
+        std::string indexer=indie->text(0).toStdString();
+        //QMessageBox::information(this,"hi",QString::fromStdString(indexer));
+        while (indie->parent()!=NULL)
+        {
+            indie=(indie->parent());
+            indexer= indie->text(0).toStdString() + "/" + indexer; //toString().toUtf8().constData();
+        }
+
         std::set<string> filenames_copy = filenames;
+
+        string beginningpart = indexer; //this is a model index, convert to string
+        //QMessageBox::information(this,"hi",QString::fromStdString(beginningpart));
         for( std::set<string>::iterator it = filenames_copy.begin() ; it !=  filenames_copy.end() ; ++it) {
             std::string its = *it;
+
             auto res = std::mismatch(beginningpart.begin() ,  beginningpart.end() , its.begin());//Return mistmatch thingy
-            if (  (fileowners[*it] != this->client->user.userID) && (res.first == beginningpart.end()) ) {
+            if (  (its != "") && (fileowners[its] != this->client->user.userID) && (res.first == beginningpart.end()) ) {
                 this->client->data.filename = its;
                 //This thing should send a request for all files that are a subset
                 this->client->data.type = DOWNLOAD_SHARED_FILE;
-                this->client->data.other_user.userID=this->ui->shareTreeWidget->selectedItems()[0]->text(1).toUtf8().constData();
+                this->client->data.other_user.userID = fileowners[its];
                 bool reply= this->client->eventHandler(DOWNLOAD_SHARED_FILE);
+
                 if(!reply)
                 {
                     QMessageBox::information(this,tr("Error"),tr("Download Failed"));
@@ -247,47 +225,97 @@ void DropBox::on_btnRemove_clicked()
 
 void DropBox::on_btnShare_clicked()
 {
-    //Need to get username with which to share.
-    this->client->data.filename = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData();//this is a model index, convert to string
-    bfs::path f(this->client->data.filename);
-    string fn = f.filename().string();
-    bool ok;
-    string templol = "SHARE FILE " + fn + " WITH " ;
-    QString text = QInputDialog::getText(this, tr(templol.c_str()),
-                                         tr("User name:"), QLineEdit::Normal,
-                                         QDir::home().dirName(), &ok);
-    if (ok && !text.isEmpty()) {
-        this->client->data.other_user.userID = text.toStdString(); //Far simpler to std::string !
+    if (distinguisher==0) {
     } else {
+        string target;
+        QTreeWidgetItem* indie=(ui->serverTreeWidget->currentItem());
 
-    }
-    this->client->data.type = FILE_SHARE;
-    bool reply= this->client->eventHandler( FILE_SHARE);
-    if(!reply)
-    {
-        QMessageBox::information(this,tr("Error"),tr("Share Failed"));
+        std::string indexer=indie->text(0).toStdString();
+        //QMessageBox::information(this,"hi",QString::fromStdString(indexer));
+        while (indie->parent()!=NULL)
+        {
+            indie=(indie->parent());
+            indexer= indie->text(0).toStdString() + "/" + indexer; //toString().toUtf8().constData();
+        } //GET THE INITIAL NODE
+
+        bool ok;
+
+        string templol = "SHARE FILE " + indexer + " WITH " ;
+        QString text = QInputDialog::getText(this, tr(templol.c_str()),
+                                             tr("User name:"), QLineEdit::Normal,
+                                             QDir::home().dirName(), &ok);
+        if (ok && !text.isEmpty()) {
+            target = text.toStdString(); //Far simpler to std::string !
+        } else {
+
+        }
+        std::set<string> filenames_copy = filenames;
+        string beginningpart = indexer; //this is a model index, convert to string
+        for( std::set<string>::iterator it = filenames_copy.begin() ; it !=  filenames_copy.end() ; ++it) {
+            std::string its = *it;
+
+            auto res = std::mismatch(beginningpart.begin() ,  beginningpart.end() , its.begin());//Return mistmatch thingy
+            if (  (its != "") && (fileowners[its] == this->client->user.userID) && (res.first == beginningpart.end()) ) {
+                this->client->data.filename = its;
+                //This thing should send a request for all files that are a subset
+                this->client->data.type = FILE_SHARE;
+                this->client->data.other_user.userID= target;
+                bool reply= this->client->eventHandler(FILE_SHARE);
+
+                if(!reply)
+                {
+                    QMessageBox::information(this,tr("Error"),tr("Share Failed"));
+                }
+            }
+        }
     }
 }
 
 void DropBox::on_btnUnshare_clicked()
 {
-    this->client->data.filename = this->ui->serverTreeWidget->selectedItems()[0]->text(0).toUtf8().constData();//this is a model index, convert to string
-    bfs::path f(this->client->data.filename);
-    string fn = f.filename().string();
-    bool ok;
-    string templol = "UNSHARE FILE " + fn + " FROM ";
-    QString text = QInputDialog::getText(this, tr(templol.c_str() ),
-                                         tr("User name:"), QLineEdit::Normal,
-                                         QDir::home().dirName(), &ok);
-    if (ok && !text.isEmpty()) {
-        this->client->data.other_user.userID = text.toStdString(); //Far simpler to std::string !
+    if (distinguisher==0) {
+
     } else {
-    }
-    this->client->data.type = FILE_UNSHARE;
-    bool reply= this->client->eventHandler( FILE_UNSHARE);
-    if(!reply)
-    {
-        QMessageBox::information(this,tr("Error"),tr("UnShare Failed"));
+        string target;
+        QTreeWidgetItem* indie=(ui->serverTreeWidget->currentItem());
+
+        std::string indexer=indie->text(0).toStdString();
+        //QMessageBox::information(this,"hi",QString::fromStdString(indexer));
+        while (indie->parent()!=NULL)
+        {
+            indie=(indie->parent());
+            indexer= indie->text(0).toStdString() + "/" + indexer; //toString().toUtf8().constData();
+        } //GET THE INITIAL NODE
+
+        bool ok;
+        string templol = "UNSHARE FILE " + indexer + " FROM " ;
+        QString text = QInputDialog::getText(this, tr(templol.c_str()),
+                                             tr("User name:"), QLineEdit::Normal,
+                                             QDir::home().dirName(), &ok);
+        if (ok && !text.isEmpty()) {
+            target = text.toStdString(); //Far simpler to std::string !
+        } else {
+
+        }
+        std::set<string> filenames_copy = filenames;
+        string beginningpart = indexer; //this is a model index, convert to string
+        for( std::set<string>::iterator it = filenames_copy.begin() ; it !=  filenames_copy.end() ; ++it) {
+            std::string its = *it;
+
+            auto res = std::mismatch(beginningpart.begin() ,  beginningpart.end() , its.begin());//Return mistmatch thingy
+            if (  (its != "") && (fileowners[its] == this->client->user.userID) && (res.first == beginningpart.end()) ) {
+                this->client->data.filename = its;
+                //This thing should send a request for all files that are a subset
+                this->client->data.type = FILE_UNSHARE;
+                this->client->data.other_user.userID = target;
+                bool reply= this->client->eventHandler(FILE_UNSHARE);
+
+                if(!reply)
+                {
+                    QMessageBox::information(this,tr("Error"),tr("Download Failed"));
+                }
+            }
+        }
     }
 }
 
@@ -325,6 +353,7 @@ void DropBox::updateServerFiles() {
 //    }
 
     this->populateServer();
+    this->populateShareTree();
 }
 
 void DropBox::on_shareTreeWidget_clicked(const QModelIndex &index)
@@ -337,19 +366,19 @@ void DropBox::on_shareTreeWidget_clicked(const QModelIndex &index)
 
 }
 
-void DropBox::AddItem(QString Name)
+void DropBox::AddItem(QString Name) //Add an item to the serverTreeWidget
 {
     QTreeWidgetItem *itm= new QTreeWidgetItem(ui->serverTreeWidget);
     itm->setText(0,Name); // itm->setText(1,size); // itm->setText(2,version);
 }
 
-void DropBox::AddItemShare(QString Name, QString Owner)
+void DropBox::AddItemShare(QString Name, QString Owner) //Add a widget to the sharewidget
 {
     QTreeWidgetItem *itm= new QTreeWidgetItem(ui->shareTreeWidget);
     itm->setText(0,Name); itm->setText(1,Owner);
 }
 
-void DropBox::on_serverTreeWidget_clicked(const QModelIndex &index)
+void DropBox::on_serverTreeWidget_clicked(const QModelIndex &index) //Just sets the active items and also toggles the distinguisher
 {
     ui->comboRevert->clear();
     std::string indexer=index.data().toString().toUtf8().constData();
@@ -360,7 +389,7 @@ void DropBox::on_serverTreeWidget_clicked(const QModelIndex &index)
         indexer= indie.data().toString().toStdString() + "/" + indexer; //toString().toUtf8().constData();
     }
     int y= this->fileversions[indexer];
-    QMessageBox::information(this,"hi",QString::fromStdString(indexer));
+    //QMessageBox::information(this,"hi",QString::fromStdString(indexer));
     for (int i=1;i<=y;i++)
     {
         ui->comboRevert->addItem("Version "+QString::number(i));
@@ -375,7 +404,7 @@ void DropBox::on_textSearch_selectionChanged()
 }
 
 
-void DropBox::on_btnMove_clicked()
+void DropBox::on_btnMove_clicked() //Move button moves directory in pc into the shareable directory.
 {
     using namespace boost::filesystem;
     QMessageBox::StandardButton reply;
@@ -424,8 +453,7 @@ void DropBox::on_btnMove_clicked()
 
 }
 
-void DropBox::populateServer()
-{
+void DropBox::populateServer() {
             // filenames --> QStringList fileNames
 
 
@@ -435,8 +463,10 @@ void DropBox::populateServer()
     for ( ; it != filenames.end() ; ++it) {
         std::string its = *it;
         if(its != "") {
-            QString qfilenamesi = QString::fromStdString(its);
-            fileNames << qfilenamesi;
+            if ( fileowners[its] == this->client->user.userID ) {
+                QString qfilenamesi = QString::fromStdString(its);
+                fileNames << qfilenamesi;
+            }
         }
     } //ASSERT : Converted it.
 
@@ -482,6 +512,59 @@ void DropBox::populateServer()
         childItem->setText(0, splitFileName.last());
     }
 
+}
+
+void DropBox::populateShareTree() {
+    QStringList fileNames;//convert filenames to this
+    std::set<string>::iterator it = filenames.begin();
+    for ( ; it != filenames.end() ; ++it) {
+        std::string its = *it;
+        if(its != "") {
+            if ( fileowners[its] != this->client->user.userID ) {
+                QString qfilenamesi = QString::fromStdString(its);
+                fileNames << qfilenamesi;
+            }
+        }
+    } //ASSERT : Converted it.
+
+    QTreeWidgetItem *topLevelItem = NULL;
+    foreach (const QString &fileName, fileNames)
+    {
+        QStringList splitFileName = fileName.split("/");
+
+        // add root folder as top level item if treeWidget doesn't already have it
+        if (this->ui->shareTreeWidget->findItems(splitFileName[0], Qt::MatchFixedString).isEmpty())
+        {
+            topLevelItem = new QTreeWidgetItem;
+            topLevelItem->setText(0, splitFileName[0]);
+            this->ui->shareTreeWidget->addTopLevelItem(topLevelItem);
+        }
+
+        QTreeWidgetItem *parentItem = topLevelItem;
+
+        // iterate through non-root directories (file name comes after)
+        for (int i = 1; i < splitFileName.size() - 1; ++i)
+        {
+            // iterate through children of parentItem to see if this directory exists
+            bool thisDirectoryExists = false;
+            for (int j = 0; j < parentItem->childCount(); ++j)
+            {
+                if (splitFileName[i] == parentItem->child(j)->text(0))
+                {
+                    thisDirectoryExists = true;
+                    parentItem = parentItem->child(j);
+                    break;
+                }
+            }
+            if (!thisDirectoryExists)
+            {
+                parentItem = new QTreeWidgetItem(parentItem);
+                parentItem->setText(0, splitFileName[i]);
+            }
+        }
+        QTreeWidgetItem *childItem = new QTreeWidgetItem(parentItem);
+        childItem->setText(0, splitFileName.last());
+    }
 }
 
 #endif

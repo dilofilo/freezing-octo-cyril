@@ -111,9 +111,9 @@ bool Client::eventHandler( INSTRUCTION_TYPE instr ) { //Handle the InstructionDa
         //Haroun magic 1.
 
     } else if ( instr == DOWNLOAD_FILE) { //to server
-        this->handleDownload();
+        return this->handleDownload();
     } else if (instr == DOWNLOAD_SHARED_FILE) {
-        this->handleSharedDownload();
+        return this->handleSharedDownload();
     } else if ( instr == REMOVE_FILE) { //to server
         this->handleRemove();
     } else if ( instr == SYNC) { //to server - retrieves dates and decides. Works only for files which have been uploaded at least once.

@@ -21,10 +21,8 @@ bool Server::handleDownload() {
     conn.readFromSocket(owner);
 
     string filepath = SERVER_DIRECTORY + owner + "/" + filename ; //Sends the latest version.
-    cout << "fetching file=" << filepath << "\n";
     //reader.open(filepath.c_str(),ios::in);
     conn.writeToSocket_file(filepath); //correct file.
-    cout << "wrote file into the socket. FILE=" << filepath << "\n";
     std::string rcont;
     conn.readFromSocket(rcont); //read a continue.
 
@@ -45,7 +43,7 @@ bool Server::handleSharedDownload(){
     conn.writeToSocket(cont);
     conn.readFromSocket(conti);
 
-    string filepath = SERVER_DIRECTORY + fo + "/" + fn;
+    string filepath = SERVER_DIRECTORY + fo + "/" + fn; //it must exist.
     conn.writeToSocket_file(filepath);
     conn.readFromSocket(conti);
 

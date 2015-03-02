@@ -26,14 +26,12 @@ std::string Client::processFileName( std::string filename ) {
     string cwd = (boost::filesystem::current_path()).string();
     cwd += user.userID + "/" + CLIENT_SYNC_DIR + "/";
     p = p.substr( cwd.size() + 1 );
-    cout << "###return ralative path=" << p << "####\n";
     return p;
 }
 
 bool Client::uploadNewFile() {
     //ASSERT : data.filetype == FILE_TYPE_NEW
     std::string filename = this->data.filename; //Entire path.
-    cout << "uploadNewFile() detects:" << filename << "\n";
     //reader.open(filename ); //In mode.
     //Need to process file name.
     //TODO : PROCESS FILE NAME. ADD IT TO MY DATABASE.
@@ -51,7 +49,6 @@ bool Client::uploadNewFile() {
 
     string version;
     conn.readFromSocket(version);
-    cout << " we are uploading the version=" << version << "\n";
     int ver = atoi( version.c_str() );
     //need to add to file.
     this->addToFileLog(this->user.userID , filename_processed , filename , ver);
